@@ -1,3 +1,10 @@
+import { Router } from './app/Router';
+import { AppProvider } from './app/AppProvider';
+
 export function App() {
-  return <h1>Hello World, SIGH!</h1>;
+  return (
+    <AppProvider>
+      <Router />
+    </AppProvider>
+  );
 }
