@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { PrivateRoute } from './PrivateRoute';
 
-import { LoginPage } from '../../pages/Login';
 import { DashboardPage } from '../../pages/Dashboard';
+import { LoginPage } from '../../pages/OnBoarding/Login';
 
 export function Router() {
   return (
