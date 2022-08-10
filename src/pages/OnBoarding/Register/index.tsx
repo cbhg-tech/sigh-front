@@ -28,7 +28,7 @@ export function RegisterPage() {
             <option value="deodoro">Deodoro</option>
           </Select>
           <Textfield type="password" name="password" label="Senha" />
-          <Button label="Criar conta" />
+          <Button type="submit" label="Criar conta" />
         </Form>
         <p className="text-xs text-light-on-surface text-center">
           * Caso ainda não tenha um clube e deseja conhecer e praticar este

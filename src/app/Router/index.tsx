@@ -5,6 +5,7 @@ import { PrivateRoute } from './PrivateRoute';
 import { DashboardPage } from '../../pages/Dashboard';
 import { LoginPage } from '../../pages/OnBoarding/Login';
 import { RegisterPage } from '../../pages/OnBoarding/Register';
+import { ForgotPasswordPage } from '../../pages/OnBoarding/ForgotPassword';
 
 export function Router() {
   return (
@@ -12,6 +13,7 @@ export function Router() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />
+        <Route path="/esqueceu-a-senha" element={<ForgotPasswordPage />} />
         <Route path="/dashboard" element={<PrivateRoute />}>
           <Route path="" element={<DashboardPage />} />
         </Route>
