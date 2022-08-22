@@ -45,11 +45,6 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <Divider />
         <ListSubtitle label="Área restrita" />
         <ListItem
-          href="/app/restrito/atletas"
-          label="Listagem de atletas"
-          icon={MdFormatListBulleted}
-        />
-        <ListItem
           href="/app/restrito/atletas/aprovacao"
           label="Aprovação de atletas"
           icon={MdChecklist}
