@@ -24,6 +24,7 @@
     "prettier"
   ],
   "rules": {
+    "no-shadow": "off",
     "consistent-return": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "class-methods-use-this": "off",

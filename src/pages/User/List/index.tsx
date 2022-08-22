@@ -12,25 +12,8 @@ import { IconButton } from '../../../components/Inputs/IconButton';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { Badge } from '../../../components/Badge';
 import { Button } from '../../../components/Inputs/Button';
-
-interface IUser {
-  id: string;
-  name: string;
-  team: string;
-  role: string;
-  status: string;
-}
-
-// create an array of fake data using IAthlete
-const fakeData = [
-  {
-    id: '1',
-    name: 'ADMIN',
-    team: 'CBHG',
-    role: 'ADMIN',
-    status: 'ativo',
-  },
-];
+import { IUser } from '../../../types/User';
+import { useGetUsers } from '../../../dataAccess/hooks/user/useGetUsers';
 
 const columns: ColumnDef<IUser>[] = [
   {
@@ -88,10 +71,11 @@ const COLUMN_WIDTH = [
 
 export function UserListPage() {
   const navigate = useNavigate();
-  const [data] = useState<Array<IUser>>([...fakeData]);
+  // const [data] = useState<Array<IUser>>([...fakeData]);
+  const { data, isLoading, isSuccess, isError } = useGetUsers();
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -112,44 +96,62 @@ export function UserListPage() {
           <TextfieldBare label="Buscar..." name="search" />
         </div>
       </div>
-      <table className="w-full">
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, index) => (
-                <th
-                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                  key={header.id}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr
-              className="border-b last:border-none border-slate-200"
-              key={row.id}
-            >
-              {row.getVisibleCells().map((cell, index) => (
-                <td
-                  className={`${COLUMN_WIDTH[index]} py-4 px-2`}
-                  key={cell.id}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {isLoading && (
+        <div className="text-center mt-8">
+          <p className="text-light-on-surface-variant text-xl">
+            Buscando dados ...
+          </p>
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-center mt-8">
+          <p className="text-light-on-error-container text-xl">
+            Error ao buscar dados, tente novamente
+          </p>
+        </div>
+      )}
+
+      {isSuccess && (
+        <table className="w-full">
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header, index) => (
+                  <th
+                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                    key={header.id}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map(row => (
+              <tr
+                className="border-b last:border-none border-slate-200"
+                key={row.id}
+              >
+                {row.getVisibleCells().map((cell, index) => (
+                  <td
+                    className={`${COLUMN_WIDTH[index]} py-4 px-2`}
+                    key={cell.id}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
