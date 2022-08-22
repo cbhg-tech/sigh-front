@@ -36,6 +36,7 @@ module.exports = {
           'on-primary': '#FFFFFF',
           'primary-container': '#79FBB8',
           primary: '#006C45',
+          'surface-1': '#EEF6EF',
         },
       },
     },
