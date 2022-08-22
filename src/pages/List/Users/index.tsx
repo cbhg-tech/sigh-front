@@ -6,19 +6,17 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { MdEdit, MdOutlineDeleteOutline } from 'react-icons/md';
-import { AiOutlineEye } from 'react-icons/ai';
 import { useState } from 'react';
 import { IconButton } from '../../../components/Inputs/IconButton';
-import { SelectBare } from '../../../components/Inputs/SelectBare';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
+import { Badge } from '../../../components/Badge';
 import { Button } from '../../../components/Inputs/Button';
 
-interface IAthlete {
+interface IUser {
   id: string;
   name: string;
   team: string;
-  category: string;
-  sex: string;
+  role: string;
   status: string;
 }
 
@@ -26,54 +24,34 @@ interface IAthlete {
 const fakeData = [
   {
     id: '1',
-    name: 'Rafael',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
-    status: 'ativo',
-  },
-  {
-    id: '2',
-    name: 'Bruno',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
-    status: 'ativo',
-  },
-  {
-    id: '3',
-    name: 'Pedro',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
+    name: 'ADMIN',
+    team: 'CBHG',
+    role: 'ADMIN',
     status: 'ativo',
   },
 ];
 
-const columns: ColumnDef<IAthlete>[] = [
+const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: 'name',
     header: 'Nome',
     cell: info => info.getValue(),
   },
   {
+    accessorKey: 'status',
+    header: 'status',
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: 'role',
+    header: 'RoleAccess',
+    cell: info => {
+      return <Badge type="tertiary">{info.getValue() as string}</Badge>;
+    },
+  },
+  {
     accessorKey: 'team',
     header: 'Clube',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'category',
-    header: 'Categoria',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'sex',
-    header: 'Sexo',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
     cell: info => info.getValue(),
   },
   {
@@ -84,12 +62,6 @@ const columns: ColumnDef<IAthlete>[] = [
         <IconButton
           icon={MdEdit}
           className="text-light-primary"
-          size="1.5rem"
-          onClick={() => console.log(info.getValue())}
-        />
-        <IconButton
-          icon={AiOutlineEye}
-          className="text-light-tertiary"
           size="1.5rem"
           onClick={() => console.log(info.getValue())}
         />
@@ -113,8 +85,8 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
-export function ListAthletesPage() {
-  const [data] = useState<Array<IAthlete>>([...fakeData]);
+export function ListUsersPage() {
+  const [data] = useState<Array<IUser>>([...fakeData]);
 
   const table = useReactTable({
     data,
@@ -126,38 +98,16 @@ export function ListAthletesPage() {
     <div className="bg-light-surface p-6 rounded-2xl h-full">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface mb-4">
-          Listagem de atletas
+          Listagem de usuários
         </h2>
         <Button
           aditionalClasses="w-full lg:w-auto px-6"
           type="button"
-          label="Criar atleta"
+          label="Criar usuário"
         />
       </div>
-      <div className="flex flex-col lg:flex-row gap-2 mb-4">
-        <div className="w-full lg:w-1/4">
-          <SelectBare label="Clube" name="team-filter">
-            <option value="">Todos</option>
-            <option value="">AABB - Canoas/RS</option>
-            <option value="">AABB/ São Leopoldo</option>
-            <option value="">Deodoro Hoquei Clube</option>
-          </SelectBare>
-        </div>
-        <div className="w-full lg:w-1/4">
-          <SelectBare label="Federação" name="federation-filter">
-            <option value="">Todas</option>
-            <option value="mg">
-              Federação de Hóquei do Estado de Minas Gerais
-            </option>
-            <option value="sc">
-              Federação de Hóquei do Estado de Santa Catarina
-            </option>
-            <option value="sp">
-              Federação de Hóquei do Estado de São Paulo
-            </option>
-          </SelectBare>
-        </div>
-        <div className="w-full lg:w-1/2">
+      <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
+        <div className="w-full lg:w-1/3">
           <TextfieldBare label="Buscar..." name="search" />
         </div>
       </div>
