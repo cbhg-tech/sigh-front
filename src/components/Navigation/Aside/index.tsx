@@ -20,7 +20,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
 
   return (
     <aside
-      className={`absolute duration-200 ease-in-out ${isOpenStyle} lg:translate-x-0 lg:p-4 top-0 left-0 z-10 w-full h-full lg:relative lg:w-full lg:col-span-1 bg-light-background`}
+      className={`absolute duration-200 ease-in-out ${isOpenStyle} lg:translate-x-0 lg:p-4 top-0 left-0 z-10 w-full h-full lg:relative lg:w-full lg:col-span-1 bg-transparent`}
     >
       <div className="bg-light-surface-1 flex flex-col h-full p-4 lg:rounded-3xl">
         <div className="flex justify-end mb-4 lg:hidden">
