@@ -10,6 +10,7 @@ import { Navigation } from '../../components/Navigation';
 import { ListAthletesPage } from '../../pages/List/Athletes';
 import { UserListPage } from '../../pages/User/List';
 import { UserRegisterPage } from '../../pages/User/Register';
+import { NotFoundPage } from '../../pages/NotFound';
 
 export function Router() {
   return (
@@ -52,6 +53,7 @@ export function Router() {
             }
           />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
