@@ -38,7 +38,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           icon={FaUserAlt}
         />
         <ListItem
-          href="/app/listagem/usuarios"
+          href="/app/usuarios/listagem"
           label="Usuário do sistema"
           icon={FaUserFriends}
         />

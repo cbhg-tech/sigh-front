@@ -8,7 +8,8 @@ import { RegisterPage } from '../../pages/OnBoarding/Register';
 import { ForgotPasswordPage } from '../../pages/OnBoarding/ForgotPassword';
 import { Navigation } from '../../components/Navigation';
 import { ListAthletesPage } from '../../pages/List/Athletes';
-import { ListUsersPage } from '../../pages/List/Users';
+import { UserListPage } from '../../pages/User/List';
+import { UserRegisterPage } from '../../pages/User/Register';
 
 export function Router() {
   return (
@@ -35,10 +36,18 @@ export function Router() {
             }
           />
           <Route
-            path="/app/listagem/usuarios"
+            path="/app/usuarios/listagem"
             element={
               <Navigation title="Usuário do sistema">
-                <ListUsersPage />
+                <UserListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/usuarios/cadastro"
+            element={
+              <Navigation title="Cadastro de Usuário">
+                <UserRegisterPage />
               </Navigation>
             }
           />
