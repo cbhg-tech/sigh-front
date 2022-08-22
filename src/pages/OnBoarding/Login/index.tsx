@@ -1,11 +1,60 @@
+import { useRef } from 'react';
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { Link, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+
+import { toast } from 'react-toastify';
 import { OnBoardingContainer } from '..';
 import { Button } from '../../../components/Inputs/Button';
 import { Textfield } from '../../../components/Inputs/Textfield';
+import { useAuthenticate } from '../../../dataAccess/hooks/auth/useAuthenticate';
+import { validateForm } from '../../../utils/validateForm';
+import { handleFormErrors } from '../../../utils/handleFormErrors';
+import { useGlobal } from '../../../contexts/global.context';
+
+interface IForm {
+  email: string;
+  password: string;
+}
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const formRef = useRef<FormHandles>(null);
+  const { setIsLoggedIn } = useGlobal();
+  const { mutateAsync, isLoading } = useAuthenticate();
+
+  async function handleSubmit(data: IForm) {
+    formRef.current?.setErrors({});
+
+    try {
+      await validateForm(data, {
+        email: Yup.string()
+          .required('Email obrigatório')
+          .email('Email inválido'),
+        password: Yup.string().required('Senha obrigatória'),
+      });
+
+      await mutateAsync({
+        email: data.email,
+        password: data.password,
+      });
+
+      setIsLoggedIn(true);
+
+      toast.success('Login realizado com sucesso!');
+
+      navigate('/dashboard');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = handleFormErrors(err);
+
+        return formRef.current?.setErrors(errors);
+      }
+
+      toast.error('Ops! Email e senha não batem!');
+    }
+  }
 
   return (
     <OnBoardingContainer>
@@ -13,10 +62,10 @@ export function LoginPage() {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Faça o login no SIGH ou registre-se
         </p>
-        <Form onSubmit={data => console.log(data)}>
+        <Form ref={formRef} onSubmit={data => handleSubmit(data)}>
           <Textfield type="email" name="email" label="Email" />
           <Textfield type="password" name="password" label="Senha" />
-          <Button type="submit" label="Entrar" />
+          <Button type="submit" label="Entrar" isLoading={isLoading} />
         </Form>
         <Button
           type="button"

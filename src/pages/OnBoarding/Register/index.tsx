@@ -14,6 +14,7 @@ export function RegisterPage() {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Cadastro de atletas do hóquei brasileiro
         </p>
+        {/* eslint-disable-next-line no-console */}
         <Form onSubmit={data => console.log(data)}>
           <Textfield type="text" name="name" label="Nome completo" />
           <Textfield type="email" name="email" label="Email" />
