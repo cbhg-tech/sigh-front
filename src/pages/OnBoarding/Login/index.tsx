@@ -22,7 +22,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { setIsLoggedIn } = useGlobal();
-  const { mutateAsync } = useAuthenticate();
+  const { mutateAsync, isLoading } = useAuthenticate();
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
@@ -65,7 +65,7 @@ export function LoginPage() {
         <Form ref={formRef} onSubmit={data => handleSubmit(data)}>
           <Textfield type="email" name="email" label="Email" />
           <Textfield type="password" name="password" label="Senha" />
-          <Button type="submit" label="Entrar" />
+          <Button type="submit" label="Entrar" isLoading={isLoading} />
         </Form>
         <Button
           type="button"
