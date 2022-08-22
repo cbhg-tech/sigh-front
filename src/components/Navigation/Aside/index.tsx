@@ -33,7 +33,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <Divider />
         <ListSubtitle label="Cadastros" />
         <ListItem
-          href="/app/cadastros/atleta"
+          href="/app/listagem/atletas"
           label="Atletas"
           icon={FaUserAlt}
         />
