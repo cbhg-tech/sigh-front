@@ -33,22 +33,17 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <Divider />
         <ListSubtitle label="Cadastros" />
         <ListItem
-          href="/app/cadastros/atleta"
+          href="/app/listagem/atletas"
           label="Atletas"
           icon={FaUserAlt}
         />
         <ListItem
-          href="/app/cadastros/usuario"
+          href="/app/listagem/usuarios"
           label="Usuário do sistema"
           icon={FaUserFriends}
         />
         <Divider />
         <ListSubtitle label="Área restrita" />
-        <ListItem
-          href="/app/restrito/atletas"
-          label="Listagem de atletas"
-          icon={MdFormatListBulleted}
-        />
         <ListItem
           href="/app/restrito/atletas/aprovacao"
           label="Aprovação de atletas"
