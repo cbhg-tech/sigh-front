@@ -29,15 +29,23 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
             icon={MdOutlineClose}
           />
         </div>
-        <ListItem href="/app/dashboard" label="Dashboard" icon={MdDashboard} />
+
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/dashboard"
+          label="Dashboard"
+          icon={MdDashboard}
+        />
         <Divider />
         <ListSubtitle label="Cadastros" />
         <ListItem
+          closeModal={() => toogleSideMenu(false)}
           href="/app/listagem/atletas"
           label="Atletas"
           icon={FaUserAlt}
         />
         <ListItem
+          closeModal={() => toogleSideMenu(false)}
           href="/app/usuarios/listagem"
           label="Usuário do sistema"
           icon={FaUserFriends}
@@ -45,16 +53,19 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <Divider />
         <ListSubtitle label="Área restrita" />
         <ListItem
+          closeModal={() => toogleSideMenu(false)}
           href="/app/restrito/atletas/aprovacao"
           label="Aprovação de atletas"
           icon={MdChecklist}
         />
         <ListItem
+          closeModal={() => toogleSideMenu(false)}
           href="/app/restrito/atletas"
           label="Listagem de transferencias"
           icon={MdFormatListBulleted}
         />
         <ListItem
+          closeModal={() => toogleSideMenu(false)}
           href="/app/restrito/atletas/aprovacao"
           label="Aprovação de transferencias"
           icon={MdChecklist}
