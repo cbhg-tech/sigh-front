@@ -28,7 +28,7 @@ export function Header({ toogleSideMenu, title }: IProps) {
   }, [isDropdownOpen]);
 
   return (
-    <header className="flex items-center justify-between px-4 col-span-5 bg-light-surface">
+    <header className="flex items-center justify-between px-4 col-span-5 bg-light-surface-1">
       <div className="flex items-center lg:hidden">
         <IconButton
           icon={MdOutlineMenu}
