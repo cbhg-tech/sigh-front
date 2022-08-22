@@ -28,7 +28,7 @@ export function Button({
 }: IButton) {
   return (
     <button
-      className={`flex rounded-full items-center justify-center w-full duration-200 border text-sm cursor-pointer hover:brightness-90 whitespace-nowrap p-2 my-2 font-medium ${aditionalClasses} ${disabledButton} ${buttonStyle[variant]}`}
+      className={`flex rounded-full items-center justify-center w-full duration-200 border text-sm cursor-pointer hover:brightness-90 whitespace-nowrap p-2 my-2 font-medium  ${disabledButton} ${buttonStyle[variant]} ${aditionalClasses}`}
       type="button"
       {...rest}
     >
