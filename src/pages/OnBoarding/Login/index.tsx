@@ -44,7 +44,7 @@ export function LoginPage() {
 
       toast.success('Login realizado com sucesso!');
 
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = handleFormErrors(err);

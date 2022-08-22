@@ -6,6 +6,7 @@ import { DashboardPage } from '../../pages/Dashboard';
 import { LoginPage } from '../../pages/OnBoarding/Login';
 import { RegisterPage } from '../../pages/OnBoarding/Register';
 import { ForgotPasswordPage } from '../../pages/OnBoarding/ForgotPassword';
+import { Navigation } from '../../components/Navigation';
 
 export function Router() {
   return (
@@ -14,8 +15,15 @@ export function Router() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />
         <Route path="/esqueceu-a-senha" element={<ForgotPasswordPage />} />
-        <Route path="/dashboard" element={<PrivateRoute />}>
-          <Route path="" element={<DashboardPage />} />
+        <Route path="/app" element={<PrivateRoute />}>
+          <Route
+            path="/app/dashboard"
+            element={
+              <Navigation title="Dashboard">
+                <DashboardPage />
+              </Navigation>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
