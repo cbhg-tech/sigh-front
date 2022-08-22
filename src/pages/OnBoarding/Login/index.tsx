@@ -52,6 +52,11 @@ export function LoginPage() {
         return formRef.current?.setErrors(errors);
       }
 
+      // @ts-ignore
+      if (err.message === 'Usuário inativo') {
+        return toast.error('Usuário inativo');
+      }
+
       toast.error('Ops! Email e senha não batem!');
     }
   }

@@ -5,10 +5,12 @@ import {
   limit,
   setDoc,
   doc,
+  updateDoc,
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { db, auth } from '../../app/FirebaseConfig';
 import { IUser } from '../../types/User';
+import { Status } from '../../enums/Status';
 
 export interface ICreateUser extends Omit<IUser, 'id' | 'status'> {
   email: string;
@@ -46,28 +48,14 @@ export class UserController {
       email,
       name,
       role,
-      // TODO: Criar enum de status
-      status: 'ACTIVE',
+      status: Status.ACTIVE,
       team,
     });
   }
 
-  public async delete(data: ICreateUser) {
-    const { email, password, name, role, team } = data;
-
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
-
-    await setDoc(doc(db, 'users', user.uid), {
-      email,
-      name,
-      role,
-      // TODO: Criar enum de status
-      status: 'ACTIVE',
-      team,
+  public async disable(id: string) {
+    await updateDoc(doc(db, 'users', id), {
+      status: Status.INACTIVE,
     });
   }
 }

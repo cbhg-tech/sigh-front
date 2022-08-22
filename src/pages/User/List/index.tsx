@@ -5,15 +5,13 @@ import {
   getCoreRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { MdEdit, MdOutlineDeleteOutline } from 'react-icons/md';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconButton } from '../../../components/Inputs/IconButton';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { Badge } from '../../../components/Badge';
 import { Button } from '../../../components/Inputs/Button';
 import { IUser } from '../../../types/User';
 import { useGetUsers } from '../../../dataAccess/hooks/user/useGetUsers';
+import { ActionButtons } from './ActionButtons';
 
 const columns: ColumnDef<IUser>[] = [
   {
@@ -41,22 +39,7 @@ const columns: ColumnDef<IUser>[] = [
   {
     header: '',
     accessorKey: 'id',
-    cell: info => (
-      <div className="flex gap-2 items-center justify-end">
-        <IconButton
-          icon={MdEdit}
-          className="text-light-primary"
-          size="1.5rem"
-          onClick={() => console.log(info.getValue())}
-        />
-        <IconButton
-          icon={MdOutlineDeleteOutline}
-          className="text-light-error"
-          size="1.5rem"
-          onClick={() => console.log(info.getValue())}
-        />
-      </div>
-    ),
+    cell: info => <ActionButtons id={info.getValue() as string} />,
   },
 ];
 
