@@ -7,8 +7,8 @@ import React, {
 } from 'react';
 
 interface GlobalContextData {
-  token: string | undefined;
-  setToken(data: string): void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface IProps {
@@ -18,15 +18,13 @@ interface IProps {
 const GlobalContext = createContext({} as GlobalContextData);
 
 function GlobalProvider({ children }: IProps) {
-  const [token, setToken] = useState(
-    () => localStorage.getItem('@SIGH:accessToken') || '',
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <GlobalContext.Provider
       value={{
-        token,
-        setToken,
+        isLoggedIn,
+        setIsLoggedIn,
       }}
     >
       {children}

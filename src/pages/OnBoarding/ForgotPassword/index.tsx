@@ -10,6 +10,7 @@ export function ForgotPasswordPage() {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Informe seu email para recuperar a senha
         </p>
+        {/* eslint-disable-next-line no-console */}
         <Form onSubmit={data => console.log(data)}>
           <Textfield type="email" name="email" label="Email" />
           <Button type="submit" label="Recuperar" />
