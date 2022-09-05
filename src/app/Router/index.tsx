@@ -11,6 +11,8 @@ import { AthletesListPage } from '../../pages/Athletes/List';
 import { UserListPage } from '../../pages/User/List';
 import { UserRegisterPage } from '../../pages/User/Register';
 import { NotFoundPage } from '../../pages/NotFound';
+import { FederationListPage } from '../../pages/Federation/List';
+import { FederationRegisterPage } from '../../pages/Federation/Register';
 
 export function Router() {
   return (
@@ -49,6 +51,22 @@ export function Router() {
             element={
               <Navigation title="Cadastro de Usuário">
                 <UserRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/federacoes/listagem"
+            element={
+              <Navigation title="Federações">
+                <FederationListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/federacoes/cadastro"
+            element={
+              <Navigation title="Cadastro de Federação">
+                <FederationRegisterPage />
               </Navigation>
             }
           />

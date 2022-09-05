@@ -5,6 +5,7 @@ import {
   MdFormatListBulleted,
   MdOutlineClose,
 } from 'react-icons/md';
+import { SiGoogleassistant } from 'react-icons/si';
 import { Divider } from '../../Divider';
 import { IconButton } from '../../Inputs/IconButton';
 import { ListItem } from './ListItem';
@@ -49,6 +50,12 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           href="/app/usuarios/listagem"
           label="Usuário do sistema"
           icon={FaUserFriends}
+        />
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/federacoes/listagem"
+          label="Federações"
+          icon={SiGoogleassistant}
         />
         <Divider />
         <ListSubtitle label="Área restrita" />
