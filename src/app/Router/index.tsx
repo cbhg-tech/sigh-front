@@ -7,7 +7,7 @@ import { LoginPage } from '../../pages/OnBoarding/Login';
 import { RegisterPage } from '../../pages/OnBoarding/Register';
 import { ForgotPasswordPage } from '../../pages/OnBoarding/ForgotPassword';
 import { Navigation } from '../../components/Navigation';
-import { ListAthletesPage } from '../../pages/List/Athletes';
+import { AthletesListPage } from '../../pages/Athletes/List';
 import { UserListPage } from '../../pages/User/List';
 import { UserRegisterPage } from '../../pages/User/Register';
 import { NotFoundPage } from '../../pages/NotFound';
@@ -32,7 +32,7 @@ export function Router() {
             path="/app/listagem/atletas"
             element={
               <Navigation title="Atletas">
-                <ListAthletesPage />
+                <AthletesListPage />
               </Navigation>
             }
           />
