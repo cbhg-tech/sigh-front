@@ -13,6 +13,8 @@ import { UserRegisterPage } from '../../pages/User/Register';
 import { NotFoundPage } from '../../pages/NotFound';
 import { FederationListPage } from '../../pages/Federation/List';
 import { FederationRegisterPage } from '../../pages/Federation/Register';
+import { TeamRegisterPage } from '../../pages/Team/Register';
+import { TeamListPage } from '../../pages/Team/List';
 
 export function Router() {
   return (
@@ -67,6 +69,22 @@ export function Router() {
             element={
               <Navigation title="Cadastro de Federação">
                 <FederationRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/clubes/listagem"
+            element={
+              <Navigation title="Clubes">
+                <TeamListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/clubes/cadastro"
+            element={
+              <Navigation title="Cadastro de Clubes">
+                <TeamRegisterPage />
               </Navigation>
             }
           />

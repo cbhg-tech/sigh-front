@@ -1,28 +1,32 @@
-import { useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import { useRef, useState } from 'react';
+import { MdError } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
-import { toast } from 'react-toastify';
-import { MdError } from 'react-icons/md';
 import { Button } from '../../../components/Inputs/Button';
+import { FileInput } from '../../../components/Inputs/FIleInput';
+import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 import { Select } from '../../../components/Inputs/Select';
 import { Textfield } from '../../../components/Inputs/Textfield';
-import { States } from '../../../dataAccess/static/states';
-import { validateForm } from '../../../utils/validateForm';
-import { useCreateFederation } from '../../../dataAccess/hooks/federation/useCreateFederation';
+import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
+import { useCreateTeam } from '../../../dataAccess/hooks/team/useCreateTeam';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
-import { FileInput } from '../../../components/Inputs/FIleInput';
+import { validateForm } from '../../../utils/validateForm';
 
 interface IForm {
   name: string;
   email: string;
   initials: string;
-  uf: string;
   presidentName: string;
   beginningOfTerm: string;
   endOfTerm: string;
+  coachName: string;
+  description: string;
+  federation: string;
+  url: string;
 }
 
 interface IFiles {
@@ -32,10 +36,12 @@ interface IFiles {
   electionMinutes: File | undefined;
 }
 
-export function FederationRegisterPage() {
+export function TeamRegisterPage() {
   const formRef = useRef<FormHandles>(null);
   const navigate = useNavigate();
-  const { mutateAsync, isLoading } = useCreateFederation();
+
+  const { data: federationData } = useGetFederations();
+  const { mutateAsync, isLoading } = useCreateTeam();
 
   const [files, setFiles] = useState<IFiles>({
     logo: undefined,
@@ -63,8 +69,11 @@ export function FederationRegisterPage() {
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
+        coachName: Yup.string().required('Nome do técnico obrigatório'),
+        description: Yup.string().required('Descrição obrigatório'),
+        federation: Yup.string().required('Federação obrigatório'),
         initials: Yup.string().required('Sigla obrigatória'),
-        uf: Yup.string().required('Estado obrigatório'),
+        url: Yup.string().required('Site ou fanpage obrigatória'),
         email: Yup.string()
           .required('Email obrigatório')
           .email('Email inválido'),
@@ -75,6 +84,11 @@ export function FederationRegisterPage() {
 
       await mutateAsync({
         ...data,
+        federation: {
+          id: data.federation,
+          name:
+            federationData?.find(f => f.id === data.federation)?.initials || '',
+        },
         logo,
         electionMinutes,
         presidentDocument,
@@ -83,7 +97,7 @@ export function FederationRegisterPage() {
 
       toast.success('Federação criada com sucesso!');
 
-      navigate('/app/federacoes/listagem');
+      navigate('/app/clubes/listagem');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = handleFormErrors(err);
@@ -97,10 +111,6 @@ export function FederationRegisterPage() {
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
-      <p className="mb-8 text-light-on-surface-variant">
-        <strong>Atenção!</strong> após este cadastro, faça o registro de pelo
-        menos um usuário administrador para esta federação.
-      </p>
       <Form
         ref={formRef}
         className="grid grid-cols-1 md:grid-cols-6 gap-2"
@@ -112,15 +122,40 @@ export function FederationRegisterPage() {
         <div className="col-span-1 md:col-span-2">
           <Textfield name="initials" label="Sigla" />
         </div>
-        <div className="col-span-1 md:col-span-2">
-          <Select name="uf" label="Estado">
-            {States.map(state => (
-              <option value={state}>{state}</option>
+        <div className="col-span-1 md:col-span-3">
+          <Textfield type="email" name="email" label="Email" />
+        </div>
+        <div className="col-span-1 md:col-span-3">
+          <Textfield name="url" label="Site/Fanpage" />
+        </div>
+        <div className="col-span-1 md:col-span-6">
+          <Textfield name="presidentName" label="Nome do Presidente" />
+        </div>
+        <div className="col-span-1 md:col-span-3">
+          <Textfield
+            type="date"
+            name="beginningOfTerm"
+            label="Início do mandato"
+          />
+        </div>
+        <div className="col-span-1 md:col-span-3">
+          <Textfield type="date" name="endOfTerm" label="Fim do mandato" />
+        </div>
+        <div className="col-span-1 md:col-span-6">
+          <Textfield name="coachName" label="Nome do Técnico" />
+        </div>
+        <div className="col-span-1 md:col-span-6">
+          <MultineTextfield name="description" label="Desccrição" />
+        </div>
+        <div className="col-span-1 md:col-span-6">
+          <Select name="federation" label="Federação">
+            <option value="">Escolha uma federação</option>
+            {federationData?.map(federation => (
+              <option key={federation.id} value={federation.id}>
+                {federation.name}
+              </option>
             ))}
           </Select>
-        </div>
-        <div className="col-span-1 md:col-span-4">
-          <Textfield type="email" name="email" label="Email" />
         </div>
         <div className="col-span-1 md:col-span-6 mb-2 md:flex md:justify-between">
           <FileInput
@@ -134,23 +169,6 @@ export function FederationRegisterPage() {
             onChange={e =>
               setFiles({ ...files, federationDocument: e.target.files?.[0] })
             }
-          />
-        </div>
-        <div className="col-span-1 md:col-span-6">
-          <Textfield name="presidentName" label="Nome do presidente" />
-        </div>
-        <div className="col-span-1 md:col-span-3">
-          <Textfield
-            type="date"
-            name="beginningOfTerm"
-            label="Data de início do mandato"
-          />
-        </div>
-        <div className="col-span-1 md:col-span-3">
-          <Textfield
-            type="date"
-            name="endOfTerm"
-            label="Data do fim do mandato"
           />
         </div>
         <div className="col-span-1 md:col-span-6 mb-2 md:flex md:justify-between">
@@ -181,12 +199,12 @@ export function FederationRegisterPage() {
             variant="primary-border"
             type="submit"
             label="Cancelar"
-            onClick={() => navigate('/app/federacoes/listagem')}
+            onClick={() => navigate('/app/clubes/listagem')}
           />
           <Button
             aditionalClasses="w-auto px-2"
             type="submit"
-            label="Criar federação"
+            label="Criar clube"
             isLoading={isLoading}
           />
         </div>
