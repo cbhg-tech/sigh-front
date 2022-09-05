@@ -1,17 +1,20 @@
-import { ITeam } from './Team';
-
-export interface IFederation {
+export interface ITeam {
   id: string;
   name: string;
   initials: string;
-  uf: string;
   email: string;
+  url: string;
   presidentName: string;
   beginningOfTerm: string;
   endOfTerm: string;
+  coachName: string;
+  description: string;
+  federation: {
+    id: string;
+    name: string;
+  };
   logo: string;
   electionMinutes: string;
   presidentDocument: string;
   federationDocument: string;
-  teams?: Array<ITeam>;
 }
