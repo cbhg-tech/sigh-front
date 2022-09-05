@@ -113,7 +113,7 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
-export function ListAthletesPage() {
+export function AthletesListPage() {
   const [data] = useState<Array<IAthlete>>([...fakeData]);
 
   const table = useReactTable({
