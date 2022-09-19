@@ -7,6 +7,7 @@ import {
   doc,
   deleteDoc,
   arrayUnion,
+  setDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { ITeam } from '../../types/Team';
@@ -78,6 +79,13 @@ export class TeamController {
 
     await updateDoc(doc(db, 'federations', federation.id), {
       teams: arrayUnion(id),
+    });
+
+    await updateDoc(doc(db, 'public', 'teams'), {
+      list: arrayUnion({
+        id,
+        name,
+      }),
     });
 
     const logo = await UploadFile(`teams/${id}/${logoFile.name}`, logoFile);

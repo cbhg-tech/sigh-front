@@ -6,11 +6,13 @@ import {
   setDoc,
   doc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { db, auth } from '../../app/FirebaseConfig';
 import { IUser } from '../../types/User';
 import { Status } from '../../enums/Status';
+import { Roles } from '../../enums/Roles';
 
 export interface ICreateUser extends Omit<IUser, 'id' | 'status'> {
   email: string;
@@ -19,7 +21,11 @@ export interface ICreateUser extends Omit<IUser, 'id' | 'status'> {
 
 export class UserController {
   public async list() {
-    const q = query(collection(db, 'users'), limit(20));
+    const q = query(
+      collection(db, 'users'),
+      where('role', '!=', Roles.USER),
+      limit(20),
+    );
     const querySnapshot = await getDocs(q);
 
     const result = [] as Array<IUser>;

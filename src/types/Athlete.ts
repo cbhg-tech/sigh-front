@@ -1,13 +1,10 @@
-export interface IAthletes {
-  id?: string;
-  userId: string;
+export interface IAthlete {
   document: string;
   phone: number;
   birthDate: string;
   country: string;
   gender: string;
   description: string;
-  status: string;
   address: {
     country: string;
     city: string;

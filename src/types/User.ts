@@ -1,3 +1,5 @@
+import { IAthlete } from './Athlete';
+
 export interface IUser {
   id: string;
   name: string;
@@ -7,5 +9,5 @@ export interface IUser {
   role: string;
   status: string;
   photo?: string;
-  athleteProfile?: string;
+  athleteProfile?: IAthlete;
 }

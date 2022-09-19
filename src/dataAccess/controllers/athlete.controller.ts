@@ -1,5 +1,15 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import { auth, db } from '../../app/FirebaseConfig';
 import { Roles } from '../../enums/Roles';
 import { Status } from '../../enums/Status';
@@ -21,18 +31,44 @@ export class AthleteController {
       password,
     );
 
-    const athleteProfile = await addDoc(collection(db, 'athletes'), {
-      userId: user.uid,
-      birthDate,
-    });
-
     await setDoc(doc(db, 'users', user.uid), {
       email,
       name,
       role: Roles.USER,
       status: Status.PENDING,
       team,
-      athleteProfile: athleteProfile.id,
+      athleteProfile: {
+        birthDate: new Date(birthDate),
+      },
     });
+
+    await setDoc(doc(db, 'userApproval', user.uid), {
+      status: Status.PENDING,
+      rergisterDate: new Date(),
+      team,
+      name,
+    });
+  }
+
+  public async list() {
+    const q = query(
+      collection(db, 'users'),
+      where('role', '==', Roles.USER),
+      limit(20),
+    );
+
+    const users = await getDocs(q);
+
+    const athletes = [] as Array<IUser>;
+
+    users.forEach(doc => {
+      // @ts-ignore
+      athletes.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    return athletes;
   }
 }
