@@ -24,5 +24,9 @@ export function PrivateRoute() {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  return <Outlet />;
+  return isLoggedIn ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/app/dashboard" state={{ from: location }} replace />
+  );
 }

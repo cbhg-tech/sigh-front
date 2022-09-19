@@ -35,7 +35,7 @@ export function SelectBare({
         )}
         <div className="relative flex-1 h-full">
           <select
-            className="w-full h-full ml-[-0.25rem] bg-transparent outline-none resize-none placeholder:invisible"
+            className="w-full h-full ml-[-0.25rem] bg-transparent outline-none resize-none placeholder:text-transparent"
             {...rest}
           >
             {children}
