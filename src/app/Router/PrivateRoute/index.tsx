@@ -1,32 +1,34 @@
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '../../FirebaseConfig';
-import { useGlobal } from '../../../contexts/global.context';
+import { LoadingScreen } from '../../../components/LoadingScreen';
 
 export function PrivateRoute() {
   const location = useLocation();
-  const { isLoggedIn, setIsLoggedIn } = useGlobal();
+  const [authStatus, setAuthStatus] = useState<
+    'logged' | 'pending' | 'unauthorized'
+  >('pending');
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      if (!user && isLoggedIn) {
-        setIsLoggedIn(false);
+      if (!user) {
+        setAuthStatus('unauthorized');
       }
 
-      if (user && !isLoggedIn) {
-        setIsLoggedIn(true);
+      if (user) {
+        setAuthStatus('logged');
       }
     });
-  }, [isLoggedIn, setIsLoggedIn]);
+  }, []);
 
-  if (!isLoggedIn) {
+  if (authStatus === 'pending') {
+    return <LoadingScreen />;
+  }
+
+  if (authStatus === 'unauthorized') {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  return isLoggedIn ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/app/dashboard" state={{ from: location }} replace />
-  );
+  return <Outlet />;
 }
