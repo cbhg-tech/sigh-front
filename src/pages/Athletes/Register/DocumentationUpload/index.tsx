@@ -1,9 +1,48 @@
+import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
 import { Button } from '../../../../components/Inputs/Button';
 import { FileInput } from '../../../../components/Inputs/FIleInput';
+import { useGlobal } from '../../../../contexts/global.context';
+import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { useAthletesRegister } from '../register.context';
 
 export function DocumentationUpload() {
-  const { setDocuments } = useAthletesRegister();
+  const { user } = useGlobal();
+  const { documents, setDocuments } = useAthletesRegister();
+  const { mutateAsync } = usePutAthlete();
+
+  const handleFileUpload = async () => {
+    const birthDate = user?.athleteProfile?.birthDate;
+    const isSubEighteen = dayjs().diff(birthDate, 'year') < 18;
+
+    try {
+      if (!documents.personalDocument)
+        throw new Error('Documento pessoal obrigatório');
+
+      if (isSubEighteen && !documents.commitmentTerm) {
+        throw new Error('Termo de compromisso obrigatório');
+      }
+
+      // @ts-ignore
+      await mutateAsync({
+        ...user?.athleteProfile,
+        documentFiles: {
+          ...documents,
+        },
+        documents: {
+          commitmentTerm: '',
+          personalDocument: '',
+          medicalCertificate: '',
+          noc: '',
+        },
+      });
+
+      toast.success('Documentos enviados com sucesso!');
+    } catch (err) {
+      // @ts-ignore
+      toast.error(err.message);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -68,10 +107,11 @@ export function DocumentationUpload() {
             variant="primary-border"
           />
           <Button
-            type="submit"
+            type="button"
             aditionalClasses="w-auto px-2"
             label="Salvar"
             variant="primary"
+            onClick={handleFileUpload}
           />
         </div>
       </div>

@@ -26,7 +26,7 @@ export interface ICreateAthlete
 }
 
 export interface IUpdateAthlete extends IAthlete {
-  userId: string;
+  userId?: string;
   documentFiles?: IAthletesDocuments;
 }
 

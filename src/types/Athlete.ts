@@ -1,5 +1,4 @@
 export interface IAthlete {
-  document: string;
   phone: number;
   birthDate: string;
   country: string;

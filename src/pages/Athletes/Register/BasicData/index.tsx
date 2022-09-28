@@ -31,7 +31,7 @@ export function BasicData() {
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
-        birthdate: Yup.string().required('Data de nascimento obrigatória'),
+        birthDate: Yup.string().required('Data de nascimento obrigatória'),
         phone: Yup.string().required('Celular obrigatório'),
         gender: Yup.string().required('Gênero obrigatório'),
         country: Yup.string().required('País de origem obrigatório'),
@@ -91,7 +91,7 @@ export function BasicData() {
             <div className="col-span-1 lg:col-span-2">
               <Textfield
                 type="date"
-                name="birthdate"
+                name="birthDate"
                 label="Data de nascimento*"
               />
             </div>
