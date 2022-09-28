@@ -48,7 +48,9 @@ export function AthletesRegisterContent() {
               <Badge type="error">Inativo</Badge>
             )}
           </div>
-          <p className="text-2xl text-light-on-surface-variant">{user?.team}</p>
+          <p className="text-2xl text-light-on-surface-variant">
+            {user?.team?.name}
+          </p>
         </div>
       </div>
       <div className="mb-8 flex flex-nowrap overflow-x-auto scroll-smooth snap-x snap-mandatory">

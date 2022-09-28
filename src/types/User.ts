@@ -4,7 +4,10 @@ export interface IUser {
   id: string;
   name: string;
   email: string;
-  team?: string;
+  team?: {
+    id: string;
+    name: string;
+  };
   federation?: string;
   role: string;
   status: string;

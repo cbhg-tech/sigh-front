@@ -27,7 +27,12 @@ const columns: ColumnDef<IUserApproval>[] = [
   {
     accessorKey: 'team',
     header: 'Time',
-    cell: info => info.getValue(),
+    cell: info => {
+      const obj = info.getValue();
+
+      // @ts-ignore
+      return obj.name;
+    },
   },
   {
     accessorKey: 'gender',

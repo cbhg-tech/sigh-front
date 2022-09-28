@@ -123,7 +123,7 @@ export function ApprovalDetailsPage() {
           <br />
           {user.email || ''}
           <br />
-          {user.team || ''}
+          {user.team?.name || ''}
           <br />
           {athleteProfile?.phone || ''}
           <br />
@@ -297,6 +297,7 @@ export function ApprovalDetailsPage() {
                 label="Salvar"
                 variant="primary"
                 isLoading={isLoading}
+                disabled={isLoading}
                 onClick={handleApprove}
               />
             </div>

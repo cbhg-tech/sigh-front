@@ -24,7 +24,12 @@ const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: 'team',
     header: 'Clube',
-    cell: info => info.getValue(),
+    cell: info => {
+      const obj = info.getValue();
+
+      // @ts-ignore
+      return obj.name;
+    },
   },
   {
     accessorKey: 'athleteProfile.sex',

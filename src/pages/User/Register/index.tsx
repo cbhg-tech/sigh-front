@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { Button } from '../../../components/Inputs/Button';
 import { Select } from '../../../components/Inputs/Select';
 import { Textfield } from '../../../components/Inputs/Textfield';
+import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useCreateUser } from '../../../dataAccess/hooks/user/useCreateUser';
 import { Roles } from '../../../enums/Roles';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
@@ -25,6 +26,7 @@ export function UserRegisterPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { mutateAsync, isLoading } = useCreateUser();
+  const { data: publicTeams } = useGetPublicTeams();
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
@@ -40,7 +42,15 @@ export function UserRegisterPage() {
         password: Yup.string().required('Senha obrigatória'),
       });
 
-      await mutateAsync(data);
+      const team = publicTeams?.list.find(t => t.id === data.team);
+
+      await mutateAsync({
+        ...data,
+        team: {
+          id: team!.id,
+          name: team!.name,
+        },
+      });
 
       toast.success('Usuário criado com sucesso!');
 
@@ -81,14 +91,13 @@ export function UserRegisterPage() {
           </div>
           <div className="flex-1">
             {/* TODO: alterar input para federaçao */}
-            {/* TODO: carregar dados do DB */}
             <Select label="Clube" name="team">
-              <option value="CBHG - Administradores">
-                CBHG - Administradores
-              </option>
-              <option value="AABB - Canoas/RS">AABB - Canoas/RS</option>
-              <option value="AABB/ São Leopoldo<">AABB/ São Leopoldo</option>
-              <option value="Deodoro Hoquei Clube">Deodoro Hoquei Clube</option>
+              <option value="">Selecione um clube</option>
+              {publicTeams?.list.map(team => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
             </Select>
           </div>
         </div>
