@@ -12,5 +12,6 @@ export interface IUserApproval {
   gender: string;
   teamApproved: boolean;
   cbhgApproved: boolean;
-  log?: Array<IUserApprovalLog>;
+  logTeam?: string;
+  logCbhg?: string;
 }

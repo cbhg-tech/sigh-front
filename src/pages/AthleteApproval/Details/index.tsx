@@ -1,6 +1,6 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdCheck, MdOpenInNew } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useGetAppovalDetails } from '../../../dataAccess/hooks/athlete/useGetApprovalDetails';
@@ -12,6 +12,7 @@ import { Roles } from '../../../enums/Roles';
 import { Status } from '../../../enums/Status';
 
 export function ApprovalDetailsPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useGlobal();
 
@@ -20,6 +21,26 @@ export function ApprovalDetailsPage() {
 
   const [isApproved, setIsApproved] = useState(false);
   const [note, setNote] = useState('');
+
+  useEffect(() => {
+    if (data) {
+      const { approval } = data;
+
+      switch (user?.role) {
+        case Roles.ADMINCLUBE:
+          setIsApproved(approval?.teamApproved);
+          setNote(approval?.logTeam || '');
+          break;
+        case Roles.ADMINFEDERACAO:
+        case Roles.ADMIN:
+          setIsApproved(approval?.cbhgApproved);
+          setNote(approval?.logCbhg || '');
+          break;
+        default:
+          throw new Error('Você não tem permissão para aprovar');
+      }
+    }
+  }, [data, user]);
 
   const handleApprove = async () => {
     const approvalData = data?.approval;
@@ -30,43 +51,50 @@ export function ApprovalDetailsPage() {
       if (!isApproved && !note)
         throw new Error('Por favor adicione uma observação');
 
-      if (
-        user?.role !== Roles.ADMINCLUBE &&
-        user?.role !== Roles.ADMINFEDERACAO
-      )
+      let isAllowedToApprove = false;
+
+      switch (user?.role) {
+        case Roles.ADMINFEDERACAO:
+        case Roles.ADMINCLUBE:
+        case Roles.ADMIN:
+          isAllowedToApprove = true;
+          break;
+        default:
+          break;
+      }
+
+      if (!isAllowedToApprove)
         throw new Error('Você não tem permissão para aprovar');
 
       if (isApproved) {
-        if (user?.role === Roles.ADMINCLUBE) approvalData.teamApproved = true;
-
-        if (
-          (approvalData.teamApproved && user?.role === Roles.ADMINCLUBE) ||
-          user?.role === Roles.ADMINFEDERACAO
-        )
-          approvalData.cbhgApproved = true;
+        switch (user?.role) {
+          case Roles.ADMINCLUBE:
+            approvalData.teamApproved = isApproved;
+            approvalData.logTeam = note;
+            break;
+          case Roles.ADMINFEDERACAO:
+          case Roles.ADMIN:
+            approvalData.cbhgApproved = isApproved;
+            approvalData.logCbhg = note;
+            break;
+          default:
+            throw new Error('Você não tem permissão para aprovar');
+        }
 
         if (approvalData.cbhgApproved && approvalData.teamApproved)
           approvalData.status = Status.ACTIVE;
       } else {
         approvalData.status = Status.INACTIVE;
 
-        // TODO: nao salvou log
-        if (!approvalData.log || approvalData.log?.length === 0) {
-          approvalData.log = [
-            {
-              updatedAt: new Date(),
-              note,
-            },
-          ];
-        } else if (approvalData.log && approvalData.log.length > 0) {
-          approvalData.log.push({
-            updatedAt: new Date(),
-            note,
-          });
-        }
+        if (user?.role === Roles.ADMINCLUBE) approvalData.logTeam = note;
+        if (user?.role === Roles.ADMINFEDERACAO) approvalData.logTeam = note;
       }
 
       await mutateAsync({ ...approvalData });
+
+      toast.success('Aprovação feita com sucesso');
+
+      navigate('/app/restrito/atletas/aprovacao');
     } catch (error) {
       // @ts-ignore
       toast.error(error.message);
@@ -153,10 +181,12 @@ export function ApprovalDetailsPage() {
           </>
         )}
 
-        <h2 className="text-3xl text-light-on-surface my-4">Documentos</h2>
         <p className="text-light-on-surface-variant">
           {personalDocument && (
             <>
+              <h2 className="text-3xl text-light-on-surface my-4">
+                Documentos
+              </h2>
               <a
                 href={personalDocument}
                 target="_blank"
@@ -220,52 +250,63 @@ export function ApprovalDetailsPage() {
     );
   };
 
+  const showApprovalActions =
+    user?.role === Roles.ADMINCLUBE ||
+    (user?.role === Roles.ADMIN && data?.approval.teamApproved);
+
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       {renderDetails()}
 
-      <div className="mt-8">
-        <label
-          htmlFor="approved"
-          className="mb-4 text-light-on-surface flex items-center gap-2 relative"
-        >
-          <input
-            id="approved"
-            type="checkbox"
-            className="peer appearance-none w-6 h-6 border-2 border-light-outline rounded bg-light-surface checked:border-light-tertiary hover:brightness-90"
-            onChange={e => setIsApproved(e.target.checked)}
+      <h2 className="text-3xl text-light-on-surface my-4">Aprovar ficha?</h2>
+      {showApprovalActions ? (
+        <div className="mt-8">
+          <label
+            htmlFor="approved"
+            className="mb-4 text-light-on-surface flex items-center gap-2 relative"
+          >
+            <input
+              id="approved"
+              type="checkbox"
+              className="peer appearance-none w-6 h-6 border-2 border-light-outline rounded bg-light-surface checked:border-light-tertiary hover:brightness-90"
+              onChange={e => setIsApproved(e.target.checked)}
+            />
+            <div className="invisible grid place-items-center peer-checked:visible w-4 h-4 rounded-sm absolute bg-light-tertiary top-1 left-1">
+              <MdCheck size="1rem" className="text-light-on-tertiary" />
+            </div>
+            Aprovar pela {user.role === Roles.ADMIN ? 'CBHG' : 'Clube'}?
+          </label>
+          <MultineTextfieldBare
+            name="note"
+            label="Observação"
+            hint="Obrigatório (Obrigatório caso rejeitado)"
+            onChange={e => setNote(e.target.value)}
+            value={note}
           />
-          <div className="invisible grid place-items-center peer-checked:visible w-4 h-4 rounded-sm absolute bg-light-tertiary top-1 left-1">
-            <MdCheck size="1rem" className="text-light-on-tertiary" />
-          </div>
-          Aprovar pela CBHG?
-        </label>
-        <MultineTextfieldBare
-          name="note"
-          label="Observação"
-          hint="Obrigatório (Obrigatório caso rejeitado)"
-          onChange={e => setNote(e.target.value)}
-          value={note}
-        />
-        <div className="col-span-1 lg:col-span-3 mt-4">
-          <div className="flex gap-2 justify-end">
-            <Button
-              type="button"
-              aditionalClasses="w-auto px-2 text-light-on-surface-variant"
-              label="Cancelar"
-              variant="primary-border"
-            />
-            <Button
-              type="button"
-              aditionalClasses="w-auto px-2"
-              label="Salvar"
-              variant="primary"
-              isLoading={isLoading}
-              onClick={handleApprove}
-            />
+          <div className="col-span-1 lg:col-span-3 mt-4">
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                aditionalClasses="w-auto px-2 text-light-on-surface-variant"
+                label="Cancelar"
+                variant="primary-border"
+              />
+              <Button
+                type="button"
+                aditionalClasses="w-auto px-2"
+                label="Salvar"
+                variant="primary"
+                isLoading={isLoading}
+                onClick={handleApprove}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <p className="text-light-on-surface-variant">
+          Aguardando aprovação do clube
+        </p>
+      )}
     </div>
   );
 }
