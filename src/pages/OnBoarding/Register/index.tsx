@@ -1,12 +1,61 @@
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
+import * as Yup from 'yup';
+
 import { OnBoardingContainer } from '..';
 import { Button } from '../../../components/Inputs/Button';
 import { Select } from '../../../components/Inputs/Select';
 import { Textfield } from '../../../components/Inputs/Textfield';
+import { useCreateAthlete } from '../../../dataAccess/hooks/athlete/useCreateAthlete';
+import { handleFormErrors } from '../../../utils/handleFormErrors';
+import { validateForm } from '../../../utils/validateForm';
+
+interface IForm {
+  name: string;
+  email: string;
+  password: string;
+  birthDate: string;
+  team: string;
+}
 
 export function RegisterPage() {
   const today = dayjs().format('YYYY-MM-DD');
+
+  const formRef = useRef<FormHandles>(null);
+  const navigate = useNavigate();
+  const { mutateAsync, isLoading } = useCreateAthlete();
+
+  async function handleSubmit(data: IForm) {
+    try {
+      validateForm(data, {
+        name: Yup.string().required('Nome obrigatório'),
+        email: Yup.string()
+          .email('Email inválido')
+          .required('Email obrigatório'),
+        password: Yup.string().required('Senha obrigatória'),
+        birthDate: Yup.date(),
+        team: Yup.string().required('Time obrigatório'),
+      });
+
+      await mutateAsync(data);
+
+      toast.success('Cadastro realizado com sucesso!');
+
+      navigate('/app/dashboard');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = handleFormErrors(err);
+
+        return formRef.current?.setErrors(errors);
+      }
+
+      toast.error('Ops! Houve um erro ao criar o usuário!');
+    }
+  }
 
   return (
     <OnBoardingContainer>
@@ -14,22 +63,21 @@ export function RegisterPage() {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Cadastro de atletas do hóquei brasileiro
         </p>
-        {/* eslint-disable-next-line no-console */}
-        <Form onSubmit={data => console.log(data)}>
+        <Form onSubmit={data => handleSubmit(data)} ref={formRef}>
           <Textfield type="text" name="name" label="Nome completo" />
           <Textfield type="email" name="email" label="Email" />
           <Textfield
             type="date"
-            name="birthday"
+            name="birthDate"
             label="Data de nascimento"
             max={today}
           />
-          <Select name="club" label="Clube atual">
+          <Select name="team" label="Clube atual">
             <option value="rio hockei">Rio hockei</option>
             <option value="deodoro">Deodoro</option>
           </Select>
           <Textfield type="password" name="password" label="Senha" />
-          <Button type="submit" label="Criar conta" />
+          <Button type="submit" label="Criar conta" isLoading={isLoading} />
         </Form>
         <p className="text-xs text-light-on-surface text-center">
           * Caso ainda não tenha um clube e deseja conhecer e praticar este

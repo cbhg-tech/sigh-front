@@ -7,50 +7,15 @@ import {
 } from '@tanstack/react-table';
 import { MdEdit, MdOutlineDeleteOutline } from 'react-icons/md';
 import { AiOutlineEye } from 'react-icons/ai';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '../../../components/Inputs/IconButton';
 import { SelectBare } from '../../../components/Inputs/SelectBare';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { Button } from '../../../components/Inputs/Button';
+import { useGetAthletes } from '../../../dataAccess/hooks/athlete/useGetAllAthletes';
+import { IUser } from '../../../types/User';
 
-interface IAthlete {
-  id: string;
-  name: string;
-  team: string;
-  category: string;
-  sex: string;
-  status: string;
-}
-
-// create an array of fake data using IAthlete
-const fakeData = [
-  {
-    id: '1',
-    name: 'Rafael',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
-    status: 'ativo',
-  },
-  {
-    id: '2',
-    name: 'Bruno',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
-    status: 'ativo',
-  },
-  {
-    id: '3',
-    name: 'Pedro',
-    team: 'Deodoro',
-    category: 'Adulto',
-    sex: 'Masculino',
-    status: 'ativo',
-  },
-];
-
-const columns: ColumnDef<IAthlete>[] = [
+const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: 'name',
     header: 'Nome',
@@ -62,14 +27,9 @@ const columns: ColumnDef<IAthlete>[] = [
     cell: info => info.getValue(),
   },
   {
-    accessorKey: 'category',
-    header: 'Categoria',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'sex',
+    accessorKey: 'athleteProfile.sex',
     header: 'Sexo',
-    cell: info => info.getValue(),
+    cell: info => info.getValue() || 'Não cadastrado',
   },
   {
     accessorKey: 'status',
@@ -114,10 +74,11 @@ const COLUMN_WIDTH = [
 ];
 
 export function AthletesListPage() {
-  const [data] = useState<Array<IAthlete>>([...fakeData]);
+  const navigate = useNavigate();
+  const { data } = useGetAthletes();
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -132,6 +93,7 @@ export function AthletesListPage() {
           aditionalClasses="w-full lg:w-auto px-6"
           type="button"
           label="Criar atleta"
+          onClick={() => navigate('/app/atletas/cadastro')}
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-2 mb-4">

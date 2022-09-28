@@ -7,6 +7,7 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { IFederation } from '../../types/Federation';
@@ -68,6 +69,13 @@ export class FederationController {
       initials,
       presidentName,
       uf,
+    });
+
+    await updateDoc(doc(db, 'public', 'federations'), {
+      list: arrayUnion({
+        id,
+        name,
+      }),
     });
 
     const logo = await UploadFile(

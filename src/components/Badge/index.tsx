@@ -1,6 +1,6 @@
 interface IProps {
   children: React.ReactNode;
-  type?: 'primary' | 'secondary' | 'tertiary' | 'error';
+  type?: 'primary' | 'secondary' | 'tertiary' | 'error' | 'warning';
 }
 
 const BADGE_STYLE_TYPE = {
@@ -8,6 +8,7 @@ const BADGE_STYLE_TYPE = {
   secondary: 'text-light-on-secondary-container bg-light-secondary-container',
   tertiary: 'text-light-on-tertiary-container bg-light-tertiary-container',
   error: 'text-light-on-error-container bg-light-error-container',
+  warning: 'text-light-on-warning-container bg-light-warning-container',
 };
 
 export function Badge({ children, type = 'primary' }: IProps) {

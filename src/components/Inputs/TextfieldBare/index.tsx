@@ -32,7 +32,7 @@ export function TextfieldBare({
         )}
         <div className="relative flex-1 h-full">
           <input
-            className="w-full h-full bg-transparent outline-none placeholder:invisible"
+            className="w-full h-full bg-transparent outline-none placeholder:text-transparent"
             placeholder={label}
             id={name}
             type="text"
