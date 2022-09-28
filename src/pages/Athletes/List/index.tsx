@@ -106,6 +106,7 @@ export function AthletesListPage() {
           </SelectBare>
         </div>
         <div className="w-full lg:w-1/4">
+          {/* TODO: carregar dados do filtro do DB */}
           <SelectBare label="Federação" name="federation-filter">
             <option value="">Todas</option>
             <option value="mg">

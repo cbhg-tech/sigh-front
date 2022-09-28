@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   limit,
   query,
@@ -17,6 +18,7 @@ import { Status } from '../../enums/Status';
 import { IAthletesDocuments } from '../../pages/Athletes/Register/register.context';
 import { IAthlete } from '../../types/Athlete';
 import { IUser } from '../../types/User';
+import { IUserApproval } from '../../types/UserApproval';
 import { UploadFile } from '../../utils/uploadFile';
 
 export interface ICreateAthlete
@@ -56,6 +58,8 @@ export class AthleteController {
       rergisterDate: new Date(),
       team,
       name,
+      teamApproved: false,
+      cbhgApproved: false,
     });
   }
 
@@ -130,10 +134,71 @@ export class AthleteController {
 
     delete data.userId;
 
+    data.address!.country = 'BR';
+
     await updateDoc(doc(db, 'users', userId), {
       athleteProfile: {
         ...data,
       },
     });
+
+    await updateDoc(doc(db, 'userApproval', userId), {
+      gender: data.gender,
+    });
+  }
+
+  public async getApprovalList() {
+    const q = query(
+      collection(db, 'userApproval'),
+      where('status', '==', Status.PENDING),
+      limit(20),
+    );
+
+    const users = await getDocs(q);
+
+    const athletes = [] as Array<IUserApproval>;
+
+    users.forEach(doc => {
+      // @ts-ignore
+      athletes.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    return athletes;
+  }
+
+  public async getApprovalDetails(userId: string) {
+    const userDetailsQuery = await getDoc(doc(db, 'users', userId));
+    const approvalDetailQuery = await getDoc(doc(db, 'userApproval', userId));
+
+    const userDetails = {
+      id: userDetailsQuery.id,
+      ...userDetailsQuery.data(),
+    } as IUser;
+    const approvalDetails = {
+      id: approvalDetailQuery.id,
+      ...approvalDetailQuery.data(),
+    } as IUserApproval;
+
+    return {
+      user: userDetails,
+      approval: approvalDetails,
+    };
+  }
+
+  public async updateApprovalStatus(data: IUserApproval) {
+    const { id, status } = data;
+
+    await updateDoc(doc(db, 'userApproval', id), {
+      ...data,
+    });
+
+    if (status !== Status.PENDING) {
+      await updateDoc(doc(db, 'users', id), {
+        status,
+      });
+    }
   }
 }

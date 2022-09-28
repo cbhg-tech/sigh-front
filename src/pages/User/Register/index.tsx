@@ -52,7 +52,7 @@ export function UserRegisterPage() {
         return formRef.current?.setErrors(errors);
       }
 
-      toast.error('Ops! Email e senha não batem!');
+      toast.error('Ops! Não foi possivel criar usuário!');
     }
   }
 
@@ -80,6 +80,8 @@ export function UserRegisterPage() {
             </Select>
           </div>
           <div className="flex-1">
+            {/* TODO: alterar input para federaçao */}
+            {/* TODO: carregar dados do DB */}
             <Select label="Clube" name="team">
               <option value="CBHG - Administradores">
                 CBHG - Administradores

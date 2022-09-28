@@ -16,6 +16,8 @@ import { FederationRegisterPage } from '../../pages/Federation/Register';
 import { TeamRegisterPage } from '../../pages/Team/Register';
 import { TeamListPage } from '../../pages/Team/List';
 import { AthletesRegisterPage } from '../../pages/Athletes/Register';
+import { AthleteApprovalListPage } from '../../pages/AthleteApproval/List';
+import { ApprovalDetailsPage } from '../../pages/AthleteApproval/Details';
 
 export function Router() {
   return (
@@ -94,6 +96,22 @@ export function Router() {
             element={
               <Navigation title="Cadastro de Clubes">
                 <TeamRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/restrito/atletas/aprovacao"
+            element={
+              <Navigation title="Aprovação de fichas">
+                <AthleteApprovalListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/restrito/atletas/aprovacao/:id"
+            element={
+              <Navigation title="Aprovação de fichas">
+                <ApprovalDetailsPage />
               </Navigation>
             }
           />
