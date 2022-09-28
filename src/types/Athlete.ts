@@ -3,7 +3,6 @@ export interface IAthlete {
   birthDate: string;
   country: string;
   gender: string;
-  description: string;
   address: {
     country: string;
     city: string;

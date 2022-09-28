@@ -81,19 +81,19 @@ export function HospitalData() {
         <div className="col-span-1">
           <Textfield
             name="hospitalData.medications"
-            label="Lista de médicamentos regulares"
+            label="Lista de medicamentos regulares"
           />
         </div>
         <div className="col-span-1">
           <Textfield
             name="emergencyContact.name"
-            label="Nome do contato de emergencia"
+            label="Nome do contato de emergência"
           />
         </div>
         <div className="col-span-1">
           <Textfield
             name="emergencyContact.phone"
-            label="Numero do contato de emergencia"
+            label="Numero do contato de emergência"
           />
         </div>
         <div className="col-span-1 lg:col-span-3 mt-4">

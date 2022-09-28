@@ -63,7 +63,7 @@ export class UserController {
   }
 
   public async create(data: ICreateUser) {
-    const { email, password, name, role, team, federation } = data;
+    const { email, password, name, role, team } = data;
 
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -77,7 +77,6 @@ export class UserController {
       role,
       status: Status.ACTIVE,
       team,
-      federation,
     });
   }
 
