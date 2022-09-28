@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { auth } from '../../../app/FirebaseConfig';
 import {
   AthleteController,
@@ -15,8 +15,8 @@ export function usePutAthlete() {
     data.userId = auth.currentUser!.uid;
 
     const res = await athleteController.put(data);
-    queryClient.invalidateQueries('getAthletes');
-    queryClient.invalidateQueries('getCurrentUser');
+    queryClient.invalidateQueries(['getAthletes']);
+    queryClient.invalidateQueries(['getCurrentUser']);
 
     return res;
   }

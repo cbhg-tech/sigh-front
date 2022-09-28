@@ -10,4 +10,12 @@ export class PublicController {
       ...docSnap.data(),
     } as IPublicTeams;
   }
+
+  public async getFederation() {
+    const docSnap = await getDoc(doc(db, 'public', 'federations'));
+
+    return {
+      ...docSnap.data(),
+    } as IPublicTeams;
+  }
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   FederationController,
   ICreateFed,
@@ -11,7 +11,7 @@ export function useCreateFederation() {
 
   async function create(data: ICreateFed) {
     const res = await federationController.create(data);
-    queryClient.invalidateQueries('getFederations');
+    queryClient.invalidateQueries(['getFederations']);
 
     return res;
   }

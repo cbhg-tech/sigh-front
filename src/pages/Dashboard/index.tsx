@@ -4,8 +4,11 @@ import { BsFillShieldFill } from 'react-icons/bs';
 import { ResumeCard } from './ResumeCard';
 import { BallMarketCard } from './BallMarketCard';
 import { UserCard } from './UserCard';
+import { useRedirectPendingAthlete } from '../../hooks/useRedirectPendingAthlete';
 
 export function DashboardPage() {
+  useRedirectPendingAthlete();
+
   return (
     <div className="grid gap-4 h-full max-h-full grid-cols-3 grid-rows-[164px_1fr]">
       <div className="col-span-3 row-span-1 flex flex-nowrap gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory">

@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IUserApproval } from '../../../types/UserApproval';
 import { AthleteController } from '../../controllers/athlete.controller';
 
@@ -9,7 +9,7 @@ export function useUpdateApprovalStatus() {
 
   async function put(data: IUserApproval) {
     const res = await athleteController.updateApprovalStatus(data);
-    queryClient.invalidateQueries('getApprovalList');
+    queryClient.invalidateQueries(['getApprovalList']);
 
     return res;
   }

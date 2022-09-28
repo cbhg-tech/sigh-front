@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { TeamController } from '../../controllers/team.controller';
 
 const teamController = new TeamController();

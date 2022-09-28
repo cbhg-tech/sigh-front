@@ -81,13 +81,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         />
         <ListItem
           closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/atletas"
-          label="Listagem de transferencias"
-          icon={MdFormatListBulleted}
-        />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/atletas/aprovacao"
+          href="/app/restrito/transferencia/listagem"
           label="Aprovação de transferencias"
           icon={MdChecklist}
         />

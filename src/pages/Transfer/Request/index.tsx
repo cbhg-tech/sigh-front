@@ -41,6 +41,10 @@ export function TransferRequestPage() {
 
       const team = publicTeams?.list.find(t => t.id === data.destinationClub);
 
+      if (team?.id === user.team?.id) {
+        throw new Error('Você não pode transferir para o mesmo clube');
+      }
+
       await mutateAsync({
         user: {
           id: user.id,
@@ -64,7 +68,8 @@ export function TransferRequestPage() {
         return formRef.current?.setErrors(errors);
       }
 
-      toast.error('Ops! Houve um erro ao criara federação!');
+      // @ts-ignore
+      toast.error(err.message || 'Ops! Houve um erro ao criar a federação!');
     }
   };
 

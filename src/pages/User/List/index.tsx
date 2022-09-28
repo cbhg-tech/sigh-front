@@ -32,8 +32,8 @@ const columns: ColumnDef<IUser>[] = [
     },
   },
   {
-    accessorKey: 'team',
-    header: 'Clube',
+    accessorKey: 'related',
+    header: 'Associação',
     cell: info => info.getValue(),
   },
   {

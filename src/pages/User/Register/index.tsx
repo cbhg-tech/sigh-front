@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { Button } from '../../../components/Inputs/Button';
 import { Select } from '../../../components/Inputs/Select';
 import { Textfield } from '../../../components/Inputs/Textfield';
+import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGetPublicFederation';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useCreateUser } from '../../../dataAccess/hooks/user/useCreateUser';
 import { Roles } from '../../../enums/Roles';
@@ -20,6 +21,7 @@ interface IForm {
   password: string;
   role: string;
   team: string;
+  federation: string;
 }
 
 export function UserRegisterPage() {
@@ -27,15 +29,22 @@ export function UserRegisterPage() {
   const formRef = useRef<FormHandles>(null);
   const { mutateAsync, isLoading } = useCreateUser();
   const { data: publicTeams } = useGetPublicTeams();
+  const { data: publicFederations } = useGetPublicFederations();
+
+  const [selectedRole, setSelectedRole] = useState<Roles>(Roles.USER);
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
+
+    if (data.federation && data.team)
+      throw new Error('Selecione uma federação ou um time');
 
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
         role: Yup.string().required('RoleAccess obrigatório'),
-        team: Yup.string().required('Clube obrigatório'),
+        team: Yup.string(),
+        federation: Yup.string(),
         email: Yup.string()
           .required('Email obrigatório')
           .email('Email inválido'),
@@ -43,14 +52,31 @@ export function UserRegisterPage() {
       });
 
       const team = publicTeams?.list.find(t => t.id === data.team);
+      const federation = publicFederations?.list.find(
+        f => f.id === data.federation,
+      );
 
-      await mutateAsync({
-        ...data,
-        team: {
-          id: team!.id,
-          name: team!.name,
-        },
-      });
+      if (team) {
+        // @ts-ignore
+        await mutateAsync({
+          ...data,
+          team: {
+            id: team!.id,
+            name: team!.name,
+          },
+        });
+      }
+
+      if (federation) {
+        // @ts-ignore
+        await mutateAsync({
+          ...data,
+          federation: {
+            id: federation!.id,
+            name: federation!.name,
+          },
+        });
+      }
 
       toast.success('Usuário criado com sucesso!');
 
@@ -80,7 +106,11 @@ export function UserRegisterPage() {
         <Textfield label="Nome" name="name" />
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
-            <Select label="AccessRole" name="role">
+            <Select
+              label="AccessRole"
+              name="role"
+              onChange={e => setSelectedRole(e.target.value as Roles)}
+            >
               <option value={Roles.ADMIN}>Admin</option>
               <option value={Roles.ADMINFEDERACAO}>AdminFederacao</option>
               <option value={Roles.ADMINCLUBE}>AdminClube</option>
@@ -91,14 +121,34 @@ export function UserRegisterPage() {
           </div>
           <div className="flex-1">
             {/* TODO: alterar input para federaçao */}
-            <Select label="Clube" name="team">
-              <option value="">Selecione um clube</option>
-              {publicTeams?.list.map(team => (
-                <option key={team.id} value={team.id}>
-                  {team.name}
-                </option>
-              ))}
-            </Select>
+
+            {selectedRole === Roles.ADMINFEDERACAO && (
+              <Select label="Federação" name="federation">
+                <option value="">Selecione uma federação</option>
+                {publicFederations &&
+                  publicFederations.list &&
+                  publicFederations.list.length > 0 &&
+                  publicFederations?.list.map(fed => (
+                    <option key={fed.id} value={fed.id}>
+                      {fed.name}
+                    </option>
+                  ))}
+              </Select>
+            )}
+
+            {selectedRole !== Roles.ADMINFEDERACAO && (
+              <Select label="Clube" name="team">
+                <option value="">Selecione um clube</option>
+                {publicTeams &&
+                  publicTeams.list &&
+                  publicTeams.list.length > 0 &&
+                  publicTeams?.list.map(team => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
+                  ))}
+              </Select>
+            )}
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-2">

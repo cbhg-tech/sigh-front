@@ -1,12 +1,13 @@
-import { Roles } from '../enums/Roles';
+import { TransferRole } from '../enums/TransferRole';
 
 export interface ITransferLog {
   status: string;
-  message: string;
-  role: Roles;
+  obs: string;
+  role: TransferRole;
 }
 
 export interface ITransfer {
+  id?: string;
   user: {
     id: string;
     name: string;

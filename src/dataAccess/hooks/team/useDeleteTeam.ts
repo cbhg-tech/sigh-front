@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TeamController } from '../../controllers/team.controller';
 
 const teamController = new TeamController();
@@ -8,7 +8,7 @@ export function useDeleteTeam() {
 
   async function deleteTeam(id: string) {
     const res = await teamController.delete(id);
-    queryClient.invalidateQueries('getTeams');
+    queryClient.invalidateQueries(['getTeams']);
 
     return res;
   }

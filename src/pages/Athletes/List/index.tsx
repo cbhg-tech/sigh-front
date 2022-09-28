@@ -79,7 +79,6 @@ const COLUMN_WIDTH = [
 ];
 
 export function AthletesListPage() {
-  const navigate = useNavigate();
   const { data } = useGetAthletes();
 
   const table = useReactTable({
@@ -90,16 +89,10 @@ export function AthletesListPage() {
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
-      <div className="flex flex-col lg:flex-row justify-between mb-4">
+      <div className="flex justify-start mb-4">
         <h2 className="text-3xl text-light-on-surface mb-4">
           Listagem de atletas
         </h2>
-        <Button
-          aditionalClasses="w-full lg:w-auto px-6"
-          type="button"
-          label="Criar atleta"
-          onClick={() => navigate('/app/atletas/cadastro')}
-        />
       </div>
       <div className="flex flex-col lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/4">

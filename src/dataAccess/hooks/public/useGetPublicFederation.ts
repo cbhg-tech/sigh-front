@@ -3,12 +3,12 @@ import { PublicController } from '../../controllers/public.controller';
 
 const publicController = new PublicController();
 
-async function getTeams() {
-  return publicController.getTeams();
+async function getFederations() {
+  return publicController.getFederation();
 }
 
-export function useGetPublicTeams() {
-  return useQuery(['getPublicTeams'], () => getTeams(), {
+export function useGetPublicFederations() {
+  return useQuery(['getPublicFederation'], () => getFederations(), {
     refetchOnWindowFocus: false,
   });
 }

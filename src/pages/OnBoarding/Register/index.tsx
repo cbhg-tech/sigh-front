@@ -47,6 +47,7 @@ export function RegisterPage() {
 
       await mutateAsync({
         ...data,
+        related: team!.name,
         team: {
           id: team!.id,
           name: team!.name,
