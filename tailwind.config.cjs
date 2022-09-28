@@ -11,10 +11,14 @@ module.exports = {
       colors: {
         light: {
           'surface-tint': '#006C45',
-          'on-error-container': '#410002',
+          error: '#BA1A1A',
           'on-error': '#FFFFFF',
           'error-container': '#FFDAD6',
-          error: '#BA1A1A',
+          'on-error-container': '#410002',
+          warning: '#f3bf48',
+          'on-warning': '#402d00',
+          'warning-container': '#5c4300',
+          'on-warning-container': '#ffdf9f',
           'on-tertiary-container': '#001F28',
           'on-tertiary': '#FFFFFF',
           'tertiary-container': '#B7EAFE',

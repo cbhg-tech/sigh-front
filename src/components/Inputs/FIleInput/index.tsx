@@ -6,6 +6,7 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
 }
 
+// TODO: alterar componente para exibir um link com download e delete do documento se houver
 export function FileInput({ name, label, hint, ...rest }: IProps) {
   return (
     <label
