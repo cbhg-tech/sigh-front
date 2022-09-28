@@ -42,7 +42,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <ListSubtitle label="Cadastros" />
         <ListItem
           closeModal={() => toogleSideMenu(false)}
-          href="/app/listagem/atletas"
+          href="/app/atletas/listagem"
           label="Atletas"
           icon={FaUserAlt}
         />

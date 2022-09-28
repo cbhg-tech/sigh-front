@@ -7,6 +7,7 @@ import {
   doc,
   updateDoc,
   where,
+  getDoc,
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { db, auth } from '../../app/FirebaseConfig';
@@ -39,6 +40,26 @@ export class UserController {
     );
 
     return result;
+  }
+
+  public async getCurrent() {
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error('UserId not found');
+    }
+
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data(),
+      } as IUser;
+    }
+
+    throw new Error('User not found');
   }
 
   public async create(data: ICreateUser) {

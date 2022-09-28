@@ -1,6 +1,8 @@
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+
 import { Router } from './app/Router';
 import { AppProvider } from './app/AppProvider';
 
@@ -20,6 +22,8 @@ export function App() {
       <AppProvider>
         <Router />
       </AppProvider>
+
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
 }

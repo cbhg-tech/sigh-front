@@ -3,12 +3,16 @@ import React, {
   createContext,
   ReactElement,
   useContext,
+  useEffect,
   useState,
 } from 'react';
+import { useGetCurrentUser } from '../dataAccess/hooks/user/useGetCurrentUser';
+import { IUser } from '../types/User';
 
 interface GlobalContextData {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  user: IUser | undefined;
 }
 
 interface IProps {
@@ -19,12 +23,14 @@ const GlobalContext = createContext({} as GlobalContextData);
 
 function GlobalProvider({ children }: IProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: user } = useGetCurrentUser(isLoggedIn);
 
   return (
     <GlobalContext.Provider
       value={{
         isLoggedIn,
         setIsLoggedIn,
+        user,
       }}
     >
       {children}

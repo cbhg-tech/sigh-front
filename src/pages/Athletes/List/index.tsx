@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-table';
 import { MdEdit, MdOutlineDeleteOutline } from 'react-icons/md';
 import { AiOutlineEye } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '../../../components/Inputs/IconButton';
 import { SelectBare } from '../../../components/Inputs/SelectBare';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
@@ -73,6 +74,7 @@ const COLUMN_WIDTH = [
 ];
 
 export function AthletesListPage() {
+  const navigate = useNavigate();
   const { data } = useGetAthletes();
 
   const table = useReactTable({
@@ -91,6 +93,7 @@ export function AthletesListPage() {
           aditionalClasses="w-full lg:w-auto px-6"
           type="button"
           label="Criar atleta"
+          onClick={() => navigate('/app/atletas/cadastro')}
         />
       </div>
       <div className="flex flex-col lg:flex-row gap-2 mb-4">

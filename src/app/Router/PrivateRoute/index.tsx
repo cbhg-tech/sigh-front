@@ -3,9 +3,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { auth } from '../../FirebaseConfig';
 import { LoadingScreen } from '../../../components/LoadingScreen';
+import { useGlobal } from '../../../contexts/global.context';
 
 export function PrivateRoute() {
   const location = useLocation();
+  const { setIsLoggedIn } = useGlobal();
   const [authStatus, setAuthStatus] = useState<
     'logged' | 'pending' | 'unauthorized'
   >('pending');
@@ -17,10 +19,11 @@ export function PrivateRoute() {
       }
 
       if (user) {
+        setIsLoggedIn(true);
         setAuthStatus('logged');
       }
     });
-  }, []);
+  }, [setIsLoggedIn]);
 
   if (authStatus === 'pending') {
     return <LoadingScreen />;
