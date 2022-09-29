@@ -10,7 +10,7 @@ export function useRedirectPendingAthlete() {
 
   useEffect(() => {
     if (user?.role === Roles.USER && user?.status === Status.PENDING) {
-      navigate('/app/atletas/cadastro');
+      navigate('/app/perfil');
     }
   }, [navigate, user]);
 }

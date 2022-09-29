@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
+import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { IFederation } from '../../../types/Federation';
 import { ActionsButtons } from './ActionsButton';
 
@@ -49,6 +50,7 @@ const COLUMN_WIDTH = [
 ];
 
 export function FederationListPage() {
+  useRedirectPendingAthlete();
   const navigate = useNavigate();
 
   const { data, isError, isLoading, isSuccess } = useGetFederations();
