@@ -58,5 +58,15 @@ export class TransferController {
     if (!id) throw new Error('Transfer ID is required');
 
     await updateDoc(doc(db, 'transfers', id), { ...data });
+
+    if (data.status === 'Aprovado') {
+      await updateDoc(doc(db, 'users', data.user.id), {
+        related: data.destinationTeam,
+        team: {
+          id: data.destinationTeamId,
+          name: data.destinationTeam,
+        },
+      });
+    }
   }
 }
