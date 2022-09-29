@@ -13,6 +13,7 @@ import { Textfield } from '../../../components/Inputs/Textfield';
 import { useGlobal } from '../../../contexts/global.context';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useCreateTransferRequest } from '../../../dataAccess/hooks/transfer/useCreateTransferRequest';
+import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 
@@ -23,6 +24,7 @@ interface IForm {
 }
 
 export function TransferRequestPage() {
+  useRedirectPendingAthlete();
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();

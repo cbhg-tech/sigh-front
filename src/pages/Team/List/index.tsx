@@ -9,6 +9,7 @@ import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
 import { useGetTeams } from '../../../dataAccess/hooks/team/useGetTeams';
+import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { ITeam } from '../../../types/Team';
 import { ActionsButtons } from './ActionsButton';
 
@@ -53,6 +54,7 @@ const COLUMN_WIDTH = [
 ];
 
 export function TeamListPage() {
+  useRedirectPendingAthlete();
   const navigate = useNavigate();
 
   const { data, isError, isLoading, isSuccess } = useGetTeams();

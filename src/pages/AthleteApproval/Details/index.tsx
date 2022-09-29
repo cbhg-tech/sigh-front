@@ -252,7 +252,8 @@ export function ApprovalDetailsPage() {
 
   const showApprovalActions =
     user?.role === Roles.ADMINCLUBE ||
-    (user?.role === Roles.ADMIN && data?.approval.teamApproved);
+    (user?.role === Roles.ADMIN && data?.approval.teamApproved) ||
+    (user?.role === Roles.ADMINFEDERACAO && data?.approval.teamApproved);
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">

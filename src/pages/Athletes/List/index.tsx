@@ -14,6 +14,7 @@ import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { Button } from '../../../components/Inputs/Button';
 import { useGetAthletes } from '../../../dataAccess/hooks/athlete/useGetAllAthletes';
 import { IUser } from '../../../types/User';
+import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 
 const columns: ColumnDef<IUser>[] = [
   {
@@ -79,6 +80,7 @@ const COLUMN_WIDTH = [
 ];
 
 export function AthletesListPage() {
+  useRedirectPendingAthlete();
   const { data } = useGetAthletes();
 
   const table = useReactTable({

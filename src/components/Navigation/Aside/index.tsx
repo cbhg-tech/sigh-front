@@ -1,13 +1,14 @@
-import { FaUserAlt, FaUserFriends } from 'react-icons/fa';
+import { FaUserAlt, FaUserFriends, FaUsers } from 'react-icons/fa';
 import {
   MdChecklist,
   MdCompareArrows,
   MdDashboard,
-  MdFormatListBulleted,
   MdOutlineClose,
   MdShield,
 } from 'react-icons/md';
 import { SiGoogleassistant } from 'react-icons/si';
+import { useGlobal } from '../../../contexts/global.context';
+import { Roles } from '../../../enums/Roles';
 import { Divider } from '../../Divider';
 import { IconButton } from '../../Inputs/IconButton';
 import { ListItem } from './ListItem';
@@ -20,6 +21,13 @@ interface IProps {
 
 export function Aside({ isOpen, toogleSideMenu }: IProps) {
   const isOpenStyle = isOpen ? 'translate-x-0' : '-translate-x-full';
+
+  const { user } = useGlobal();
+
+  const isAdmin =
+    user?.role === Roles.ADMIN ||
+    user?.role === Roles.ADMINCLUBE ||
+    user?.role === Roles.ADMINFEDERACAO;
 
   return (
     <aside
@@ -39,26 +47,38 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Dashboard"
           icon={MdDashboard}
         />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/transferencia/solicitacao"
-          label="Transferências"
-          icon={MdCompareArrows}
-        />
         <Divider />
-        <ListSubtitle label="Cadastros" />
+        <ListSubtitle label={isAdmin ? 'Cadastros' : 'Menu'} />
+        {user?.role === Roles.USER && (
+          <>
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/perfil"
+              label="Meu perfil"
+              icon={FaUserAlt}
+            />
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/transferencia/solicitacao"
+              label="Transferências"
+              icon={MdCompareArrows}
+            />
+          </>
+        )}
         <ListItem
           closeModal={() => toogleSideMenu(false)}
           href="/app/atletas/listagem"
           label="Atletas"
-          icon={FaUserAlt}
+          icon={FaUsers}
         />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/usuarios/listagem"
-          label="Usuário do sistema"
-          icon={FaUserFriends}
-        />
+        {isAdmin && (
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/usuarios/listagem"
+            label="Usuário do sistema"
+            icon={FaUserFriends}
+          />
+        )}
         <ListItem
           closeModal={() => toogleSideMenu(false)}
           href="/app/clubes/listagem"
@@ -71,20 +91,24 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Federações"
           icon={SiGoogleassistant}
         />
-        <Divider />
-        <ListSubtitle label="Área restrita" />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/atletas/aprovacao"
-          label="Aprovação de atletas"
-          icon={MdChecklist}
-        />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/transferencia/listagem"
-          label="Aprovação de transferencias"
-          icon={MdChecklist}
-        />
+        {isAdmin && (
+          <>
+            <Divider />
+            <ListSubtitle label="Área restrita" />
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/restrito/atletas/aprovacao"
+              label="Aprovação de atletas"
+              icon={MdChecklist}
+            />
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/restrito/transferencia/listagem"
+              label="Aprovação de transferencias"
+              icon={MdChecklist}
+            />
+          </>
+        )}
       </div>
     </aside>
   );

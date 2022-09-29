@@ -55,6 +55,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/perfil"
+            element={
+              <Navigation title="Meu perfil">
+                <AthletesRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/usuarios/listagem"
             element={
               <Navigation title="Usuário do sistema">
