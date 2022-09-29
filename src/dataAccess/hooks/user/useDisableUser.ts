@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserController } from '../../controllers/user.controller';
 
 const userController = new UserController();
@@ -8,7 +8,7 @@ export function useDisableUser() {
 
   async function disableUser(id: string): Promise<void> {
     await userController.disable(id);
-    queryClient.invalidateQueries('getUsers');
+    queryClient.invalidateQueries(['getUsers']);
   }
 
   return useMutation(disableUser);

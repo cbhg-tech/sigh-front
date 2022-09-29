@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { FederationController } from '../../controllers/federation.controller';
 
 const federationController = new FederationController();

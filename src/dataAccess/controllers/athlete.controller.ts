@@ -147,12 +147,21 @@ export class AthleteController {
     });
   }
 
-  public async getApprovalList() {
-    const q = query(
+  public async getApprovalList(team?: string) {
+    let q = query(
       collection(db, 'userApproval'),
       where('status', '==', Status.PENDING),
       limit(20),
     );
+
+    if (team) {
+      q = query(
+        collection(db, 'userApproval'),
+        where('status', '==', Status.PENDING),
+        where('team.id', '==', team),
+        limit(20),
+      );
+    }
 
     const users = await getDocs(q);
 

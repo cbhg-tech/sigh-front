@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { PasswordController } from '../../controllers/password.controller';
 
 const passwordController = new PasswordController();

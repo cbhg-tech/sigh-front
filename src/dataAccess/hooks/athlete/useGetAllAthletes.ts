@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { IUser } from '../../../types/User';
 import { AthleteController } from '../../controllers/athlete.controller';
 

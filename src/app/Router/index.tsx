@@ -18,6 +18,9 @@ import { TeamListPage } from '../../pages/Team/List';
 import { AthletesRegisterPage } from '../../pages/Athletes/Register';
 import { AthleteApprovalListPage } from '../../pages/AthleteApproval/List';
 import { ApprovalDetailsPage } from '../../pages/AthleteApproval/Details';
+import { TransferRequestPage } from '../../pages/Transfer/Request';
+import { TransferListPage } from '../../pages/Transfer/List';
+import { TransferApprovalWorkflow } from '../../pages/Transfer/ApprovalWorkflow';
 
 export function Router() {
   return (
@@ -112,6 +115,30 @@ export function Router() {
             element={
               <Navigation title="Aprovação de fichas">
                 <ApprovalDetailsPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/transferencia/solicitacao"
+            element={
+              <Navigation title="Transferência">
+                <TransferRequestPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/restrito/transferencia/listagem"
+            element={
+              <Navigation title="Aprovação de transferência">
+                <TransferListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/restrito/transferencia/aprovacao/:id"
+            element={
+              <Navigation title="Aprovação de transferência">
+                <TransferApprovalWorkflow />
               </Navigation>
             }
           />

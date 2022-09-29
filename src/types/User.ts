@@ -4,8 +4,15 @@ export interface IUser {
   id: string;
   name: string;
   email: string;
-  team?: string;
-  federation?: string;
+  related: string;
+  team?: {
+    id: string;
+    name: string;
+  };
+  federation?: {
+    id: string;
+    name: string;
+  };
   role: string;
   status: string;
   photo?: string;

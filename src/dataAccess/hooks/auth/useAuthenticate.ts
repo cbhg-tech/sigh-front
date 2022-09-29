@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AuthController, IAuthData } from '../../controllers/auth.controller';
 
 const authController = new AuthController();

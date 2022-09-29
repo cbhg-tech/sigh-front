@@ -13,6 +13,7 @@ import { Textfield } from '../../../components/Inputs/Textfield';
 import { useCreateAthlete } from '../../../dataAccess/hooks/athlete/useCreateAthlete';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
+import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 
 interface IForm {
   name: string;
@@ -27,6 +28,7 @@ export function RegisterPage() {
 
   const formRef = useRef<FormHandles>(null);
   const navigate = useNavigate();
+  const { data: publicTeams } = useGetPublicTeams();
   const { mutateAsync, isLoading } = useCreateAthlete();
 
   async function handleSubmit(data: IForm) {
@@ -38,10 +40,19 @@ export function RegisterPage() {
           .required('Email obrigatório'),
         password: Yup.string().required('Senha obrigatória'),
         birthDate: Yup.date(),
-        team: Yup.string().required('Time obrigatório'),
+        team: Yup.string().required('Clube obrigatório'),
       });
 
-      await mutateAsync(data);
+      const team = publicTeams?.list.find(t => t.id === data.team);
+
+      await mutateAsync({
+        ...data,
+        related: team!.name,
+        team: {
+          id: team!.id,
+          name: team!.name,
+        },
+      });
 
       toast.success('Cadastro realizado com sucesso!');
 
@@ -73,8 +84,11 @@ export function RegisterPage() {
             max={today}
           />
           <Select name="team" label="Clube atual">
-            <option value="rio hockei">Rio hockei</option>
-            <option value="deodoro">Deodoro</option>
+            <option value="">Selecione um clube</option>
+            {publicTeams &&
+              publicTeams.list.map(team => (
+                <option value={team.id}>{team.name}</option>
+              ))}
           </Select>
           <Textfield type="password" name="password" label="Senha" />
           <Button type="submit" label="Criar conta" isLoading={isLoading} />

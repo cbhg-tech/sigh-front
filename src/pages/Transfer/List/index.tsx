@@ -4,41 +4,44 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
-import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
-import { useGlobal } from '../../../contexts/global.context';
-import { useGetAppovalList } from '../../../dataAccess/hooks/athlete/useGetApprovalList';
-import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
-import { IUserApproval } from '../../../types/UserApproval';
+import { useGetAllTransfers } from '../../../dataAccess/hooks/transfer/useGetAllTransfers';
+import { ITransfer } from '../../../types/Transfer';
 import { ActionButton } from './ActionButton';
 
-const columns: ColumnDef<IUserApproval>[] = [
+const columns: ColumnDef<ITransfer>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'user',
     header: 'Nome',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'team',
-    header: 'Time',
     cell: info => {
-      const obj = info.getValue();
+      const user = info.getValue();
 
       // @ts-ignore
-      return obj.name;
+      return user.name;
     },
   },
   {
-    accessorKey: 'gender',
-    header: 'Sexo',
-    cell: info => info.getValue() || 'Não informado',
+    accessorKey: 'currentTeam',
+    header: 'Clube de origem',
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: 'destinationTeam',
+    header: 'Clube de destino',
+    cell: info => info.getValue(),
+  },
+  {
+    accessorKey: 'transferData',
+    header: 'Data da transferencia',
+    cell: info => {
+      const date = info.getValue() as string;
+
+      if (!date) return 'Data não informada';
+
+      return dayjs(date).format('DD/MM/YYYY');
+    },
   },
   {
     header: '',
@@ -49,17 +52,14 @@ const columns: ColumnDef<IUserApproval>[] = [
 
 const COLUMN_WIDTH = [
   'w-1/3 lg:w-1/4',
+  'hidden lg:table-cell lg:w-1/5',
+  'hidden lg:table-cell lg:w-1/5',
   'w-1/3 lg:w-1/4',
-  'hidden lg:table-cell lg:w-1/5',
-  'hidden lg:table-cell lg:w-1/5',
   'w-auto',
 ];
 
-export function AthleteApprovalListPage() {
-  const { user } = useGlobal();
-  const { data, isError, isLoading, isSuccess } = useGetAppovalList(
-    user?.team?.id,
-  );
+export function TransferListPage() {
+  const { data, isError, isLoading, isSuccess } = useGetAllTransfers();
 
   const table = useReactTable({
     data: data || [],
@@ -71,7 +71,7 @@ export function AthleteApprovalListPage() {
     <div className="bg-light-surface p-6 rounded-2xl h-full">
       <div className="flex justify-start">
         <h2 className="text-3xl text-light-on-surface">
-          Aprovação da ficha de atletas
+          Aprovação da transferencia de atletas
         </h2>
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">

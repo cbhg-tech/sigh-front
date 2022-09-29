@@ -1,6 +1,7 @@
 import { FaUserAlt, FaUserFriends } from 'react-icons/fa';
 import {
   MdChecklist,
+  MdCompareArrows,
   MdDashboard,
   MdFormatListBulleted,
   MdOutlineClose,
@@ -38,6 +39,12 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Dashboard"
           icon={MdDashboard}
         />
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/transferencia/solicitacao"
+          label="Transferências"
+          icon={MdCompareArrows}
+        />
         <Divider />
         <ListSubtitle label="Cadastros" />
         <ListItem
@@ -74,13 +81,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         />
         <ListItem
           closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/atletas"
-          label="Listagem de transferencias"
-          icon={MdFormatListBulleted}
-        />
-        <ListItem
-          closeModal={() => toogleSideMenu(false)}
-          href="/app/restrito/atletas/aprovacao"
+          href="/app/restrito/transferencia/listagem"
           label="Aprovação de transferencias"
           icon={MdChecklist}
         />

@@ -7,7 +7,6 @@ import {
   doc,
   deleteDoc,
   arrayUnion,
-  setDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { ITeam } from '../../types/Team';
@@ -85,6 +84,7 @@ export class TeamController {
       list: arrayUnion({
         id,
         name,
+        federationId: federation.id,
       }),
     });
 

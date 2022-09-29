@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FederationController } from '../../controllers/federation.controller';
 
 const federationController = new FederationController();
@@ -8,7 +8,7 @@ export function useDeleteFederation() {
 
   async function deleteFed(id: string) {
     const res = await federationController.delete(id);
-    queryClient.invalidateQueries('getFederations');
+    queryClient.invalidateQueries(['getFederations']);
 
     return res;
   }
