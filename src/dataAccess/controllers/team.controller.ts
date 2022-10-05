@@ -7,8 +7,11 @@ import {
   doc,
   deleteDoc,
   arrayUnion,
+  getDoc,
+  arrayRemove,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
+import { IPublicData } from '../../types/PublicTeams';
 import { ITeam } from '../../types/Team';
 import { UploadFile } from '../../utils/uploadFile';
 
@@ -112,5 +115,21 @@ export class TeamController {
 
   public async delete(id: string) {
     await deleteDoc(doc(db, 'teams', id));
+
+    const res = await getDoc(doc(db, 'public', 'teams'));
+
+    const obj = { ...res.data() } as IPublicData;
+
+    const team = obj.list.find(f => f.id === id);
+
+    await updateDoc(doc(db, 'federations', team!.federationId!), {
+      teams: arrayRemove(id),
+    });
+
+    await updateDoc(doc(db, 'public', 'teams'), {
+      list: arrayRemove({
+        ...team,
+      }),
+    });
   }
 }

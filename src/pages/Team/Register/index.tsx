@@ -206,6 +206,7 @@ export function TeamRegisterPage() {
             type="submit"
             label="Criar clube"
             isLoading={isLoading}
+            disabled={isLoading}
           />
         </div>
       </Form>

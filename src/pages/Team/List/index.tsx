@@ -1,48 +1,10 @@
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
-import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
 import { useGetTeams } from '../../../dataAccess/hooks/team/useGetTeams';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
-import { ITeam } from '../../../types/Team';
 import { ActionsButtons } from './ActionsButton';
-
-const columns: ColumnDef<ITeam>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Nome',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'federation',
-    header: 'Federação',
-    cell: info => {
-      // @ts-ignore
-      return info.getValue().name;
-    },
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'presidentName',
-    header: 'Presidente',
-    cell: info => info.getValue(),
-  },
-  {
-    header: '',
-    accessorKey: 'id',
-    cell: info => <ActionsButtons id={info.getValue() as string} />,
-  },
-];
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -53,17 +15,20 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
+const COLUMN_NAMES = ['Nome', 'Federação', 'Email', 'Presidente', ''];
+
 export function TeamListPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
 
   const { data, isError, isLoading, isSuccess } = useGetTeams();
+  const [filter, setFilter] = useState('');
 
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  let tableData = data || [];
+
+  tableData = tableData.filter(team =>
+    team.name.toLowerCase().includes(filter.toLowerCase()),
+  );
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -80,7 +45,11 @@ export function TeamListPage() {
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
-          <TextfieldBare label="Buscar..." name="search" />
+          <TextfieldBare
+            label="Buscar..."
+            name="search"
+            onChange={e => setFilter(e.target.value)}
+          />
         </div>
       </div>
 
@@ -100,41 +69,43 @@ export function TeamListPage() {
         </div>
       )}
 
-      {isSuccess && (
+      {isSuccess && data.length === 0 && (
+        <p className="text-light-on-surface-variant text-center mt-8">
+          Nenhum clube encontrado
+        </p>
+      )}
+
+      {isSuccess && data.length > 0 && (
         <table className="w-full">
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <th
-                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            <tr>
+              {COLUMN_NAMES.map((columnName, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={columnName}
+                >
+                  {columnName}
+                </th>
+              ))}
+            </tr>
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {tableData.map(team => (
               <tr
                 className="border-b last:border-none border-slate-200"
-                key={row.id}
+                key={team.id}
               >
-                {row.getVisibleCells().map((cell, index) => (
-                  <td
-                    className={`${COLUMN_WIDTH[index]} py-4 px-2`}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{team.name}</td>
+                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                  {team.federation.name}
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>{team.email}</td>
+                <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
+                  {team.presidentName}
+                </td>
+                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
+                  <ActionsButtons id={team.id} />
+                </td>
               </tr>
             ))}
           </tbody>
