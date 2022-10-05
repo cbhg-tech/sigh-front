@@ -8,9 +8,13 @@ import {
   doc,
   deleteDoc,
   arrayUnion,
+  arrayRemove,
+  setDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { IFederation } from '../../types/Federation';
+import { IPublicData } from '../../types/PublicTeams';
 import { UploadFile } from '../../utils/uploadFile';
 
 export interface ICreateFed
@@ -103,8 +107,19 @@ export class FederationController {
     });
   }
 
-  // delete federation based on id
   public async delete(id: string) {
     await deleteDoc(doc(db, 'federations', id));
+
+    const res = await getDoc(doc(db, 'public', 'federations'));
+
+    const obj = { ...res.data() } as IPublicData;
+
+    const federation = obj.list.find(f => f.id === id);
+
+    await updateDoc(doc(db, 'public', 'federations'), {
+      list: arrayRemove({
+        ...federation,
+      }),
+    });
   }
 }

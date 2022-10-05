@@ -91,7 +91,7 @@ export function FederationRegisterPage() {
         return formRef.current?.setErrors(errors);
       }
 
-      toast.error('Ops! Houve um erro ao criara federação!');
+      toast.error('Ops! Houve um erro ao criar a federação!');
     }
   }
 
@@ -188,6 +188,7 @@ export function FederationRegisterPage() {
             type="submit"
             label="Criar federação"
             isLoading={isLoading}
+            disabled={isLoading}
           />
         </div>
       </Form>

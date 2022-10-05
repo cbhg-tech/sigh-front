@@ -1,4 +1,4 @@
-export interface IPublicTeams {
+export interface IPublicData {
   list: Array<{
     id: string;
     federationId?: string;

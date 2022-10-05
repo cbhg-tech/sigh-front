@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
-import { IPublicTeams } from '../../types/PublicTeams';
+import { IPublicData } from '../../types/PublicTeams';
 
 export class PublicController {
   public async getTeams() {
@@ -8,7 +8,7 @@ export class PublicController {
 
     return {
       ...docSnap.data(),
-    } as IPublicTeams;
+    } as IPublicData;
   }
 
   public async getFederation() {
@@ -16,6 +16,6 @@ export class PublicController {
 
     return {
       ...docSnap.data(),
-    } as IPublicTeams;
+    } as IPublicData;
   }
 }
