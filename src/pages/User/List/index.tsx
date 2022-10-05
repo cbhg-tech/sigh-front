@@ -57,19 +57,15 @@ export function UserListPage() {
       </div>
 
       {isLoading && (
-        <div className="text-center mt-8">
-          <p className="text-light-on-surface-variant text-xl">
-            Buscando dados ...
-          </p>
-        </div>
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Buscando dados ...
+        </p>
       )}
 
       {isError && (
-        <div className="text-center mt-8">
-          <p className="text-light-on-error-container text-xl">
-            Error ao buscar dados, tente novamente
-          </p>
-        </div>
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Error ao buscar dados, tente novamente
+        </p>
       )}
 
       {isSuccess && (

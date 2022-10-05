@@ -18,3 +18,5 @@
 - [x] preencher dados do dashboard
 - [ ] criar cadastro de comissão tecnica
 - [x] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)
+- [x] criar pagina de relatório do atleta
+- [x] pagina de relatorio do atleta ter export para excel

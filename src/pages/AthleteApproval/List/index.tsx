@@ -86,7 +86,9 @@ export function AthleteApprovalListPage() {
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
                   {data.status}
                 </td>
-                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>{data.team}</td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  {data.team.name}
+                </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
                   {data.gender || 'Não informado'}
                 </td>

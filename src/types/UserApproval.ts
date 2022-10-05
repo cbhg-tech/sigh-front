@@ -7,7 +7,10 @@ export interface IUserApproval {
   id: string;
   name: string;
   registerDate: Date;
-  team: string;
+  team: {
+    id: string;
+    name: string;
+  };
   status: string;
   gender: string;
   teamApproved: boolean;

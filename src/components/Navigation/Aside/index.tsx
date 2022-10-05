@@ -75,7 +75,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         {user?.role === Roles.ADMINCLUBE && (
           <ListItem
             closeModal={() => toogleSideMenu(false)}
-            href="/app/usuarios/listagem"
+            href="/app/tecnico/listagem"
             label="Comissão técnica"
             icon={FaUserFriends}
           />
