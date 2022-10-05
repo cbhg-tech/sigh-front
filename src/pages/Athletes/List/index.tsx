@@ -9,6 +9,8 @@ import { useGetAthletes } from '../../../dataAccess/hooks/athlete/useGetAllAthle
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGetPublicFederation';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
+import { useHasPermission } from '../../../hooks/useHasPermission';
+import { Roles } from '../../../enums/Roles';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -26,6 +28,8 @@ export function AthletesListPage() {
   const { data } = useGetAthletes();
   const { data: publicFederation } = useGetPublicFederations();
   const { data: publicTeams } = useGetPublicTeams();
+
+  const isAthlete = useHasPermission([Roles.USER]);
 
   const [filter, setFilter] = useState('');
   const [filterFederation, setFilterFederation] = useState('');
@@ -123,32 +127,34 @@ export function AthletesListPage() {
                 {athlete.team?.name}
               </td>
               <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                {athlete.athleteProfile?.gender}
+                {athlete.athleteProfile?.gender || 'Não informado'}
               </td>
               <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
                 {athlete.status}
               </td>
               <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                <div className="flex gap-2 items-center justify-end">
-                  <IconButton
-                    icon={MdEdit}
-                    className="text-light-primary"
-                    size="1.5rem"
-                    onClick={() => console.log(athlete.id)}
-                  />
-                  <IconButton
-                    icon={AiOutlineEye}
-                    className="text-light-tertiary"
-                    size="1.5rem"
-                    onClick={() => console.log(athlete.id)}
-                  />
-                  <IconButton
-                    icon={MdOutlineDeleteOutline}
-                    className="text-light-error"
-                    size="1.5rem"
-                    onClick={() => console.log(athlete.id)}
-                  />
-                </div>
+                {!isAthlete && (
+                  <div className="flex gap-2 items-center justify-end">
+                    <IconButton
+                      icon={MdEdit}
+                      className="text-light-primary"
+                      size="1.5rem"
+                      onClick={() => console.log(athlete.id)}
+                    />
+                    <IconButton
+                      icon={AiOutlineEye}
+                      className="text-light-tertiary"
+                      size="1.5rem"
+                      onClick={() => console.log(athlete.id)}
+                    />
+                    <IconButton
+                      icon={MdOutlineDeleteOutline}
+                      className="text-light-error"
+                      size="1.5rem"
+                      onClick={() => console.log(athlete.id)}
+                    />
+                  </div>
+                )}
               </td>
             </tr>
           ))}

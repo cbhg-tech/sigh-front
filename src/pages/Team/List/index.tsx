@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetTeams } from '../../../dataAccess/hooks/team/useGetTeams';
+import { Roles } from '../../../enums/Roles';
+import { useHasPermission } from '../../../hooks/useHasPermission';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { ActionsButtons } from './ActionsButton';
 
@@ -20,7 +22,7 @@ const COLUMN_NAMES = ['Nome', 'Federação', 'Email', 'Presidente', ''];
 export function TeamListPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
-
+  const isAthlete = useHasPermission([Roles.USER]);
   const { data, isError, isLoading, isSuccess } = useGetTeams();
   const [filter, setFilter] = useState('');
 
@@ -104,7 +106,7 @@ export function TeamListPage() {
                   {team.presidentName}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                  <ActionsButtons id={team.id} />
+                  {!isAthlete && <ActionsButtons id={team.id} />}
                 </td>
               </tr>
             ))}

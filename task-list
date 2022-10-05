@@ -11,7 +11,7 @@
 - [x] usuário com ficha negada pode acessar conta novamente
 - [ ] usuário com ficha negada pode enviar ficha novamente para analise
 - [ ] usuário pode fazer upload de foto de perfil
-- [ ] filtro das listagens devem funcionar corretamente
+- [x] filtro das listagens devem funcionar corretamente
 - [ ] editar abrir pagina de formulario com os dados preenchidos
 - [ ] preencher dados do dashboard
 - [ ] criar cadastro de comissão tecnica

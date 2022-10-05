@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
+import { Roles } from '../../../enums/Roles';
+import { useHasPermission } from '../../../hooks/useHasPermission';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { ActionsButtons } from './ActionsButton';
 
@@ -21,8 +23,10 @@ export function FederationListPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
 
-  const [filter, setFilter] = useState('');
   const { data, isError, isLoading, isSuccess } = useGetFederations();
+  const isAthlete = useHasPermission([Roles.USER]);
+
+  const [filter, setFilter] = useState('');
 
   let tableData = data || [];
 
@@ -109,7 +113,7 @@ export function FederationListPage() {
                   {federation.presidentName}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                  <ActionsButtons id={federation.id} />
+                  {!isAthlete && <ActionsButtons id={federation.id} />}
                 </td>
               </tr>
             ))}
