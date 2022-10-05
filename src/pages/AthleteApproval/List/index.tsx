@@ -1,51 +1,8 @@
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useNavigate } from 'react-router-dom';
-
-import { Button } from '../../../components/Inputs/Button';
+import { useState } from 'react';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGlobal } from '../../../contexts/global.context';
 import { useGetAppovalList } from '../../../dataAccess/hooks/athlete/useGetApprovalList';
-import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
-import { IUserApproval } from '../../../types/UserApproval';
 import { ActionButton } from './ActionButton';
-
-const columns: ColumnDef<IUserApproval>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Nome',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'team',
-    header: 'Time',
-    cell: info => {
-      const obj = info.getValue();
-
-      // @ts-ignore
-      return obj.name;
-    },
-  },
-  {
-    accessorKey: 'gender',
-    header: 'Sexo',
-    cell: info => info.getValue() || 'Não informado',
-  },
-  {
-    header: '',
-    accessorKey: 'id',
-    cell: info => <ActionButton id={info.getValue() as string} />,
-  },
-];
 
 const COLUMN_WIDTH = [
   'w-1/3 lg:w-1/4',
@@ -55,17 +12,22 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
+const COLUMN_NAME = ['Nome', 'Status', 'Time', 'Sexo', ''];
+
 export function AthleteApprovalListPage() {
   const { user } = useGlobal();
   const { data, isError, isLoading, isSuccess } = useGetAppovalList(
     user?.team?.id,
   );
+  const [filter, setFilter] = useState('');
 
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  let tableData = data || [];
+
+  if (filter) {
+    tableData = tableData.filter(athlete =>
+      athlete.name.toLowerCase().includes(filter.toLowerCase()),
+    );
+  }
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -76,7 +38,11 @@ export function AthleteApprovalListPage() {
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
-          <TextfieldBare label="Buscar..." name="search" />
+          <TextfieldBare
+            label="Buscar..."
+            name="search"
+            onChange={e => setFilter(e.target.value)}
+          />
         </div>
       </div>
 
@@ -99,38 +65,34 @@ export function AthleteApprovalListPage() {
       {isSuccess && (
         <table className="w-full">
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <th
-                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            <tr>
+              {COLUMN_NAME.map((columnName, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={columnName}
+                >
+                  {columnName}
+                </th>
+              ))}
+            </tr>
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {tableData.map(data => (
               <tr
                 className="border-b last:border-none border-slate-200"
-                key={row.id}
+                key={data.id}
               >
-                {row.getVisibleCells().map((cell, index) => (
-                  <td
-                    className={`${COLUMN_WIDTH[index]} py-4 px-2`}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{data.name}</td>
+                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                  {data.status}
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>{data.team}</td>
+                <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
+                  {data.gender || 'Não informado'}
+                </td>
+                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
+                  <ActionButton id={data.id} />
+                </td>
               </tr>
             ))}
           </tbody>

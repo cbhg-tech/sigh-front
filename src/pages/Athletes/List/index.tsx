@@ -25,7 +25,7 @@ const COLUMN_NAMES = ['Nome', 'Clube', 'Sexo', 'Status', ''];
 
 export function AthletesListPage() {
   useRedirectPendingAthlete();
-  const { data } = useGetAthletes();
+  const { data, isLoading } = useGetAthletes();
   const { data: publicFederation } = useGetPublicFederations();
   const { data: publicTeams } = useGetPublicTeams();
 
@@ -103,63 +103,83 @@ export function AthletesListPage() {
           />
         </div>
       </div>
-      <table className="w-full">
-        <thead>
-          <tr>
-            {COLUMN_NAMES.map((name, index) => (
-              <th
-                className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                key={name}
-              >
-                {name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {tableData?.map(athlete => (
-            <tr
-              className="border-b last:border-none border-slate-200"
-              key={athlete.id}
-            >
-              <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{athlete.name}</td>
-              <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                {athlete.team?.name}
-              </td>
-              <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                {athlete.athleteProfile?.gender || 'Não informado'}
-              </td>
-              <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                {athlete.status}
-              </td>
-              <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                {!isAthlete && (
-                  <div className="flex gap-2 items-center justify-end">
-                    <IconButton
-                      icon={MdEdit}
-                      className="text-light-primary"
-                      size="1.5rem"
-                      onClick={() => console.log(athlete.id)}
-                    />
-                    <IconButton
-                      icon={AiOutlineEye}
-                      className="text-light-tertiary"
-                      size="1.5rem"
-                      onClick={() => console.log(athlete.id)}
-                    />
-                    <IconButton
-                      icon={MdOutlineDeleteOutline}
-                      className="text-light-error"
-                      size="1.5rem"
-                      onClick={() => console.log(athlete.id)}
-                    />
-                  </div>
-                )}
-              </td>
+      {isLoading && (
+        <div className="text-center mt-8">
+          <p className="text-light-on-surface-variant text-xl">
+            Buscando dados ...
+          </p>
+        </div>
+      )}
+
+      {!isLoading && tableData.length === 0 && (
+        <div className="text-center mt-8">
+          <p className="text-light-on-error-container text-xl">
+            Error ao buscar dados, tente novamente
+          </p>
+        </div>
+      )}
+
+      {!isLoading && tableData.length > 0 && (
+        <table className="w-full">
+          <thead>
+            <tr>
+              {COLUMN_NAMES.map((name, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={name}
+                >
+                  {name}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tableData?.map(athlete => (
+              <tr
+                className="border-b last:border-none border-slate-200"
+                key={athlete.id}
+              >
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                  {athlete.name}
+                </td>
+                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                  {athlete.team?.name}
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  {athlete.athleteProfile?.gender || 'Não informado'}
+                </td>
+                <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
+                  {athlete.status}
+                </td>
+                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
+                  {!isAthlete && (
+                    <div className="flex gap-2 items-center justify-end">
+                      <IconButton
+                        icon={MdEdit}
+                        className="text-light-primary"
+                        size="1.5rem"
+                        onClick={() => console.log(athlete.id)}
+                      />
+                      <IconButton
+                        icon={AiOutlineEye}
+                        className="text-light-tertiary"
+                        size="1.5rem"
+                        onClick={() => console.log(athlete.id)}
+                      />
+                      <IconButton
+                        icon={MdOutlineDeleteOutline}
+                        className="text-light-error"
+                        size="1.5rem"
+                        onClick={() => console.log(athlete.id)}
+                      />
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
