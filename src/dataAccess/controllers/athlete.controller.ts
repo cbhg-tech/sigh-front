@@ -63,11 +63,12 @@ export class AthleteController {
 
     await setDoc(doc(db, 'userApproval', user.uid), {
       status: Status.PENDING,
-      rergisterDate: new Date(),
+      registerDate: new Date(),
       team,
       name,
       teamApproved: false,
       cbhgApproved: false,
+      createdAt: new Date(),
     });
   }
 
@@ -217,5 +218,12 @@ export class AthleteController {
         status,
       });
     }
+  }
+
+  public async reopenApprovalStatus(id: string) {
+    await updateDoc(doc(db, 'userApproval', id), {
+      status: Status.PENDING,
+      updatedAt: new Date(),
+    });
   }
 }

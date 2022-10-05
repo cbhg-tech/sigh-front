@@ -4,11 +4,12 @@ import { Button } from '../../../../components/Inputs/Button';
 import { FileInput } from '../../../../components/Inputs/FIleInput';
 import { useGlobal } from '../../../../contexts/global.context';
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
+import { Status } from '../../../../enums/Status';
 import { useAthletesRegister } from '../register.context';
 
 export function DocumentationUpload() {
   const { user } = useGlobal();
-  const { documents, setDocuments } = useAthletesRegister();
+  const { documents, setDocuments, setActiveTab } = useAthletesRegister();
   const { mutateAsync } = usePutAthlete();
 
   const handleFileUpload = async () => {
@@ -38,6 +39,10 @@ export function DocumentationUpload() {
       });
 
       toast.success('Documentos enviados com sucesso!');
+
+      if (user?.status !== Status.ACTIVE) {
+        setActiveTab(2);
+      }
     } catch (err) {
       // @ts-ignore
       toast.error(err.message);
@@ -109,7 +114,7 @@ export function DocumentationUpload() {
           <Button
             type="button"
             aditionalClasses="w-auto px-2"
-            label="Salvar"
+            label={user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'}
             variant="primary"
             onClick={handleFileUpload}
           />

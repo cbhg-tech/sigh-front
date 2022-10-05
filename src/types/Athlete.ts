@@ -1,6 +1,7 @@
 export interface IAthlete {
   phone: number;
   birthDate: string;
+  nickname: string;
   country: string;
   gender: string;
   address: {

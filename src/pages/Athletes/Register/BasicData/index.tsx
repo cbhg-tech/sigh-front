@@ -12,8 +12,10 @@ import { useGlobal } from '../../../../contexts/global.context';
 import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.controller';
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { States } from '../../../../dataAccess/static/states';
+import { Status } from '../../../../enums/Status';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
 import { validateForm } from '../../../../utils/validateForm';
+import { useAthletesRegister } from '../register.context';
 
 export function BasicData() {
   const { innerWidth: width } = window;
@@ -23,6 +25,7 @@ export function BasicData() {
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();
 
+  const { setActiveTab } = useAthletesRegister();
   const { mutateAsync, isLoading } = usePutAthlete();
 
   const handleSubmit = async (data: IUpdateAthlete) => {
@@ -47,6 +50,10 @@ export function BasicData() {
       await mutateAsync({ ...user?.athleteProfile, ...data });
 
       toast.success('Perfil atualizado com sucesso!');
+
+      if (user?.status !== Status.ACTIVE) {
+        setActiveTab(1);
+      }
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = handleFormErrors(err);
@@ -80,7 +87,11 @@ export function BasicData() {
         <div className="col-span-5 lg:col-span-11">
           <div className="grid grid-cols-1 lg:grid-cols-6 lg:gap-2">
             <div className="col-span-1 lg:col-span-4">
-              <Textfield name="name" label="Nome completo*" />
+              <Textfield
+                name="name"
+                label="Nome completo*"
+                defaultValue={user?.name}
+              />
             </div>
             <div className="col-span-1 lg:col-span-2">
               <Textfield name="nickname" label="Apelido" />
@@ -141,7 +152,11 @@ export function BasicData() {
 
           <div className="grid grid-cols-1 lg:grid-cols-6 lg:gap-2">
             <div className="col-span-1 lg:col-span-3">
-              <Select name="address.state" label="Estado*">
+              <Select
+                name="address.state"
+                label="Estado*"
+                defaultValue={user?.athleteProfile?.address.state}
+              >
                 <option value="">Selecione um estado</option>
                 {States.map(state => (
                   <option key={state} value={state}>
@@ -167,7 +182,9 @@ export function BasicData() {
             <Button
               type="submit"
               aditionalClasses="w-auto px-2"
-              label="Salvar"
+              label={
+                user?.status === Status.ACTIVE ? 'Salvar' : 'Próxima passo'
+              }
               variant="primary"
               isLoading={isLoading}
               disabled={isLoading}

@@ -41,7 +41,7 @@ export function HospitalData() {
 
       await mutateAsync({ ...user?.athleteProfile, ...data });
 
-      toast.success('Perfil atualizado com sucesso!');
+      toast.success('Dados hospitalares atualizado!');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = handleFormErrors(err);

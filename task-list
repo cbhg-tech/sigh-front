@@ -5,13 +5,15 @@
 - [x] garantir que o cadsatro de federação está funcionando corretamente e salvando apenas uma federação por id no public
 - [x] garantir que o cadastro de clube está funcionando corretamente e salvando apenas uma federaçao por id no public
 - [x] garantir que o cadastro de usuário é unico por CPF
-- [ ] usuário tipo atleta não pode ter ação na lista
+- [x] usuário tipo atleta não pode ter ação na lista
 - [x] aprovação de ficha de atleta ter dois botões para ação
 - [x] usuário pode navegar por paginas sem ter completado a ficha mas deve aparecer um warning
 - [x] usuário com ficha negada pode acessar conta novamente
-- [ ] usuário com ficha negada pode enviar ficha novamente para analise
+- [x] ficha de usuário ser um wizard
+- [x] usuário com ficha negada pode enviar ficha novamente para analise
 - [ ] usuário pode fazer upload de foto de perfil
 - [x] filtro das listagens devem funcionar corretamente
 - [ ] editar abrir pagina de formulario com os dados preenchidos
+- [ ] input file abrir com links já preenchidos
 - [ ] preencher dados do dashboard
 - [ ] criar cadastro de comissão tecnica

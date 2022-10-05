@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { auth } from '../../../app/FirebaseConfig';
+import { useGlobal } from '../../../contexts/global.context';
+import { Status } from '../../../enums/Status';
 import {
   AthleteController,
   IUpdateAthlete,
@@ -8,6 +10,7 @@ import {
 const athleteController = new AthleteController();
 
 export function usePutAthlete() {
+  const { user } = useGlobal();
   const queryClient = useQueryClient();
 
   async function put(data: IUpdateAthlete) {
@@ -15,6 +18,11 @@ export function usePutAthlete() {
     data.userId = auth.currentUser!.uid;
 
     const res = await athleteController.put(data);
+
+    if (user?.status === Status.REJECTED) {
+      await athleteController.reopenApprovalStatus(user.id);
+    }
+
     queryClient.invalidateQueries(['getAthletes']);
     queryClient.invalidateQueries(['getCurrentUser']);
 
