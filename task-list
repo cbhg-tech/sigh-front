@@ -1,4 +1,5 @@
-- [ ] ajustar css do input de select
+- [x] ajustar css do input de select
+- [x] logo da CBHG ser clicavel para voltar pro login
 - [ ] garantir que o cadastro de usuário está funcionando corretamente
 - [ ] garantir que o cadastro de usuário por admin está funcionando corretamento
 - [ ] garantir que o cadsatro de federação está funcionando corretamente e salvando apenas uma federação por id no public

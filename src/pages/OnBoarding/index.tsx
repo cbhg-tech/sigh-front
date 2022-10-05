@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { Link } from 'react-router-dom';
 import CBHGLogo from '../../assets/cbhg-logo.png';
 
 interface IProps {
@@ -10,7 +11,9 @@ export function OnBoardingContainer({ children }: IProps) {
     <div className="flex items-stretch h-screen overflow-hidden">
       <div className="flex flex-col justify-between w-full lg:max-w-2xl overflow-y-auto bg-light-background">
         <div className="mt-12">
-          <img src={CBHGLogo} alt="Logo da CBHG" className="w-56 mx-auto" />
+          <Link to="/">
+            <img src={CBHGLogo} alt="Logo da CBHG" className="w-56 mx-auto" />
+          </Link>
         </div>
 
         <div className="max-w-sm mx-auto w-full p-4">{children}</div>
