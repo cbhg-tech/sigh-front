@@ -1,47 +1,12 @@
 /* eslint-disable no-console */
-import {
-  ColumnDef,
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from '@tanstack/react-table';
+
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { Badge } from '../../../components/Badge';
 import { Button } from '../../../components/Inputs/Button';
-import { IUser } from '../../../types/User';
 import { useGetUsers } from '../../../dataAccess/hooks/user/useGetUsers';
 import { ActionButtons } from './ActionButtons';
-
-const columns: ColumnDef<IUser>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Nome',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'status',
-    header: 'status',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'role',
-    header: 'RoleAccess',
-    cell: info => {
-      return <Badge type="tertiary">{info.getValue() as string}</Badge>;
-    },
-  },
-  {
-    accessorKey: 'related',
-    header: 'Associação',
-    cell: info => info.getValue(),
-  },
-  {
-    header: '',
-    accessorKey: 'id',
-    cell: info => <ActionButtons id={info.getValue() as string} />,
-  },
-];
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -52,16 +17,21 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
+const COLUMN_NAMES = ['Nome', 'Status', 'RoleAccess', 'Associação', ''];
+
 export function UserListPage() {
   const navigate = useNavigate();
-  // const [data] = useState<Array<IUser>>([...fakeData]);
   const { data, isLoading, isSuccess, isError } = useGetUsers();
 
-  const table = useReactTable({
-    data: data || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const [filter, setFilter] = useState('');
+
+  let tableData = data || [];
+
+  if (filter) {
+    tableData = tableData.filter(user =>
+      user.name.toLowerCase().includes(filter.toLowerCase()),
+    );
+  }
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -78,9 +48,14 @@ export function UserListPage() {
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
-          <TextfieldBare label="Buscar..." name="search" />
+          <TextfieldBare
+            label="Buscar..."
+            name="search"
+            onChange={e => setFilter(e.target.value)}
+          />
         </div>
       </div>
+
       {isLoading && (
         <div className="text-center mt-8">
           <p className="text-light-on-surface-variant text-xl">
@@ -100,38 +75,36 @@ export function UserListPage() {
       {isSuccess && (
         <table className="w-full">
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <th
-                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            <tr>
+              {COLUMN_NAMES.map((columnName, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={columnName}
+                >
+                  {columnName}
+                </th>
+              ))}
+            </tr>
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {tableData.map(user => (
               <tr
                 className="border-b last:border-none border-slate-200"
-                key={row.id}
+                key={user.id}
               >
-                {row.getVisibleCells().map((cell, index) => (
-                  <td
-                    className={`${COLUMN_WIDTH[index]} py-4 px-2`}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{user.name}</td>
+                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                  {user.status}
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  <Badge type="tertiary">{user.status}</Badge>
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  {user.related}
+                </td>
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                  <ActionButtons id={user.id} />
+                </td>
               </tr>
             ))}
           </tbody>
