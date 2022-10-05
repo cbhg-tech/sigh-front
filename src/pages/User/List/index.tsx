@@ -66,7 +66,9 @@ export function UserListPage() {
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
-        <h2 className="text-3xl text-light-on-surface">Listagem de usuários</h2>
+        <h2 className="text-3xl text-light-on-surface">
+          Listagem de usuários {`(${data?.length || 0})`}
+        </h2>
         <Button
           aditionalClasses="w-full lg:w-auto px-6"
           type="button"
