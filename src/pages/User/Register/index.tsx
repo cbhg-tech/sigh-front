@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { useRef, useState } from 'react';
@@ -36,8 +37,11 @@ export function UserRegisterPage() {
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
 
-    if (data.federation && data.team)
-      throw new Error('Selecione uma federação ou um time');
+    if (
+      (data.role === Roles.ADMINFEDERACAO && !data.federation) ||
+      (data.role === Roles.ADMINCLUBE && !data.team)
+    )
+      throw new Error('Selecione uma federação ou um clube');
 
     try {
       await validateForm(data, {
@@ -114,14 +118,10 @@ export function UserRegisterPage() {
               <option value={Roles.ADMIN}>Admin</option>
               <option value={Roles.ADMINFEDERACAO}>AdminFederacao</option>
               <option value={Roles.ADMINCLUBE}>AdminClube</option>
-              <option value={Roles.COMISSAOTECNICA}>ComissaoTecnica</option>
               <option value={Roles.OFICIAL}>Oficial</option>
-              <option value={Roles.USER}>Usuario</option>
             </Select>
           </div>
           <div className="flex-1">
-            {/* TODO: alterar input para federaçao */}
-
             {selectedRole === Roles.ADMINFEDERACAO && (
               <Select label="Federação" name="federation">
                 <option value="">Selecione uma federação</option>
@@ -170,8 +170,9 @@ export function UserRegisterPage() {
           <Button
             aditionalClasses="w-auto px-2"
             type="submit"
-            isLoading={isLoading}
             label="Criar usuário"
+            isLoading={isLoading}
+            disabled={isLoading}
           />
         </div>
       </Form>
