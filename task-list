@@ -1,10 +1,10 @@
 - [x] ajustar css do input de select
 - [x] logo da CBHG ser clicavel para voltar pro login
-- [ ] garantir que o cadastro de usuário está funcionando corretamente
-- [ ] garantir que o cadastro de usuário por admin está funcionando corretamento
+- [x] garantir que o cadastro de usuário está funcionando corretamente
+- [x] garantir que o cadastro de usuário por admin está funcionando corretamento
 - [x] garantir que o cadsatro de federação está funcionando corretamente e salvando apenas uma federação por id no public
-- [ ] garantir que o cadastro de clube está funcionando corretamente e salvando apenas uma federaçao por id no public
-- [ ] garantir que o cadastro de usuário é unico por CPF
+- [x] garantir que o cadastro de clube está funcionando corretamente e salvando apenas uma federaçao por id no public
+- [x] garantir que o cadastro de usuário é unico por CPF
 - [ ] usuário tipo atleta não pode ter ação na lista
 - [ ] aprovação de ficha de atleta ter dois botões para ação
 - [ ] usuário pode navegar por paginas sem ter completado a ficha mas deve aparecer um warning

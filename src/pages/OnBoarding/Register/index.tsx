@@ -21,6 +21,7 @@ interface IForm {
   password: string;
   birthDate: string;
   team: string;
+  document: string;
 }
 
 export function RegisterPage() {
@@ -38,6 +39,7 @@ export function RegisterPage() {
         email: Yup.string()
           .email('Email inválido')
           .required('Email obrigatório'),
+        document: Yup.string().required('Documento obrigatório'),
         password: Yup.string().required('Senha obrigatória'),
         birthDate: Yup.date(),
         team: Yup.string().required('Clube obrigatório'),
@@ -64,7 +66,8 @@ export function RegisterPage() {
         return formRef.current?.setErrors(errors);
       }
 
-      toast.error('Ops! Houve um erro ao criar o usuário!');
+      // @ts-ignore
+      toast.error(err.message || 'Ops! Houve um erro ao criar o usuário!');
     }
   }
 
@@ -77,6 +80,7 @@ export function RegisterPage() {
         <Form onSubmit={data => handleSubmit(data)} ref={formRef}>
           <Textfield type="text" name="name" label="Nome completo" />
           <Textfield type="email" name="email" label="Email" />
+          <Textfield type="text" name="document" label="Documento" />
           <Textfield
             type="date"
             name="birthDate"

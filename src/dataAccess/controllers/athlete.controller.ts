@@ -16,15 +16,20 @@ import { auth, db } from '../../app/FirebaseConfig';
 import { Roles } from '../../enums/Roles';
 import { Status } from '../../enums/Status';
 import { IAthletesDocuments } from '../../pages/Athletes/Register/register.context';
+import { validateIfDocumentExist } from '../../services/validateIfDocumentExists';
 import { IAthlete } from '../../types/Athlete';
 import { IUser } from '../../types/User';
 import { IUserApproval } from '../../types/UserApproval';
 import { UploadFile } from '../../utils/uploadFile';
 
 export interface ICreateAthlete
-  extends Omit<IUser, 'id' | 'status' | 'role' | 'photo' | 'federation'> {
+  extends Omit<
+    IUser,
+    'id' | 'status' | 'role' | 'photo' | 'federation' | 'document'
+  > {
   password: string;
   birthDate: string;
+  document: string;
 }
 
 export interface IUpdateAthlete extends IAthlete {
@@ -34,7 +39,9 @@ export interface IUpdateAthlete extends IAthlete {
 
 export class AthleteController {
   public async create(data: ICreateAthlete) {
-    const { email, name, password, team, birthDate } = data;
+    const { email, name, password, team, birthDate, document } = data;
+
+    await validateIfDocumentExist(document);
 
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -51,6 +58,7 @@ export class AthleteController {
       athleteProfile: {
         birthDate: new Date(birthDate),
       },
+      document,
     });
 
     await setDoc(doc(db, 'userApproval', user.uid), {

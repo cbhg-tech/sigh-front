@@ -16,5 +16,6 @@ export interface IUser {
   role: string;
   status: string;
   photo?: string;
+  document?: string;
   athleteProfile?: IAthlete;
 }

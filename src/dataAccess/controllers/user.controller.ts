@@ -14,6 +14,7 @@ import { db, auth } from '../../app/FirebaseConfig';
 import { IUser } from '../../types/User';
 import { Status } from '../../enums/Status';
 import { Roles } from '../../enums/Roles';
+import { validateIfDocumentExist } from '../../services/validateIfDocumentExists';
 
 export interface ICreateUser extends Omit<IUser, 'id' | 'status'> {
   email: string;
@@ -63,7 +64,11 @@ export class UserController {
   }
 
   public async create(data: ICreateUser) {
-    const { email, password, name, role, team, federation } = data;
+    const { email, password, name, role, team, federation, document } = data;
+
+    if (role === Roles.USER && document) {
+      await validateIfDocumentExist(document);
+    }
 
     const { user } = await createUserWithEmailAndPassword(
       auth,
@@ -79,6 +84,7 @@ export class UserController {
       related: team?.name || federation?.name,
       team: team || {},
       federation: federation || {},
+      document: document || '',
     });
   }
 
