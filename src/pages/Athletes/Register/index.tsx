@@ -1,6 +1,11 @@
+import { MdOutlineCloudUpload } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import { Badge } from '../../../components/Badge';
 import { useGlobal } from '../../../contexts/global.context';
+import { usePutAthlete } from '../../../dataAccess/hooks/athlete/usePutAthlete';
+import { usePutUser } from '../../../dataAccess/hooks/user/usePutUser';
 import { Status } from '../../../enums/Status';
+import { UploadFile } from '../../../utils/uploadFile';
 import { BasicData } from './BasicData';
 import { DocumentationUpload } from './DocumentationUpload';
 import { HospitalData } from './HospitalData';
@@ -21,17 +26,51 @@ const USER_NOT_FOUND_IMG =
 export function AthletesRegisterContent() {
   const { activeTab, setActiveTab } = useAthletesRegister();
   const { user } = useGlobal();
+  const { mutateAsync, isLoading } = usePutUser();
+
+  async function handleProfilePhotoUpload(file: File) {
+    const photoUrl = await UploadFile('/usersAvatar/', file);
+
+    try {
+      mutateAsync({
+        ...user,
+        photoUrl,
+      });
+    } catch (err) {
+      toast.error('Erro ao atualizar foto de perfil');
+    }
+  }
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex gap-2 items-center mb-4">
         <div className="w-24 h-24 rounded-full">
-          {/* TODO: Adicionar botão para upload de foto */}
-          <img
-            src={user?.photo || USER_NOT_FOUND_IMG}
-            alt={user?.name}
-            className="w-24 h-24 rounded-full object-cover bg-light-secondary-container"
-          />
+          {!isLoading && (
+            <label
+              htmlFor="userAvatar"
+              className="relative cursor-pointer group"
+            >
+              <input
+                id="userAvatar"
+                type="file"
+                className="hidden"
+                accept="image/png, image/jpeg"
+                onChange={e => handleProfilePhotoUpload(e.target.files![0])}
+              />
+              <div className="absolute z-10 top-4 left-0 w-24 h-24 rounded-full bg-black/20 backdrop-blur flex flex-col justify-center items-center text-white duration-200 opacity-0 group-hover:opacity-100">
+                <MdOutlineCloudUpload size="2rem" />
+                <p className="text-xs">Alterar foto</p>
+              </div>
+              <img
+                src={user?.photoUrl || USER_NOT_FOUND_IMG}
+                alt={user?.name}
+                className="w-24 h-24 z-0 rounded-full object-cover bg-light-secondary-container"
+              />
+            </label>
+          )}
+          {isLoading && (
+            <div className="w-24 h-24 rounded-full bg-light-secondary-container animate-pulse" />
+          )}
         </div>
         <div>
           <div className="flex items-center gap-2">

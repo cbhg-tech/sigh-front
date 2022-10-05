@@ -51,10 +51,11 @@ export function Header({ toogleSideMenu, title }: IProps) {
       <button
         type="button"
         onClick={() => setIsDropdownOpen(val => !val)}
-        className="w-9 h-9 rounded-full"
+        className="w-auto h-9 rounded-full flex gap-4 items-center text-light-on-surface-variant"
       >
+        {user?.name}
         <img
-          src={user?.photo || USER_NOT_FOUND_IMG}
+          src={user?.photoUrl || USER_NOT_FOUND_IMG}
           alt={user?.name}
           className="w-9 h-9 rounded-full object-cover"
         />

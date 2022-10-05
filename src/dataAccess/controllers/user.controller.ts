@@ -88,6 +88,10 @@ export class UserController {
     });
   }
 
+  public async put(data: Partial<IUser>) {
+    await updateDoc(doc(db, 'users', data.id!), { ...data });
+  }
+
   public async disable(id: string) {
     await updateDoc(doc(db, 'users', id), {
       status: Status.INACTIVE,
