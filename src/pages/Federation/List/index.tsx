@@ -1,45 +1,10 @@
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFederations';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
-import { IFederation } from '../../../types/Federation';
 import { ActionsButtons } from './ActionsButton';
-
-const columns: ColumnDef<IFederation>[] = [
-  {
-    accessorKey: 'initials',
-    header: 'Sigla',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'uf',
-    header: 'Estado',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: info => info.getValue(),
-  },
-  {
-    accessorKey: 'presidentName',
-    header: 'Presidente',
-    cell: info => info.getValue(),
-  },
-  {
-    header: '',
-    accessorKey: 'id',
-    cell: info => <ActionsButtons id={info.getValue() as string} />,
-  },
-];
 
 const COLUMN_WIDTH = [
   'w-1/3 lg:w-1/4',
@@ -49,6 +14,8 @@ const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/5',
   'w-auto',
 ];
+
+const COLUMN_NAME = ['Sigla', 'Estado', 'Email', 'Presidente', ''];
 
 export function FederationListPage() {
   useRedirectPendingAthlete();
@@ -62,12 +29,6 @@ export function FederationListPage() {
   tableData = tableData.filter(federation =>
     federation.name.toLowerCase().includes(filter.toLowerCase()),
   );
-
-  const table = useReactTable({
-    data: tableData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -87,6 +48,7 @@ export function FederationListPage() {
           <TextfieldBare
             label="Buscar..."
             name="search"
+            value={filter}
             onChange={e => setFilter(e.target.value)}
           />
         </div>
@@ -117,38 +79,38 @@ export function FederationListPage() {
       {isSuccess && data.length > 0 && (
         <table className="w-full">
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <th
-                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            <tr>
+              {COLUMN_NAME.map((name, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={name}
+                >
+                  {name}
+                </th>
+              ))}
+            </tr>
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {tableData.map(federation => (
               <tr
                 className="border-b last:border-none border-slate-200"
-                key={row.id}
+                key={federation.id}
               >
-                {row.getVisibleCells().map((cell, index) => (
-                  <td
-                    className={`${COLUMN_WIDTH[index]} py-4 px-2`}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                  {federation.initials}
+                </td>
+                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                  {federation.uf}
+                </td>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  {federation.email}
+                </td>
+                <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
+                  {federation.presidentName}
+                </td>
+                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
+                  <ActionsButtons id={federation.id} />
+                </td>
               </tr>
             ))}
           </tbody>
