@@ -21,6 +21,7 @@ import { ApprovalDetailsPage } from '../../pages/AthleteApproval/Details';
 import { TransferRequestPage } from '../../pages/Transfer/Request';
 import { TransferListPage } from '../../pages/Transfer/List';
 import { TransferApprovalWorkflow } from '../../pages/Transfer/ApprovalWorkflow';
+import { AthletesReportPage } from '../../pages/Athletes/Report';
 
 export function Router() {
   return (
@@ -53,6 +54,10 @@ export function Router() {
                 <AthletesRegisterPage />
               </Navigation>
             }
+          />
+          <Route
+            path="/app/atletas/relatorio"
+            element={<AthletesReportPage />}
           />
           <Route
             path="/app/perfil"

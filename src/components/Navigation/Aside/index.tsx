@@ -1,8 +1,9 @@
-import { FaUserAlt, FaUserFriends, FaUsers } from 'react-icons/fa';
+import { FaUserAlt, FaUserFriends, FaUsers, FaUsersCog } from 'react-icons/fa';
 import {
   MdChecklist,
   MdCompareArrows,
   MdDashboard,
+  MdInsertDriveFile,
   MdOutlineClose,
   MdShield,
 } from 'react-icons/md';
@@ -71,12 +72,20 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Atletas"
           icon={FaUsers}
         />
+        {user?.role === Roles.ADMINCLUBE && (
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/usuarios/listagem"
+            label="Comissão técnica"
+            icon={FaUserFriends}
+          />
+        )}
         {isAdmin && (
           <ListItem
             closeModal={() => toogleSideMenu(false)}
             href="/app/usuarios/listagem"
             label="Usuário do sistema"
-            icon={FaUserFriends}
+            icon={FaUsersCog}
           />
         )}
         <ListItem
@@ -106,6 +115,12 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
               href="/app/restrito/transferencia/listagem"
               label="Aprovação de transferencias"
               icon={MdChecklist}
+            />
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/atletas/relatorio"
+              label="Relatório de atletas"
+              icon={MdInsertDriveFile}
             />
           </>
         )}

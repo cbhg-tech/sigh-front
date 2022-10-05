@@ -96,6 +96,24 @@ export class AthleteController {
     return athletes;
   }
 
+  public async listAll() {
+    const q = query(collection(db, 'users'), where('role', '==', Roles.USER));
+
+    const users = await getDocs(q);
+
+    const athletes = [] as Array<IUser>;
+
+    users.forEach(doc => {
+      // @ts-ignore
+      athletes.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    return athletes;
+  }
+
   public async put(data: Partial<IUpdateAthlete>) {
     let commitmentTermUrl = '';
     let medicalCertificateUrl = '';
