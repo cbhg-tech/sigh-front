@@ -7,7 +7,7 @@
 - [x] garantir que o cadastro de usuário é unico por CPF
 - [ ] usuário tipo atleta não pode ter ação na lista
 - [ ] aprovação de ficha de atleta ter dois botões para ação
-- [ ] usuário pode navegar por paginas sem ter completado a ficha mas deve aparecer um warning
+- [x] usuário pode navegar por paginas sem ter completado a ficha mas deve aparecer um warning
 - [ ] usuário com ficha negada pode acessar conta novamente e melhorar o perfil
 - [ ] usuário pode fazer upload de foto de perfil
 - [ ] filtro das listagens devem funcionar corretamente
