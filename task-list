@@ -17,4 +17,4 @@
 - [ ] input file abrir com links já preenchidos
 - [x] preencher dados do dashboard
 - [ ] criar cadastro de comissão tecnica
-- [ ] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)
+- [x] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)

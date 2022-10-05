@@ -7,6 +7,8 @@ interface IProps {
 }
 
 export function OnBoardingContainer({ children }: IProps) {
+  const randomNumber = Math.floor(Math.random() * 10);
+
   return (
     <div className="flex items-stretch h-screen overflow-hidden">
       <div className="flex flex-col justify-between w-full lg:max-w-2xl overflow-y-auto bg-light-background">
@@ -23,7 +25,11 @@ export function OnBoardingContainer({ children }: IProps) {
           </p>
         </div>
       </div>
-      <div className="flex-1 hidden bg-center bg-no-repeat bg-cover lg:block bg-on-boarding" />
+      <div
+        className={`flex-1 hidden bg-center bg-no-repeat bg-cover lg:block ${
+          randomNumber > 5 ? 'bg-on-boarding-one' : 'bg-on-boarding-two'
+        }`}
+      />
     </div>
   );
 }

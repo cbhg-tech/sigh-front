@@ -25,7 +25,11 @@ interface IForm {
   federation: string;
 }
 
-export function UserRegisterPage() {
+interface IProps {
+  isEditing?: boolean;
+}
+
+export function UserRegisterPage({ isEditing = false }: IProps) {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { mutateAsync, isLoading } = useCreateUser();
