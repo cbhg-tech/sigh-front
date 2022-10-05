@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { MdCheck, MdOpenInNew } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { CgSpinner } from 'react-icons/cg';
 import { useGetAppovalDetails } from '../../../dataAccess/hooks/athlete/useGetApprovalDetails';
 import { MultineTextfieldBare } from '../../../components/Inputs/MultilineTextfieldBare';
 import { Button } from '../../../components/Inputs/Button';
@@ -18,8 +19,6 @@ export function ApprovalDetailsPage() {
 
   const { data } = useGetAppovalDetails(id);
   const { mutateAsync, isLoading } = useUpdateApprovalStatus();
-
-  const [isApproved, setIsApproved] = useState(false);
   const [note, setNote] = useState('');
 
   useEffect(() => {
@@ -28,12 +27,10 @@ export function ApprovalDetailsPage() {
 
       switch (user?.role) {
         case Roles.ADMINCLUBE:
-          setIsApproved(approval?.teamApproved);
           setNote(approval?.logTeam || '');
           break;
         case Roles.ADMINFEDERACAO:
         case Roles.ADMIN:
-          setIsApproved(approval?.cbhgApproved);
           setNote(approval?.logCbhg || '');
           break;
         default:
@@ -42,7 +39,7 @@ export function ApprovalDetailsPage() {
     }
   }, [data, user]);
 
-  const handleApprove = async () => {
+  const handleApprove = async (isApproved: boolean) => {
     const approvalData = data?.approval;
 
     if (!approvalData) throw new Error('Approval data not found');
@@ -84,7 +81,7 @@ export function ApprovalDetailsPage() {
         if (approvalData.cbhgApproved && approvalData.teamApproved)
           approvalData.status = Status.ACTIVE;
       } else {
-        approvalData.status = Status.INACTIVE;
+        approvalData.status = Status.REJECTED;
 
         if (user?.role === Roles.ADMINCLUBE) approvalData.logTeam = note;
         if (user?.role === Roles.ADMINFEDERACAO) approvalData.logTeam = note;
@@ -262,21 +259,6 @@ export function ApprovalDetailsPage() {
       <h2 className="text-3xl text-light-on-surface my-4">Aprovar ficha?</h2>
       {showApprovalActions ? (
         <div className="mt-8">
-          <label
-            htmlFor="approved"
-            className="mb-4 text-light-on-surface flex items-center gap-2 relative"
-          >
-            <input
-              id="approved"
-              type="checkbox"
-              className="peer appearance-none w-6 h-6 border-2 border-light-outline rounded bg-light-surface checked:border-light-tertiary hover:brightness-90"
-              onChange={e => setIsApproved(e.target.checked)}
-            />
-            <div className="invisible grid place-items-center peer-checked:visible w-4 h-4 rounded-sm absolute bg-light-tertiary top-1 left-1">
-              <MdCheck size="1rem" className="text-light-on-tertiary" />
-            </div>
-            Aprovar pela {user.role === Roles.ADMIN ? 'CBHG' : 'Clube'}?
-          </label>
           <MultineTextfieldBare
             name="note"
             label="Observação"
@@ -285,22 +267,36 @@ export function ApprovalDetailsPage() {
             value={note}
           />
           <div className="col-span-1 lg:col-span-3 mt-4">
-            <div className="flex gap-2 justify-end">
-              <Button
-                type="button"
-                aditionalClasses="w-auto px-2 text-light-on-surface-variant"
-                label="Cancelar"
-                variant="primary-border"
-              />
-              <Button
-                type="button"
-                aditionalClasses="w-auto px-2"
-                label="Salvar"
-                variant="primary"
-                isLoading={isLoading}
-                disabled={isLoading}
-                onClick={handleApprove}
-              />
+            <div className="flex flex-col-reverse lg:flex-row gap-2">
+              {!isLoading && (
+                <>
+                  <Button
+                    type="button"
+                    aditionalClasses="w-auto px-20 text-light-on-surface-variant"
+                    label="Voltar"
+                    variant="primary-border"
+                    onClick={() => navigate('/app/restrito/atletas/aprovacao')}
+                  />
+                  <Button
+                    label="Rejeitar"
+                    variant="error"
+                    onClick={() => handleApprove(false)}
+                  />
+                  <Button
+                    label="Aprovar"
+                    variant="primary"
+                    onClick={() => handleApprove(true)}
+                  />
+                </>
+              )}
+              {isLoading && (
+                <div className="w-full flex justify-center">
+                  <div className="flex flex-col items-center gap-4 text-light-on-surface-variant">
+                    <CgSpinner size="2rem" className="animate-spin" />
+                    <p>Carregando...</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

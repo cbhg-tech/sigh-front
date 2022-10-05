@@ -44,6 +44,9 @@ export function AthletesRegisterContent() {
             {user?.status === Status.PENDING && (
               <Badge type="warning">Pendente</Badge>
             )}
+            {user?.status === Status.REJECTED && (
+              <Badge type="error">Rejeitado</Badge>
+            )}
             {user?.status === Status.INACTIVE && (
               <Badge type="error">Inativo</Badge>
             )}
