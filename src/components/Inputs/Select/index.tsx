@@ -45,7 +45,7 @@ export function Select({
         )}
         <div className="relative flex-1 h-full">
           <select
-            className="w-full h-full ml-[-0.25rem] bg-transparent outline-none resize-none placeholder:text-transparent"
+            className="w-full h-full ml-[-0.25rem] bg-transparent outline-none resize-none placeholder:text-transparent appearance-none"
             defaultValue={defaultValue}
             ref={inputRef}
             {...rest}
