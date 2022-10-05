@@ -51,6 +51,7 @@ export function TransferRequestPage() {
         user: {
           id: user.id,
           name: user.name,
+          photoUrl: user.photoUrl,
         },
         destinationTeam: team!.name,
         destinationTeamId: team!.id,

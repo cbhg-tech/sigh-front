@@ -54,6 +54,7 @@ export function RegisterPage() {
           id: team!.id,
           name: team!.name,
         },
+        updatedAt: new Date().toISOString(),
       });
 
       toast.success('Cadastro realizado com sucesso!');

@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { IFederation } from '../../types/Federation';
-import { IPublicData } from '../../types/PublicTeams';
+import { IPublicData } from '../../types/PublicData';
 import { UploadFile } from '../../utils/uploadFile';
 
 export interface ICreateFed

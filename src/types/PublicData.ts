@@ -3,5 +3,6 @@ export interface IPublicData {
     id: string;
     federationId?: string;
     name: string;
+    logoUrl?: string;
   }>;
 }

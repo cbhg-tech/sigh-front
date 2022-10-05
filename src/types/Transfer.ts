@@ -11,10 +11,13 @@ export interface ITransfer {
   user: {
     id: string;
     name: string;
+    photoUrl?: string;
   };
   currentTeam: string;
+  currentTeamLogoUrl?: string;
   currentTeamId: string;
   destinationTeam: string;
+  destinationTeamLogoUrl?: string;
   destinationTeamId: string;
   obs: string;
   status: string;

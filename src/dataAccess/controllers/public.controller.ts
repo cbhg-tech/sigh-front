@@ -1,6 +1,6 @@
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
-import { IPublicData } from '../../types/PublicTeams';
+import { IPublicData } from '../../types/PublicData';
 
 export class PublicController {
   public async getTeams() {

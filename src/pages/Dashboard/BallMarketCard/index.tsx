@@ -1,21 +1,29 @@
 import { BiTransferAlt } from 'react-icons/bi';
 
-import UserImg from '../../../assets/user-img.jpg';
+import dayjs from 'dayjs';
 import ImgNotFound from '../../../assets/image-not-found.png';
 import { Badge } from '../../../components/Badge';
+import { ITransfer } from '../../../types/Transfer';
+import { Status } from '../../../enums/Status';
 
-export function BallMarketCard() {
+interface IProps {
+  transfer: ITransfer;
+}
+
+const USER_NOT_FOUND_IMG =
+  'https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/96/1A1A1A/external-user-user-tanah-basah-glyph-tanah-basah-4.png';
+
+export function BallMarketCard({ transfer }: IProps) {
   return (
     <div className="flex flex-col bg-light-surface rounded-2xl p-6 mb-3">
       <div className="flex mb-4 gap-4 items-center">
         <img
           className="w-14 h-14 rounded-full object-cover"
-          src={UserImg}
+          src={transfer.user.photoUrl || USER_NOT_FOUND_IMG}
           alt="Foto de perfil do usuário"
         />
         <div>
-          <p className="text-xl text-light-on-surface">Nome do atleta</p>
-          <p className="text-light-on-surface-variant">Sub-18</p>
+          <p className="text-xl text-light-on-surface">{transfer.user.name}</p>
         </div>
       </div>
 
@@ -24,11 +32,11 @@ export function BallMarketCard() {
           <p className="text-light-on-surface-variant text-sm">Origem</p>
           <img
             className="w-24 h-24 rounded-full object-cover my-2"
-            src={ImgNotFound}
+            src={transfer.currentTeamLogoUrl || ImgNotFound}
             alt="Clube de origem"
           />
           <p className="line-clamp-1 text-light-on-surface">
-            Deodoro Hockei Clube
+            {transfer.currentTeam}
           </p>
         </div>
         <BiTransferAlt size="2rem" className="text-light-on-surface-variant" />
@@ -36,16 +44,31 @@ export function BallMarketCard() {
           <p className="text-light-on-surface-variant text-sm">Destino</p>
           <img
             className="w-24 h-24 rounded-full object-cover my-2"
-            src={ImgNotFound}
+            src={transfer.destinationTeamLogoUrl || ImgNotFound}
             alt="Clube de destino"
           />
-          <p className="line-clamp-1 text-light-on-surface">Rio Hockei Clube</p>
+          <p className="line-clamp-1 text-light-on-surface">
+            {transfer.destinationTeam}
+          </p>
         </div>
       </div>
 
       <div className="flex justify-between lg:justify-center gap-2">
-        <Badge type="tertiary">Negociando</Badge>
-        <p className="text-light-on-surface-variant">21/09/2022</p>
+        {transfer.status === Status.PENDING && (
+          <Badge type="tertiary">Negociando</Badge>
+        )}
+
+        {transfer.status === Status.ACTIVE && (
+          <Badge type="primary">Aprovado</Badge>
+        )}
+
+        {transfer.status === Status.REJECTED && (
+          <Badge type="error">Negado</Badge>
+        )}
+
+        <p className="text-light-on-surface-variant">
+          {dayjs(transfer.transferData).format('DD/MM/YYYY')}
+        </p>
       </div>
     </div>
   );

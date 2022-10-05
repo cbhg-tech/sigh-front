@@ -11,7 +11,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
-import { IPublicData } from '../../types/PublicTeams';
+import { IPublicData } from '../../types/PublicData';
 import { ITeam } from '../../types/Team';
 import { UploadFile } from '../../utils/uploadFile';
 
@@ -83,14 +83,6 @@ export class TeamController {
       teams: arrayUnion(id),
     });
 
-    await updateDoc(doc(db, 'public', 'teams'), {
-      list: arrayUnion({
-        id,
-        name,
-        federationId: federation.id,
-      }),
-    });
-
     const logo = await UploadFile(`teams/${id}/${logoFile.name}`, logoFile);
     const electionMinutes = await UploadFile(
       `teams/${id}/${electionMinutesFile.name}`,
@@ -110,6 +102,15 @@ export class TeamController {
       electionMinutes,
       presidentDocument,
       federationDocument,
+    });
+
+    await updateDoc(doc(db, 'public', 'teams'), {
+      list: arrayUnion({
+        id,
+        name,
+        federationId: federation.id,
+        logoUrl: logo,
+      }),
     });
   }
 

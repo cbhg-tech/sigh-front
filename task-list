@@ -11,7 +11,7 @@
 - [x] usuário com ficha negada pode acessar conta novamente
 - [x] ficha de usuário ser um wizard
 - [x] usuário com ficha negada pode enviar ficha novamente para analise
-- [ ] usuário pode fazer upload de foto de perfil
+- [x] usuário pode fazer upload de foto de perfil
 - [x] filtro das listagens devem funcionar corretamente
 - [ ] editar abrir pagina de formulario com os dados preenchidos
 - [ ] input file abrir com links já preenchidos

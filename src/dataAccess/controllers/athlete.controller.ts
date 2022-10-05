@@ -59,6 +59,7 @@ export class AthleteController {
         birthDate: new Date(birthDate),
       },
       document,
+      updatedAt: new Date(),
     });
 
     await setDoc(doc(db, 'userApproval', user.uid), {
@@ -69,6 +70,7 @@ export class AthleteController {
       teamApproved: false,
       cbhgApproved: false,
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
@@ -149,10 +151,12 @@ export class AthleteController {
       athleteProfile: {
         ...data,
       },
+      updatedAt: new Date(),
     });
 
     await updateDoc(doc(db, 'userApproval', userId), {
       gender: data.gender,
+      updatedAt: new Date(),
     });
   }
 
@@ -211,11 +215,13 @@ export class AthleteController {
 
     await updateDoc(doc(db, 'userApproval', id), {
       ...data,
+      updatedAt: new Date(),
     });
 
     if (status !== Status.PENDING) {
       await updateDoc(doc(db, 'users', id), {
         status,
+        updatedAt: new Date(),
       });
     }
   }

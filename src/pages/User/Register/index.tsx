@@ -67,6 +67,7 @@ export function UserRegisterPage() {
           team: {
             id: team!.id,
             name: team!.name,
+            logoUrl: team!.logoUrl,
           },
         });
       }

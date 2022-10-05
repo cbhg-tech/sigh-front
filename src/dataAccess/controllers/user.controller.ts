@@ -85,16 +85,21 @@ export class UserController {
       team: team || {},
       federation: federation || {},
       document: document || '',
+      updatedAt: new Date(),
     });
   }
 
   public async put(data: Partial<IUser>) {
-    await updateDoc(doc(db, 'users', data.id!), { ...data });
+    await updateDoc(doc(db, 'users', data.id!), {
+      ...data,
+      updatedAt: new Date(),
+    });
   }
 
   public async disable(id: string) {
     await updateDoc(doc(db, 'users', id), {
       status: Status.INACTIVE,
+      updatedAt: new Date(),
     });
   }
 }
