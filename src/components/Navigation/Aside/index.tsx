@@ -5,6 +5,7 @@ import {
   MdDashboard,
   MdInsertDriveFile,
   MdOutlineClose,
+  MdOutlineListAlt,
   MdShield,
 } from 'react-icons/md';
 import { SiGoogleassistant } from 'react-icons/si';
@@ -112,15 +113,22 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
             />
             <ListItem
               closeModal={() => toogleSideMenu(false)}
-              href="/app/restrito/transferencia/listagem"
-              label="Aprovação de transferencias"
+              href="/app/restrito/transferencia/listagem/pendentes"
+              label="Aprovação de transferências"
               icon={MdChecklist}
             />
             <ListItem
               closeModal={() => toogleSideMenu(false)}
-              href="/app/atletas/relatorio"
+              href="/app/restrito/atletas/relatorio"
               label="Relatório de atletas"
               icon={MdInsertDriveFile}
+            />
+            <ListItem
+              closeModal={() => toogleSideMenu(false)}
+              href="/app/restrito/transferencia/listagem"
+              label="Transferências"
+              icon={MdOutlineListAlt}
+              end
             />
           </>
         )}

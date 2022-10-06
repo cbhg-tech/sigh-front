@@ -89,7 +89,7 @@ export function AthletesReportPage() {
   }
 
   return (
-    <div className="w-screen h-screen bg-light-surface-1 p-4">
+    <div className="min-w-screen w-full h-screen bg-light-surface-1 p-4">
       <header className="flex items-center gap-4 justify-between mb-8">
         <Button
           aditionalClasses="w-auto"
@@ -169,6 +169,7 @@ export function AthletesReportPage() {
             </th>
           </tr>
         </thead>
+
         <tbody>
           {data?.map(athlete => (
             <tr key={athlete.id}>
@@ -237,6 +238,12 @@ export function AthletesReportPage() {
           ))}
         </tbody>
       </table>
+
+      {data && data.length === 0 && (
+        <p className="text-light-on-surface w-full text-center mt-8">
+          Nenhum atleta encontrado
+        </p>
+      )}
     </div>
   );
 }

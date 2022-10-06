@@ -27,7 +27,6 @@
 - [ ] na listagem de clube, ao lado do nome, colocar a logo
 
 ======== bugs
-
 - [ ] data de transferencia pode ser qualquer uma
 - [ ] label do input de data ser "Data real da solicitação de transferencia"
 - [ ] usar parametrizaçao do periodo de transfenrecia

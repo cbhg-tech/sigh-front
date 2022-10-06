@@ -103,20 +103,17 @@ export function AthletesListPage() {
           />
         </div>
       </div>
+
       {isLoading && (
-        <div className="text-center mt-8">
-          <p className="text-light-on-surface-variant text-xl">
-            Buscando dados ...
-          </p>
-        </div>
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Buscando dados ...
+        </p>
       )}
 
       {!isLoading && tableData.length === 0 && (
-        <div className="text-center mt-8">
-          <p className="text-light-on-error-container text-xl">
-            Error ao buscar dados, tente novamente
-          </p>
-        </div>
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Nenhum atleta encontrado
+        </p>
       )}
 
       {!isLoading && tableData.length > 0 && (
