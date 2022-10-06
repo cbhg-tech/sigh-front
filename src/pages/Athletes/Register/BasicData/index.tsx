@@ -142,11 +142,11 @@ export function BasicData() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-6 lg:gap-2">
-            <div className="col-span-1 lg:col-span-4">
-              <Textfield name="address.complement" label="Complemento" />
-            </div>
-            <div className="col-span-1 lg:col-span-2">
+            <div className="col-span-1 lg:col-span-3">
               <Textfield name="address.number" label="Número*" />
+            </div>
+            <div className="col-span-1 lg:col-span-3">
+              <Textfield name="address.complement" label="Complemento" />
             </div>
           </div>
 
@@ -155,7 +155,7 @@ export function BasicData() {
               <Select
                 name="address.state"
                 label="Estado*"
-                defaultValue={user?.athleteProfile?.address.state}
+                defaultValue={user?.athleteProfile?.address?.state}
               >
                 <option value="">Selecione um estado</option>
                 {States.map(state => (

@@ -23,7 +23,7 @@ export class TransferController {
     });
   }
 
-  public async getAll() {
+  public async getPending() {
     const q = query(
       collection(db, 'transfers'),
       where('status', '==', Status.PENDING),

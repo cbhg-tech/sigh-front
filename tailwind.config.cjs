@@ -6,8 +6,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'on-boarding-one': "url('assets/onboarding-one.jpeg')",
-        'on-boarding-two': "url('assets/onboarding-two.jpeg')",
+        'on-boarding': "url('assets/onboarding.jpg')",
       },
       colors: {
         light: {

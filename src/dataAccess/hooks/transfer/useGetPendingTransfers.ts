@@ -3,12 +3,12 @@ import { TransferController } from '../../controllers/transfer.controller';
 
 const transferController = new TransferController();
 
-async function getAllTransfers() {
-  return transferController.getAll();
+async function getPendingTransfers() {
+  return transferController.getPending();
 }
 
-export function useGetAllTransfers() {
-  return useQuery(['getAllTransfers'], () => getAllTransfers(), {
+export function useGetPendingTransfers() {
+  return useQuery(['getPendingTransfers'], () => getPendingTransfers(), {
     refetchOnWindowFocus: false,
   });
 }

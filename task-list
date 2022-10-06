@@ -1,3 +1,4 @@
+======== taskes
 - [x] ajustar css do input de select
 - [x] logo da CBHG ser clicavel para voltar pro login
 - [x] garantir que o cadastro de usuário está funcionando corretamente
@@ -16,7 +17,27 @@
 - [ ] editar abrir pagina de formulario com os dados preenchidos
 - [ ] input file abrir com links já preenchidos
 - [x] preencher dados do dashboard
-- [ ] criar cadastro de comissão tecnica
+- [ ] criar cadastro de comissão tecnica (só clube pode cadastrar, mas geral pode ver pode geral sem CPF)
 - [x] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)
 - [x] criar pagina de relatório do atleta
 - [x] pagina de relatorio do atleta ter export para excel
+- [ ] criar tela de listagem de transferencias
+- [ ] fazer envio de emails de notificações
+- [ ] colocar o logo da CBHG no menu do sidebar
+- [ ] na listagem de clube, ao lado do nome, colocar a logo
+
+======== bugs
+
+- [ ] data de transferencia pode ser qualquer uma
+- [ ] label do input de data ser "Data real da solicitação de transferencia"
+- [ ] usar parametrizaçao do periodo de transfenrecia
+- [ ] fluxo de transferencia não ta funcionando corretamente (não está indo para confederaçao (clube > federaçao > confederaçao))
+- [ ] id do atleta ser formado por: ano de cadastro + sequencial de usuário atleta
+- [ ] cadastro do club a logo está como logo da federaçao
+
+======== fluxos
+- [ ] aprovaçao da ficha de atleta: clube > federaçao > confederaçao
+- [ ] cadastro de projetos parceiros: ADMINCLUBE, ADMINFED & GOD
+- [ ] metrica de envio de email: todas vez que alguem aprova ou rejeita uma ficha ou transferencia (quem recebe é o atleta e o proximo aprovador)
+- [ ] funcao (texto) nome, cpf e genero (não é usuário mas o CPF só pode estar vinculado aquele clube)
+

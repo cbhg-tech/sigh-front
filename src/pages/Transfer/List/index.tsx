@@ -7,7 +7,7 @@ import {
 import dayjs from 'dayjs';
 
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
-import { useGetAllTransfers } from '../../../dataAccess/hooks/transfer/useGetAllTransfers';
+import { useGetPendingTransfers } from '../../../dataAccess/hooks/transfer/useGetPendingTransfers';
 import { ITransfer } from '../../../types/Transfer';
 import { ActionButton } from './ActionButton';
 
@@ -58,8 +58,16 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
+const COLUMN_NAME = [
+  'Nome',
+  'Clube de origem',
+  'Clube de destino',
+  'Data da transferencia',
+  '',
+];
+
 export function TransferListPage() {
-  const { data, isError, isLoading, isSuccess } = useGetAllTransfers();
+  const { data, isError, isLoading, isSuccess } = useGetPendingTransfers();
 
   const table = useReactTable({
     data: data || [],
@@ -99,23 +107,16 @@ export function TransferListPage() {
       {isSuccess && (
         <table className="w-full">
           <thead>
-            {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, index) => (
-                  <th
-                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
+            <tr>
+              {COLUMN_NAME.map((columnName, index) => (
+                <th
+                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  key={columnName}
+                >
+                  {columnName}
+                </th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {table.getRowModel().rows.map(row => (
