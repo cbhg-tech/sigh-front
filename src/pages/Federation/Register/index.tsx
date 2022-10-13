@@ -127,6 +127,7 @@ export function FederationRegisterPage() {
             name="logo-file"
             label="Logo da federação"
             onChange={e => setFiles({ ...files, logo: e.target.files?.[0] })}
+            accept="image/png, image/jpeg, image/jpg"
           />
           <FileInput
             name="federation-file"

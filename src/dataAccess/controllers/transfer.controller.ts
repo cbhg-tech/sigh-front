@@ -12,7 +12,10 @@ import { db } from '../../app/FirebaseConfig';
 import { Status } from '../../enums/Status';
 import { ITransfer } from '../../types/Transfer';
 
-export type ICreateTransfer = Omit<ITransfer, 'log' | 'status'>;
+export interface ICreateTransfer
+  extends Omit<ITransfer, 'log' | 'status' | 'transferData'> {
+  transferData: Date;
+}
 
 export class TransferController {
   public async create(data: ICreateTransfer) {
@@ -21,6 +24,21 @@ export class TransferController {
       status: Status.PENDING,
       log: [],
     });
+  }
+
+  public async getAll() {
+    const q = query(collection(db, 'transfers'));
+
+    const querySnapshot = await getDocs(q);
+
+    const transfers: ITransfer[] = [];
+
+    querySnapshot.forEach(doc => {
+      const data = { id: doc.id, ...doc.data() } as ITransfer;
+      transfers.push(data);
+    });
+
+    return transfers;
   }
 
   public async getPending() {

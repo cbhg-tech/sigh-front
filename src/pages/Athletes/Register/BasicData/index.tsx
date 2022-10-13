@@ -13,6 +13,7 @@ import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.contr
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { States } from '../../../../dataAccess/static/states';
 import { Status } from '../../../../enums/Status';
+import { DataService } from '../../../../utils/DataService';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
 import { validateForm } from '../../../../utils/validateForm';
 import { useAthletesRegister } from '../register.context';
@@ -34,7 +35,7 @@ export function BasicData() {
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
-        birthDate: Yup.string().required('Data de nascimento obrigatória'),
+        birthDate: Yup.date().required('Data de nascimento obrigatória'),
         phone: Yup.string().required('Celular obrigatório'),
         gender: Yup.string().required('Gênero obrigatório'),
         country: Yup.string().required('País de origem obrigatório'),
@@ -47,7 +48,11 @@ export function BasicData() {
         }),
       });
 
-      await mutateAsync({ ...user?.athleteProfile, ...data });
+      await mutateAsync({
+        ...user?.athleteProfile,
+        ...data,
+        birthDate: new Date(data.birthDate),
+      });
 
       toast.success('Perfil atualizado com sucesso!');
 
@@ -69,6 +74,11 @@ export function BasicData() {
       toast.error('Ops! Não foi possivel salvar dados!');
     }
   };
+
+  const birthDate = DataService().format(
+    user?.athleteProfile?.birthDate.seconds || 0,
+    'YYYY-MM-DD',
+  );
 
   return (
     <div>
@@ -104,6 +114,7 @@ export function BasicData() {
                 type="date"
                 name="birthDate"
                 label="Data de nascimento*"
+                defaultValue={birthDate}
               />
             </div>
             <div className="col-span-1 lg:col-span-4">

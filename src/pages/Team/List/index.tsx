@@ -8,6 +8,8 @@ import { useHasPermission } from '../../../hooks/useHasPermission';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { ActionsButtons } from './ActionsButton';
 
+import ImgNotFound from '../../../assets/image-not-found.png';
+
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
   'hidden lg:table-cell lg:w-1/4',
@@ -83,7 +85,9 @@ export function TeamListPage() {
             <tr>
               {COLUMN_NAMES.map((columnName, index) => (
                 <th
-                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                  className={`${
+                    COLUMN_WIDTH[index]
+                  } text-left py-4 px-2 bg-slate-100 ${index === 0 && 'pl-14'}`}
                   key={columnName}
                 >
                   {columnName}
@@ -97,7 +101,16 @@ export function TeamListPage() {
                 className="border-b last:border-none border-slate-200"
                 key={team.id}
               >
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{team.name}</td>
+                <td
+                  className={`${COLUMN_WIDTH[0]} flex gap-2 items-center py-4 px-2`}
+                >
+                  <img
+                    src={team.logo || ImgNotFound}
+                    alt={team.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <span>{team.name}</span>
+                </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
                   {team.federation.name}
                 </td>

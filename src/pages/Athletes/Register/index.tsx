@@ -54,7 +54,7 @@ export function AthletesRegisterContent() {
                 id="userAvatar"
                 type="file"
                 className="hidden"
-                accept="image/png, image/jpeg"
+                accept="image/png, image/jpeg, image/jpg"
                 onChange={e => handleProfilePhotoUpload(e.target.files![0])}
               />
               <div className="absolute z-10 top-4 left-0 w-24 h-24 rounded-full bg-black/20 backdrop-blur flex flex-col justify-center items-center text-white duration-200 opacity-0 group-hover:opacity-100">

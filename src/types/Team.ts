@@ -1,3 +1,5 @@
+import { IFirebaseDate } from './FirebaseData';
+
 export interface ITeam {
   id: string;
   name: string;
@@ -17,4 +19,6 @@ export interface ITeam {
   electionMinutes: string;
   presidentDocument: string;
   federationDocument: string;
+  createdAt: Date | IFirebaseDate;
+  updatedAt: Date | IFirebaseDate;
 }

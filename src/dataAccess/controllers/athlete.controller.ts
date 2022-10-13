@@ -32,9 +32,10 @@ export interface ICreateAthlete
   document: string;
 }
 
-export interface IUpdateAthlete extends IAthlete {
+export interface IUpdateAthlete extends Omit<IAthlete, 'birthDate'> {
   userId?: string;
   documentFiles?: IAthletesDocuments;
+  birthDate: Date;
 }
 
 export class AthleteController {

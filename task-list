@@ -23,16 +23,16 @@
 - [x] pagina de relatorio do atleta ter export para excel
 - [ ] criar tela de listagem de transferencias
 - [ ] fazer envio de emails de notificações
-- [ ] colocar o logo da CBHG no menu do sidebar
-- [ ] na listagem de clube, ao lado do nome, colocar a logo
+- [x] colocar o logo da CBHG no menu do sidebar
+- [x] na listagem de clube, ao lado do nome, colocar a logo
 
 ======== bugs
-- [ ] data de transferencia pode ser qualquer uma
-- [ ] label do input de data ser "Data real da solicitação de transferencia"
-- [ ] usar parametrizaçao do periodo de transfenrecia
+- [x] data de transferencia pode ser qualquer uma
+- [x] label do input de data ser "Data real da solicitação de transferencia"
+- [x] usar parametrizaçao do periodo de transfenrecia
 - [ ] fluxo de transferencia não ta funcionando corretamente (não está indo para confederaçao (clube > federaçao > confederaçao))
 - [ ] id do atleta ser formado por: ano de cadastro + sequencial de usuário atleta
-- [ ] cadastro do club a logo está como logo da federaçao
+- [x] cadastro do club a logo está como logo da federaçao
 
 ======== fluxos
 - [ ] aprovaçao da ficha de atleta: clube > federaçao > confederaçao

@@ -1,6 +1,8 @@
+import { IFirebaseDate } from './FirebaseData';
+
 interface IUserApprovalLog {
   note: string;
-  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface IUserApproval {
@@ -17,4 +19,7 @@ export interface IUserApproval {
   cbhgApproved: boolean;
   logTeam?: string;
   logCbhg?: string;
+  log: Array<IUserApprovalLog>;
+  createdAt: Date | IFirebaseDate;
+  updatedAt: Date | IFirebaseDate;
 }
