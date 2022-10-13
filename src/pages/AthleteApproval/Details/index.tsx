@@ -11,6 +11,7 @@ import { useUpdateApprovalStatus } from '../../../dataAccess/hooks/athlete/useUp
 import { useGlobal } from '../../../contexts/global.context';
 import { Roles } from '../../../enums/Roles';
 import { Status } from '../../../enums/Status';
+import { DataService } from '../../../utils/DataService';
 
 export function ApprovalDetailsPage() {
   const navigate = useNavigate();
@@ -116,7 +117,7 @@ export function ApprovalDetailsPage() {
         <h2 className="text-3xl text-light-on-surface mb-4">Dados pessoais</h2>
         <p className="text-light-on-surface-variant">
           {user.name || ''} -{' '}
-          {dayjs(athleteProfile?.birthDate).format('DD/MM/YYYY')}
+          {DataService().format(athleteProfile?.birthDate.seconds)}
           <br />
           {user.email || ''}
           <br />

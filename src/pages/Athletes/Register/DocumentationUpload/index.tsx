@@ -13,7 +13,7 @@ export function DocumentationUpload() {
   const { mutateAsync } = usePutAthlete();
 
   const handleFileUpload = async () => {
-    const birthDate = user?.athleteProfile?.birthDate;
+    const birthDate = user?.athleteProfile?.birthDate.seconds;
     const isSubEighteen = dayjs().diff(birthDate, 'year') < 18;
 
     try {

@@ -1,4 +1,5 @@
 import { IAthlete } from './Athlete';
+import { IFirebaseDate } from './FirebaseData';
 
 export interface IUser {
   id: string;
@@ -20,5 +21,6 @@ export interface IUser {
   photoUrl?: string;
   document?: string;
   athleteProfile?: IAthlete;
-  updatedAt: string | Date;
+  createdAt: Date | IFirebaseDate;
+  updatedAt: Date | IFirebaseDate;
 }

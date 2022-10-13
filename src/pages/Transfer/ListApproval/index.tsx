@@ -1,8 +1,8 @@
-import dayjs from 'dayjs';
 import { useState } from 'react';
 
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetPendingTransfers } from '../../../dataAccess/hooks/transfer/useGetPendingTransfers';
+import { DataService } from '../../../utils/DataService';
 import { ActionButton } from './ActionButton';
 
 const COLUMN_WIDTH = [
@@ -93,7 +93,7 @@ export function TransferListApprovalPage() {
                   {row.destinationTeam}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                  {dayjs(row.transferData).format('DD/MM/YYYY') ||
+                  {DataService().format(row.transferData.seconds) ||
                     'Data não informada'}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>

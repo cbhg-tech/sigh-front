@@ -160,8 +160,9 @@ export function TeamRegisterPage() {
         <div className="col-span-1 md:col-span-6 mb-2 md:flex md:justify-between">
           <FileInput
             name="logo-file"
-            label="Logo da federação"
+            label="Logo do clube"
             onChange={e => setFiles({ ...files, logo: e.target.files?.[0] })}
+            accept="image/png, image/jpeg, image/jpg"
           />
           <FileInput
             name="federation-file"

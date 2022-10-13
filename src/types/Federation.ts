@@ -1,4 +1,5 @@
 import { ITeam } from './Team';
+import { IFirebaseDate } from './FirebaseData';
 
 export interface IFederation {
   id: string;
@@ -14,4 +15,6 @@ export interface IFederation {
   presidentDocument: string;
   federationDocument: string;
   teams?: Array<ITeam>;
+  createdAt: Date | IFirebaseDate;
+  updatedAt: Date | IFirebaseDate;
 }
