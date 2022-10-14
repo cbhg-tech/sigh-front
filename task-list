@@ -17,7 +17,7 @@
 - [ ] editar abrir pagina de formulario com os dados preenchidos
 - [ ] input file abrir com links já preenchidos
 - [x] preencher dados do dashboard
-- [ ] criar cadastro de comissão tecnica (só clube pode cadastrar, mas geral pode ver pode geral sem CPF)
+- [x] criar cadastro de comissão tecnica (só clube pode cadastrar, mas geral pode ver pode geral sem CPF)
 - [x] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)
 - [x] criar pagina de relatório do atleta
 - [x] pagina de relatorio do atleta ter export para excel
