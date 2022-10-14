@@ -11,6 +11,7 @@ import { ActionButtons } from '../../TechnicalCommittee/List/ActionButtons';
 import { useGetAllPartnerProjects } from '../../../dataAccess/hooks/partnerProject/useGetAllPartnerProjects';
 import { DateService } from '../../../services/DateService';
 import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGetPublicFederation';
+import { ActionsButtons } from './ActionsButton';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -157,7 +158,9 @@ export function PartnerProjectListPage() {
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
                   {pp?.related.name || 'Não encontrado'}
                 </td>
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`} />
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                  <ActionsButtons id={pp!.id!} relatedId={pp!.relatedId} />
+                </td>
               </tr>
             ))}
           </tbody>

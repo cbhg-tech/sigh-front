@@ -27,6 +27,7 @@ import { ListTransfersPage } from '../../pages/Transfer/List';
 import { TechnicalCommitteeRegisterPage } from '../../pages/TechnicalCommittee/Register';
 import { PartnerProjectListPage } from '../../pages/PartnerProject/List';
 import { PartnerProjectRegisterPage } from '../../pages/PartnerProject/Register';
+import { PartnerProjectDetailsPage } from '../../pages/PartnerProject/Details';
 
 export function Router() {
   return (
@@ -101,6 +102,14 @@ export function Router() {
             element={
               <Navigation title="Projetos parceiros">
                 <PartnerProjectListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/projetosparceiros/detalhes/:id"
+            element={
+              <Navigation title="Projeto parceiro">
+                <PartnerProjectDetailsPage />
               </Navigation>
             }
           />

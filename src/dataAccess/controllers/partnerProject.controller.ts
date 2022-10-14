@@ -6,6 +6,7 @@ import {
   query,
   limit,
   getDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { ITeam } from '../../types/Team';
@@ -44,11 +45,6 @@ export class PartnerProjectController {
     if (relatedType === 'Federation') {
       const res = await getDoc(doc(db, 'federations', project.relatedId!));
 
-      const data = {
-        ...project,
-        related: res.data() as IFederation,
-      };
-      console.log(data);
       return {
         ...project,
         related: res.data() as IFederation,
@@ -82,5 +78,20 @@ export class PartnerProjectController {
     const joinReads = data.map(d => this.joinProjects(d));
 
     return Promise.all(joinReads);
+  }
+
+  public async getOne(id: string) {
+    const res = await getDoc(doc(db, 'partnerProject', id));
+
+    const data = {
+      ...(res.data() as IPartnerProject),
+      id: res.id,
+    };
+
+    return this.joinProjects(data);
+  }
+
+  public async delete(id: string) {
+    await deleteDoc(doc(db, 'partnerProject', id));
   }
 }
