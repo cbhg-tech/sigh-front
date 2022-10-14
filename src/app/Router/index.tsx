@@ -209,6 +209,14 @@ export function Router() {
               </Navigation>
             }
           />
+          <Route
+            path="/app/restrito/transferencia/detalhes/:id"
+            element={
+              <Navigation title="Detalhes de transferência">
+                <TransferApprovalWorkflow isDisplayOnly />
+              </Navigation>
+            }
+          />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -5,9 +5,11 @@ import { useGetAllTransfers } from '../../../dataAccess/hooks/transfer/useGetAll
 import { ITransfer } from '../../../types/Transfer';
 import { Status } from '../../../enums/Status';
 import { Badge } from '../../../components/Badge';
+import { ActionsButtons } from './ActionsButton';
 
 const COLUMN_WIDTH = [
   'w-1/3 lg:w-1/5',
+  'hidden lg:table-cell lg:w-1/5',
   'hidden lg:table-cell lg:w-1/5',
   'hidden lg:table-cell lg:w-1/5',
   'w-1/3 lg:w-1/5',
@@ -20,6 +22,7 @@ const COLUMN_NAME = [
   'Nome',
   'Data da transferencia',
   'Situação',
+  '',
 ];
 
 export function ListTransfersPage() {
@@ -121,6 +124,9 @@ export function ListTransfersPage() {
                   >
                     {badgerGenerator(row)}
                   </Badge>
+                </td>
+                <td>
+                  <ActionsButtons id={row.id!} />
                 </td>
               </tr>
             ))}

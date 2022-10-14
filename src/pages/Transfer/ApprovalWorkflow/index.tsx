@@ -7,14 +7,17 @@ import { Divider } from '../../../components/Divider';
 import { Button } from '../../../components/Inputs/Button';
 import { MultineTextfieldBare } from '../../../components/Inputs/MultilineTextfieldBare';
 import { useGlobal } from '../../../contexts/global.context';
-import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useGetOneTransfer } from '../../../dataAccess/hooks/transfer/useGetOneTransfer';
 import { useUpdateTransferDetails } from '../../../dataAccess/hooks/transfer/useUpdateTransferDetail';
 import { Roles } from '../../../enums/Roles';
 import { TransferRole } from '../../../enums/TransferRole';
 import { Status } from '../../../enums/Status';
 
-export function TransferApprovalWorkflow() {
+interface IProps {
+  isDisplayOnly?: boolean;
+}
+
+export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   const { id } = useParams();
   const { user } = useGlobal();
   const { data: transferData } = useGetOneTransfer(id);
@@ -23,6 +26,8 @@ export function TransferApprovalWorkflow() {
   const [obs, setObs] = useState('');
 
   function canApproveWorkflow() {
+    if (isDisplayOnly) return false;
+
     if (transferData?.status !== Status.ACTIVE) {
       if (
         user?.role === Roles.ADMINCLUBE &&
@@ -62,6 +67,8 @@ export function TransferApprovalWorkflow() {
   }
 
   async function handleSubmit(isApproved: boolean) {
+    if (isDisplayOnly) return;
+
     try {
       if (!transferData) throw new Error('Transferencia não foi achada');
 
@@ -196,7 +203,7 @@ export function TransferApprovalWorkflow() {
           transferData.log.map(log => (
             <div>
               <h3 className="text-light-on-surface my-2">
-                {log.role}
+                <strong>{log.role}</strong>
 
                 <span className="ml-2">
                   {log.status === Status.ACTIVE ? (
