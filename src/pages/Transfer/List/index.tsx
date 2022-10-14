@@ -2,12 +2,15 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetAllTransfers } from '../../../dataAccess/hooks/transfer/useGetAllTransfers';
+import { ITransfer } from '../../../types/Transfer';
+import { Status } from '../../../enums/Status';
+import { Badge } from '../../../components/Badge';
 
 const COLUMN_WIDTH = [
-  'w-1/3 lg:w-1/4',
+  'w-1/3 lg:w-1/5',
   'hidden lg:table-cell lg:w-1/5',
   'hidden lg:table-cell lg:w-1/5',
-  'w-1/3 lg:w-1/4',
+  'w-1/3 lg:w-1/5',
   'w-auto',
 ];
 
@@ -29,6 +32,20 @@ export function ListTransfersPage() {
     tableData = tableData.filter(transfer =>
       transfer.user?.name.toLowerCase().includes(filter.toLowerCase()),
     );
+  }
+
+  function badgerGenerator(transfer: ITransfer) {
+    if (transfer.currentTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de origem';
+    if (transfer.destinationTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de destino';
+    if (transfer.currentFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de origem';
+    if (transfer.destinationFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de destino';
+    if (transfer.cbhgStatus !== Status.ACTIVE) return 'Pendente confederação';
+
+    return 'Transferência concluída';
   }
 
   return (
@@ -94,7 +111,17 @@ export function ListTransfersPage() {
                   {dayjs(row.transferData).format('DD/MM/YYYY') ||
                     'Data não informada'}
                 </td>
-                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`} />
+                <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
+                  <Badge
+                    type={
+                      badgerGenerator(row) === 'Transferência concluída'
+                        ? 'primary'
+                        : 'warning'
+                    }
+                  >
+                    {badgerGenerator(row)}
+                  </Badge>
+                </td>
               </tr>
             ))}
           </tbody>
