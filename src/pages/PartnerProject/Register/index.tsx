@@ -12,6 +12,7 @@ import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { useCreateProjectPartner } from '../../../dataAccess/hooks/partnerProject/useCreatePartnerProject';
 import { useGlobal } from '../../../contexts/global.context';
 import { Roles } from '../../../enums/Roles';
+import { DateService } from '../../../services/DateService';
 
 interface IForm {
   name: string;
@@ -55,6 +56,11 @@ export function PartnerProjectRegisterPage() {
         }),
       });
 
+      if (!DateService().isAfter(data.initialDate, data.finalDate)) {
+        toast.error('Data final deve ser maior que a data inicial');
+        return;
+      }
+
       let relatedType: 'Team' | 'Federation' | 'Cofederation';
 
       switch (user?.role) {
@@ -70,7 +76,7 @@ export function PartnerProjectRegisterPage() {
           break;
       }
 
-      await mutateAsync({ ...data, relatedId: user!.id, relatedType });
+      await mutateAsync({ ...data, relatedId: user!.relatedId, relatedType });
 
       toast.success('Projeto cadastrado com sucesso');
 

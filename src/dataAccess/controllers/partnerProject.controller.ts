@@ -44,6 +44,11 @@ export class PartnerProjectController {
     if (relatedType === 'Federation') {
       const res = await getDoc(doc(db, 'federations', project.relatedId!));
 
+      const data = {
+        ...project,
+        related: res.data() as IFederation,
+      };
+      console.log(data);
       return {
         ...project,
         related: res.data() as IFederation,

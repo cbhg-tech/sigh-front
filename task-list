@@ -36,7 +36,7 @@
 
 ======== fluxos
 - [x] aprovaçao da ficha de atleta: clube > federaçao > confederaçao
-- [ ] cadastro de projetos parceiros: ADMINCLUBE, ADMINFED & GOD
+- [x] cadastro de projetos parceiros: ADMINCLUBE, ADMINFED & GOD
 - [ ] metrica de envio de email: todas vez que alguem aprova ou rejeita uma ficha ou transferencia (quem recebe é o atleta e o proximo aprovador)
-- [ ] funcao (texto) nome, cpf e genero (não é usuário mas o CPF só pode estar vinculado aquele clube)
+- [x] funcao (texto) nome, cpf e genero (não é usuário mas o CPF só pode estar vinculado aquele clube)
 

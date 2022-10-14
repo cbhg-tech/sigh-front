@@ -22,8 +22,17 @@ export function DateService() {
     return dayjs().isBetween(dayjs(initial), dayjs(end));
   }
 
+  function isAfter(initialData: string | number, endDate: string | number) {
+    const initial =
+      typeof initialData === 'string' ? initialData : initialData * 1000;
+    const end = typeof endDate === 'string' ? endDate : endDate * 1000;
+
+    return dayjs(end).isAfter(dayjs(initial));
+  }
+
   return {
     format,
     isBetween,
+    isAfter,
   };
 }

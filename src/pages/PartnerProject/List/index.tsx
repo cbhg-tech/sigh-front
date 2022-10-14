@@ -10,6 +10,7 @@ import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { ActionButtons } from '../../TechnicalCommittee/List/ActionButtons';
 import { useGetAllPartnerProjects } from '../../../dataAccess/hooks/partnerProject/useGetAllPartnerProjects';
 import { DateService } from '../../../services/DateService';
+import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGetPublicFederation';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -37,12 +38,18 @@ export function PartnerProjectListPage() {
     Roles.ADMINFEDERACAO,
   ]);
   const { data, isLoading, isError, isSuccess } = useGetAllPartnerProjects();
+  const { data: publicFederation } = useGetPublicFederations();
   const { data: publicTeams } = useGetPublicTeams();
 
   const [filter, setFilter] = useState('');
+  const [filterFederation, setFilterFederation] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
 
   let tableData = data || [];
+
+  if (filterFederation) {
+    tableData = tableData.filter(pp => pp?.relatedId === filterFederation);
+  }
 
   if (filterTeam)
     tableData = tableData.filter(team => team?.relatedId === filterTeam);
@@ -69,6 +76,21 @@ export function PartnerProjectListPage() {
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
           <SelectBare
+            label="Federação"
+            name="federation-filter"
+            onChange={e => setFilterFederation(e.target.value)}
+          >
+            <option value="">Todas</option>
+            <option value="CBHG - Administração">CBHG - Administração</option>
+            {publicFederation?.list.map(federation => (
+              <option key={federation.id} value={federation.id}>
+                {federation.name}
+              </option>
+            ))}
+          </SelectBare>
+        </div>
+        <div className="w-full lg:w-1/3">
+          <SelectBare
             label="Clube"
             name="team-filter"
             onChange={e => setFilterTeam(e.target.value)}
@@ -81,7 +103,7 @@ export function PartnerProjectListPage() {
             ))}
           </SelectBare>
         </div>
-        <div className="w-full lg:w-2/3">
+        <div className="w-full lg:w-1/3">
           <TextfieldBare
             label="Buscar..."
             name="search"
