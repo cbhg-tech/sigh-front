@@ -11,6 +11,7 @@ import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGet
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useHasPermission } from '../../../hooks/useHasPermission';
 import { Roles } from '../../../enums/Roles';
+import { ActionsButtons } from './ActionsButton';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -151,24 +152,7 @@ export function AthletesListPage() {
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
                   {!isAthlete && (
                     <div className="flex gap-2 items-center justify-end">
-                      <IconButton
-                        icon={MdEdit}
-                        className="text-light-primary"
-                        size="1.5rem"
-                        onClick={() => console.log(athlete.id)}
-                      />
-                      <IconButton
-                        icon={AiOutlineEye}
-                        className="text-light-tertiary"
-                        size="1.5rem"
-                        onClick={() => console.log(athlete.id)}
-                      />
-                      <IconButton
-                        icon={MdOutlineDeleteOutline}
-                        className="text-light-error"
-                        size="1.5rem"
-                        onClick={() => console.log(athlete.id)}
-                      />
+                      <ActionsButtons id={athlete.id} />
                     </div>
                   )}
                 </td>

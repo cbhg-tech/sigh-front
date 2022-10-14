@@ -17,6 +17,7 @@ import { ListItem } from './ListItem';
 import { ListSubtitle } from './ListSubtitle';
 
 import CBHGLogo from '../../../assets/cbhg-logo.png';
+import { useHasPermission } from '../../../hooks/useHasPermission';
 
 interface IProps {
   isOpen: boolean;
@@ -26,12 +27,14 @@ interface IProps {
 export function Aside({ isOpen, toogleSideMenu }: IProps) {
   const isOpenStyle = isOpen ? 'translate-x-0' : '-translate-x-full';
 
-  const { user } = useGlobal();
-
-  const isAdmin =
-    user?.role === Roles.ADMIN ||
-    user?.role === Roles.ADMINCLUBE ||
-    user?.role === Roles.ADMINFEDERACAO;
+  const isAdmin = useHasPermission([Roles.ADMIN]);
+  const isAthlete = useHasPermission([Roles.USER]);
+  const isManager = useHasPermission([
+    Roles.ADMIN,
+    Roles.ADMINFEDERACAO,
+    Roles.ADMINCLUBE,
+  ]);
+  const isTeamManager = useHasPermission([Roles.ADMINCLUBE]);
 
   return (
     <aside
@@ -59,7 +62,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         />
         <Divider />
         <ListSubtitle label={isAdmin ? 'Cadastros' : 'Menu'} />
-        {user?.role === Roles.USER && (
+        {isAthlete && (
           <>
             <ListItem
               closeModal={() => toogleSideMenu(false)}
@@ -81,7 +84,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Atletas"
           icon={FaUsers}
         />
-        {user?.role === Roles.ADMINCLUBE && (
+        {isTeamManager && (
           <ListItem
             closeModal={() => toogleSideMenu(false)}
             href="/app/tecnico/listagem"
@@ -109,7 +112,7 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Federações"
           icon={SiGoogleassistant}
         />
-        {isAdmin && (
+        {isManager && (
           <>
             <Divider />
             <ListSubtitle label="Área restrita" />

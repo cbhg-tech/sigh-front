@@ -25,6 +25,7 @@ export function FederationListPage() {
 
   const { data, isError, isLoading, isSuccess } = useGetFederations();
   const isAthlete = useHasPermission([Roles.USER]);
+  const isAdmin = useHasPermission([Roles.ADMIN]);
 
   const [filter, setFilter] = useState('');
 
@@ -40,12 +41,14 @@ export function FederationListPage() {
         <h2 className="text-3xl text-light-on-surface">
           Listagem de federação {`(${data?.length || 0})`}
         </h2>
-        <Button
-          aditionalClasses="w-full lg:w-auto px-6"
-          type="button"
-          label="Criar federação"
-          onClick={() => navigate('/app/federacoes/cadastro')}
-        />
+        {isAdmin && (
+          <Button
+            aditionalClasses="w-full lg:w-auto px-6"
+            type="button"
+            label="Criar federação"
+            onClick={() => navigate('/app/federacoes/cadastro')}
+          />
+        )}
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
