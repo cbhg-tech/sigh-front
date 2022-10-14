@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   addDoc,
   collection,
@@ -24,7 +25,7 @@ export class TransferController {
       ...data,
       status: Status.PENDING,
       log: [],
-      updateAt: new Date(),
+      updatedAt: new Date(),
       createdAt: new Date(),
     });
   }
@@ -77,8 +78,14 @@ export class TransferController {
   public async update(data: ITransfer) {
     const { id } = data;
 
-    // eslint-disable-next-line no-param-reassign
+    const { destinationTeam } = data;
+
     delete data.id;
+    delete data.user;
+    delete data.currentTeam;
+    delete data.destinationTeam;
+    delete data.currentFederation;
+    delete data.destinationFederation;
 
     if (!id) throw new Error('Transfer ID is required');
 
@@ -90,7 +97,7 @@ export class TransferController {
     // TODO: buscar dados do time para atualizar o usuário
     if (data.status === 'Aprovado') {
       await updateDoc(doc(db, 'users', data.userId), {
-        relatedName: data.destinationTeam?.name,
+        relatedName: destinationTeam?.name,
         relatedId: data.destinationTeamId,
         relatedType: 'team',
       });

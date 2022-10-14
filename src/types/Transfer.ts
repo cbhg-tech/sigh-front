@@ -3,6 +3,7 @@ import { IFirebaseDate } from './FirebaseData';
 import { ITeam } from './Team';
 import { IFederation } from './Federation';
 import { IUser } from './User';
+import { Status } from '../enums/Status';
 
 export interface ITransferLog {
   status: string;
@@ -15,14 +16,19 @@ export interface ITransfer {
   id?: string;
   userId: string;
   user?: IUser;
+  currentTeamStatus?: Status;
   currentTeamId: string;
   currentTeam?: ITeam;
+  destinationTeamStatus?: Status;
   destinationTeamId: string;
   destinationTeam?: ITeam;
+  currentFederationStatus?: Status;
   currentFederationId: string;
   currentFederation?: IFederation;
+  destinationFederationStatus?: Status;
   destinationFederationId: string;
   destinationFederation?: IFederation;
+  cbhgStatus?: Status;
   obs: string;
   status: string;
   transferData: string;

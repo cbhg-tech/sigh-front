@@ -3,4 +3,5 @@ export enum TransferRole {
   'CLUBEDESTINO' = 'clube de destino',
   'FEDERACAOORIGEM' = 'Federação de origem',
   'FEDERACAODESTINO' = 'Federação de destino',
+  'CONFEDERACAO' = 'Confederação',
 }

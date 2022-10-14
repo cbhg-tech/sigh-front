@@ -12,88 +12,148 @@ import { useGetOneTransfer } from '../../../dataAccess/hooks/transfer/useGetOneT
 import { useUpdateTransferDetails } from '../../../dataAccess/hooks/transfer/useUpdateTransferDetail';
 import { Roles } from '../../../enums/Roles';
 import { TransferRole } from '../../../enums/TransferRole';
+import { Status } from '../../../enums/Status';
 
 export function TransferApprovalWorkflow() {
   const { id } = useParams();
   const { user } = useGlobal();
   const { data: transferData } = useGetOneTransfer(id);
-  const { data: publicTeams } = useGetPublicTeams();
   const { mutateAsync } = useUpdateTransferDetails();
 
   const [obs, setObs] = useState('');
 
-  const handleSubmit = async (isApproved: boolean) => {
+  function canApproveWorkflow() {
+    if (transferData?.status !== Status.ACTIVE) {
+      if (
+        user?.role === Roles.ADMINCLUBE &&
+        transferData?.currentTeamId === user?.relatedId
+      )
+        return true;
+
+      if (
+        user?.role === Roles.ADMINCLUBE &&
+        transferData?.destinationTeamId === user?.relatedId &&
+        transferData?.currentTeamStatus === Status.ACTIVE
+      )
+        return true;
+
+      if (
+        user?.role === Roles.ADMINFEDERACAO &&
+        transferData?.currentFederationId === user?.relatedId &&
+        transferData?.destinationTeamStatus === Status.ACTIVE
+      )
+        return true;
+
+      if (
+        user?.role === Roles.ADMINFEDERACAO &&
+        transferData?.destinationFederationId === user?.relatedId &&
+        transferData?.currentFederationStatus === Status.ACTIVE
+      )
+        return true;
+
+      if (
+        user?.role === Roles.ADMIN &&
+        transferData?.destinationFederationStatus === Status.ACTIVE
+      )
+        return true;
+    }
+
+    return false;
+  }
+
+  async function handleSubmit(isApproved: boolean) {
     try {
       if (!transferData) throw new Error('Transferencia não foi achada');
 
       if (!obs) throw new Error('Observação é obrigatória');
 
-      const destinationTeam = publicTeams?.list.find(
-        team => team.id === transferData?.destinationTeamId,
-      );
-      const originTeam = publicTeams?.list.find(
-        team => team.id === transferData?.currentTeamId,
-      );
       let role = TransferRole.CLUBEDESTINO;
-      let userType: 'federação' | 'clube' = 'federação';
 
-      switch (user?.role) {
-        case Roles.ADMINFEDERACAO:
-          userType = 'federação';
+      if (!canApproveWorkflow())
+        throw new Error('Você não pode aprovar essa transferência');
+
+      switch (user?.relatedId) {
+        case transferData?.currentTeamId:
+          role = TransferRole.CLUBEORIGEM;
           break;
-        case Roles.ADMINCLUBE:
-          userType = 'clube';
+        case transferData?.destinationTeamId:
+          role = TransferRole.CLUBEDESTINO;
           break;
+        case transferData?.currentFederationId:
+          role = TransferRole.FEDERACAOORIGEM;
+          break;
+        case transferData?.destinationFederationId:
+          role = TransferRole.FEDERACAODESTINO;
+          break;
+        case 'CBHG - Administração':
         default:
-          throw new Error(
-            'Você não tem permissão para aprovar essa transferência',
-          );
+          role = TransferRole.CONFEDERACAO;
+          break;
       }
-
-      if (
-        userType === 'federação' &&
-        user?.related?.id === originTeam?.federationId
-      )
-        role = TransferRole.FEDERACAOORIGEM;
-
-      if (
-        userType === 'federação' &&
-        user.related?.id === destinationTeam?.federationId
-      )
-        role = TransferRole.FEDERACAODESTINO;
-
-      if (userType === 'clube' && user?.related?.id === originTeam?.id)
-        role = TransferRole.CLUBEORIGEM;
-
-      if (userType === 'clube' && user.related?.id === destinationTeam?.id)
-        role = TransferRole.CLUBEDESTINO;
 
       const log = {
         obs,
-        status: isApproved ? 'Aprovado' : 'Rejeitado',
+        status: isApproved ? Status.ACTIVE : Status.REJECTED,
         role,
         createdAt: new Date(),
       };
 
       transferData.log.push(log);
 
-      if (transferData.log.length === 4) {
-        const isAllApproved = transferData.log.every(
-          log => log.status === 'Aprovado',
-        );
-
-        transferData.status = isAllApproved ? 'Aprovado' : 'Negado';
+      if (
+        transferData.currentTeamStatus === Status.ACTIVE &&
+        transferData.destinationTeamStatus === Status.ACTIVE &&
+        transferData.currentFederationStatus === Status.ACTIVE &&
+        transferData.destinationFederationStatus === Status.ACTIVE &&
+        user?.relatedId === 'CBHG - Administração' &&
+        isApproved
+      ) {
+        transferData.status = Status.ACTIVE;
       }
 
       await mutateAsync(transferData);
 
       setObs('');
+
       toast.success('Transferência aprovada com sucesso');
     } catch (err) {
       // @ts-ignore
       toast.error(err.message);
     }
-  };
+  }
+
+  function waitingMessage() {
+    if (
+      user?.role === Roles.ADMINCLUBE &&
+      transferData?.destinationTeamId === user?.relatedId &&
+      transferData?.currentTeamStatus !== Status.ACTIVE
+    ) {
+      return 'Aguardando aprovação do time de origem';
+    }
+
+    if (
+      user?.role === Roles.ADMINFEDERACAO &&
+      transferData?.currentFederationId === user?.relatedId &&
+      transferData?.destinationTeamStatus !== Status.ACTIVE
+    ) {
+      return 'Aguardando aprovação do time de destino';
+    }
+
+    if (
+      user?.role === Roles.ADMINFEDERACAO &&
+      transferData?.destinationFederationId === user?.relatedId &&
+      transferData?.currentFederationStatus !== Status.ACTIVE
+    ) {
+      return 'Aguardando aprovação da federação de origem';
+    }
+
+    if (
+      user?.role === Roles.ADMIN &&
+      transferData?.destinationFederationStatus !== Status.ACTIVE
+    ) {
+      return 'Aguardando aprovação da federação de destino';
+    }
+  }
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -139,7 +199,7 @@ export function TransferApprovalWorkflow() {
                 {log.role}
 
                 <span className="ml-2">
-                  {log.status === 'Aprovado' ? (
+                  {log.status === Status.ACTIVE ? (
                     <Badge type="primary">Aprovado</Badge>
                   ) : (
                     <Badge type="error">Negado</Badge>
@@ -151,7 +211,7 @@ export function TransferApprovalWorkflow() {
             </div>
           ))}
       </div>
-      {transferData?.status !== 'Aprovado' && (
+      {canApproveWorkflow() ? (
         <div>
           <h2 className="text-3xl text-light-on-surface my-4">
             Você aprovar essa transferência?
@@ -174,6 +234,10 @@ export function TransferApprovalWorkflow() {
               onClick={() => handleSubmit(true)}
             />
           </div>
+        </div>
+      ) : (
+        <div className="mt-8">
+          <p className="text-light-on-surface-variant">{waitingMessage()}</p>
         </div>
       )}
     </div>
