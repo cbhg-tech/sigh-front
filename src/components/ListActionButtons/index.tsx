@@ -1,6 +1,6 @@
 import { MdEdit, MdOutlineDeleteOutline } from 'react-icons/md';
-import { IconButton } from '../Inputs/IconButton';
 import { AiOutlineEye } from 'react-icons/ai';
+import { IconButton } from '../Inputs/IconButton';
 
 interface IProps {
   editPermission?: boolean;

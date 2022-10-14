@@ -24,6 +24,7 @@ import { TransferApprovalWorkflow } from '../../pages/Transfer/ApprovalWorkflow'
 import { AthletesReportPage } from '../../pages/Athletes/Report';
 import { TechnicalCommitteeListPage } from '../../pages/TechnicalCommittee/List';
 import { ListTransfersPage } from '../../pages/Transfer/List';
+import { TechnicalCommitteeRegisterPage } from '../../pages/TechnicalCommittee/Register';
 
 export function Router() {
   return (
@@ -80,8 +81,16 @@ export function Router() {
           <Route
             path="/app/tecnico/listagem"
             element={
-              <Navigation title="Usuário do sistema">
+              <Navigation title="Comissão técnica">
                 <TechnicalCommitteeListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/tecnico/cadastro"
+            element={
+              <Navigation title="Cadastro de comissão técnica">
+                <TechnicalCommitteeRegisterPage />
               </Navigation>
             }
           />

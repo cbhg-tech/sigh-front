@@ -34,7 +34,6 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
     Roles.ADMINFEDERACAO,
     Roles.ADMINCLUBE,
   ]);
-  const isTeamManager = useHasPermission([Roles.ADMINCLUBE]);
 
   return (
     <aside
@@ -84,14 +83,12 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           label="Atletas"
           icon={FaUsers}
         />
-        {isTeamManager && (
-          <ListItem
-            closeModal={() => toogleSideMenu(false)}
-            href="/app/tecnico/listagem"
-            label="Comissão técnica"
-            icon={FaUserFriends}
-          />
-        )}
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/tecnico/listagem"
+          label="Comissão técnica"
+          icon={FaUserFriends}
+        />
         {isAdmin && (
           <ListItem
             closeModal={() => toogleSideMenu(false)}
