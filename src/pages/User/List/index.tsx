@@ -96,7 +96,7 @@ export function UserListPage() {
                   <Badge type="tertiary">{user.status}</Badge>
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {user.related}
+                  {user.relatedName}
                 </td>
                 <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
                   <ActionButtons id={user.id} />

@@ -1,5 +1,8 @@
 import { TransferRole } from '../enums/TransferRole';
 import { IFirebaseDate } from './FirebaseData';
+import { ITeam } from './Team';
+import { IFederation } from './Federation';
+import { IUser } from './User';
 
 export interface ITransferLog {
   status: string;
@@ -11,13 +14,18 @@ export interface ITransferLog {
 export interface ITransfer {
   id?: string;
   userId: string;
-  currentTeam: string;
-  destinationTeam: string;
-  currentFederation: string;
-  destinationFederation: string;
+  user?: IUser;
+  currentTeamId: string;
+  currentTeam?: ITeam;
+  destinationTeamId: string;
+  destinationTeam?: ITeam;
+  currentFederationId: string;
+  currentFederation?: IFederation;
+  destinationFederationId: string;
+  destinationFederation?: IFederation;
   obs: string;
   status: string;
-  transferData: IFirebaseDate;
+  transferData: string;
   log: Array<ITransferLog>;
   createdAt: Date | IFirebaseDate;
   updatedAt: Date | IFirebaseDate;

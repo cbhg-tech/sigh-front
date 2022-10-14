@@ -11,7 +11,6 @@ import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublic
 import { useGetOneTransfer } from '../../../dataAccess/hooks/transfer/useGetOneTransfer';
 import { useUpdateTransferDetails } from '../../../dataAccess/hooks/transfer/useUpdateTransferDetail';
 import { Roles } from '../../../enums/Roles';
-import { Status } from '../../../enums/Status';
 import { TransferRole } from '../../../enums/TransferRole';
 
 export function TransferApprovalWorkflow() {
@@ -53,26 +52,27 @@ export function TransferApprovalWorkflow() {
 
       if (
         userType === 'federação' &&
-        user.federation?.id === originTeam?.federationId
+        user?.related?.id === originTeam?.federationId
       )
         role = TransferRole.FEDERACAOORIGEM;
 
       if (
         userType === 'federação' &&
-        user.federation?.id === destinationTeam?.federationId
+        user.related?.id === destinationTeam?.federationId
       )
         role = TransferRole.FEDERACAODESTINO;
 
-      if (userType === 'clube' && user.team?.id === originTeam?.id)
+      if (userType === 'clube' && user?.related?.id === originTeam?.id)
         role = TransferRole.CLUBEORIGEM;
 
-      if (userType === 'clube' && user.team?.id === destinationTeam?.id)
+      if (userType === 'clube' && user.related?.id === destinationTeam?.id)
         role = TransferRole.CLUBEDESTINO;
 
       const log = {
         obs,
         status: isApproved ? 'Aprovado' : 'Rejeitado',
         role,
+        createdAt: new Date(),
       };
 
       transferData.log.push(log);
@@ -104,16 +104,16 @@ export function TransferApprovalWorkflow() {
         <>
           <p className="text-light-on-surface-variant">
             <strong>Jogador: </strong>
-            {transferData.user.name}
+            {transferData.user?.name}
             <br />
             <strong>Data de transferencia: </strong>
             {dayjs(transferData.transferData).format('DD/MM/YYYY')}
             <br />
             <strong>Clube de origem: </strong>
-            {transferData.currentTeam}
+            {transferData.currentTeam?.name}
             <br />
             <strong>Clube destino: </strong>
-            {transferData.destinationTeam}
+            {transferData.destinationTeam?.name}
             <br />
           </p>
           <p className="text-light-on-surface-variant">

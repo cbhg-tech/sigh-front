@@ -9,7 +9,6 @@ import {
   deleteDoc,
   arrayUnion,
   arrayRemove,
-  setDoc,
   getDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
@@ -25,6 +24,8 @@ export interface ICreateFed
     | 'electionMinutes'
     | 'presidentDocument'
     | 'federationDocument'
+    | 'updatedAt'
+    | 'createdAt'
   > {
   logo: File;
   presidentDocument: File;
@@ -73,6 +74,8 @@ export class FederationController {
       initials,
       presidentName,
       uf,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     await updateDoc(doc(db, 'public', 'federations'), {

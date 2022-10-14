@@ -1,3 +1,4 @@
+import React from 'react';
 import { IconBaseProps } from 'react-icons';
 
 interface IProps {

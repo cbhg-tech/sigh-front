@@ -8,7 +8,7 @@ export function useCreateUser() {
 
   async function createUser(data: ICreateUser): Promise<void> {
     await userController.create(data);
-    queryClient.invalidateQueries(['getUsers']);
+    await queryClient.invalidateQueries(['getUsers']);
   }
 
   return useMutation(createUser);

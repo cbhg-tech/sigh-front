@@ -13,17 +13,16 @@ export function DocumentationUpload() {
   const { mutateAsync } = usePutAthlete();
 
   const handleFileUpload = async () => {
-    const birthDate = user?.athleteProfile?.birthDate.seconds;
+    const birthDate = user?.athleteProfile?.birthDate;
     const isSubEighteen = dayjs().diff(birthDate, 'year') < 18;
 
+    if (!documents.personalDocument)
+      toast.error('Documento pessoal obrigatório');
+
+    if (isSubEighteen && !documents.commitmentTerm)
+      toast.error('Termo de compromisso obrigatório');
+
     try {
-      if (!documents.personalDocument)
-        throw new Error('Documento pessoal obrigatório');
-
-      if (isSubEighteen && !documents.commitmentTerm) {
-        throw new Error('Termo de compromisso obrigatório');
-      }
-
       // @ts-ignore
       await mutateAsync({
         ...user?.athleteProfile,

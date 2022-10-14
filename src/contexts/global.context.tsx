@@ -3,7 +3,6 @@ import React, {
   createContext,
   ReactElement,
   useContext,
-  useEffect,
   useState,
 } from 'react';
 import { useGetCurrentUser } from '../dataAccess/hooks/user/useGetCurrentUser';

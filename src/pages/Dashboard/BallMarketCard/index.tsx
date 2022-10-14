@@ -19,11 +19,11 @@ export function BallMarketCard({ transfer }: IProps) {
       <div className="flex mb-4 gap-4 items-center">
         <img
           className="w-14 h-14 rounded-full object-cover"
-          src={transfer.user.photoUrl || USER_NOT_FOUND_IMG}
+          src={transfer.user?.photoUrl || USER_NOT_FOUND_IMG}
           alt="Foto de perfil do usuário"
         />
         <div>
-          <p className="text-xl text-light-on-surface">{transfer.user.name}</p>
+          <p className="text-xl text-light-on-surface">{transfer.user?.name}</p>
         </div>
       </div>
 
@@ -32,11 +32,11 @@ export function BallMarketCard({ transfer }: IProps) {
           <p className="text-light-on-surface-variant text-sm">Origem</p>
           <img
             className="w-24 h-24 rounded-full object-cover my-2"
-            src={transfer.currentTeamLogoUrl || ImgNotFound}
+            src={transfer.currentTeam?.logo || ImgNotFound}
             alt="Clube de origem"
           />
           <p className="line-clamp-1 text-light-on-surface">
-            {transfer.currentTeam}
+            {transfer.currentTeam?.name}
           </p>
         </div>
         <BiTransferAlt size="2rem" className="text-light-on-surface-variant" />
@@ -44,11 +44,11 @@ export function BallMarketCard({ transfer }: IProps) {
           <p className="text-light-on-surface-variant text-sm">Destino</p>
           <img
             className="w-24 h-24 rounded-full object-cover my-2"
-            src={transfer.destinationTeamLogoUrl || ImgNotFound}
+            src={transfer.destinationTeam?.logo || ImgNotFound}
             alt="Clube de destino"
           />
           <p className="line-clamp-1 text-light-on-surface">
-            {transfer.destinationTeam}
+            {transfer.destinationTeam?.name}
           </p>
         </div>
       </div>

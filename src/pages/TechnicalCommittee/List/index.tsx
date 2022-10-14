@@ -32,6 +32,8 @@ export function TechnicalCommitteeListPage() {
       <p className="text-center mt-8 text-light-on-surface-variant">
         Nenhuma federação cadastrada
       </p>
+
+      {filter && <p>Filtrado por: {filter}</p>}
     </div>
   );
 }

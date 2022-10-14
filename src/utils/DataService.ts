@@ -6,14 +6,20 @@ export function DataService() {
   dayjs.extend(utc);
   dayjs.extend(isBetweenPlugin);
 
-  function format(data: number, format?: string) {
-    return dayjs(data * 1000)
+  function format(data: string | number, format?: string) {
+    const dataTobeUsed = typeof data === 'string' ? data : data * 1000;
+
+    return dayjs(dataTobeUsed)
       .utc()
       .format(format || 'DD/MM/YYYY');
   }
 
-  function isBetween(initialData: number, endDate: number) {
-    return dayjs().isBetween(dayjs(initialData * 1000), dayjs(endDate * 1000));
+  function isBetween(initialData: string | number, endDate: string | number) {
+    const initial =
+      typeof initialData === 'string' ? initialData : initialData * 1000;
+    const end = typeof endDate === 'string' ? endDate : endDate * 1000;
+
+    return dayjs().isBetween(dayjs(initial), dayjs(end));
   }
 
   return {

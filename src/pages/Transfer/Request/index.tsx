@@ -46,22 +46,17 @@ export function TransferRequestPage() {
 
       const team = publicTeams?.list.find(t => t.id === data.destinationClub);
 
-      if (team?.id === user.team?.id) {
+      if (team?.id === user.related?.id) {
         throw new Error('Você não pode transferir para o mesmo clube');
       }
 
       await mutateAsync({
-        user: {
-          id: user.id,
-          name: user.name,
-          photoUrl: user.photoUrl,
-        },
-        destinationTeam: team!.name,
+        userId: user.id,
+        currentTeamId: user.related!.id,
         destinationTeamId: team!.id,
-        currentTeam: user.team!.name,
-        currentTeamId: user.team!.id,
+        currentFederationId: user.related!.id,
+        destinationFederationId: team!.federationId!,
         obs: data.obs,
-        transferData: data.transferData,
       });
 
       toast.success('Solicitação enviada com sucesso!');

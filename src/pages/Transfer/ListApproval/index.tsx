@@ -29,7 +29,7 @@ export function TransferListApprovalPage() {
 
   if (filter) {
     tableData = tableData.filter(transfer =>
-      transfer.user.name.toLowerCase().includes(filter.toLowerCase()),
+      transfer.user?.name.toLowerCase().includes(filter.toLowerCase()),
     );
   }
 
@@ -84,16 +84,16 @@ export function TransferListApprovalPage() {
                 key={row.id}
               >
                 <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
-                  {row.user.name}
+                  {row.user?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {row.currentTeam}
+                  {row.currentTeam?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {row.destinationTeam}
+                  {row.destinationTeam?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                  {DataService().format(row.transferData.seconds) ||
+                  {DataService().format(row.transferData) ||
                     'Data não informada'}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>

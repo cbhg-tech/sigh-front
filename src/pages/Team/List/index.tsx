@@ -112,7 +112,7 @@ export function TeamListPage() {
                   <span>{team.name}</span>
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {team.federation.name}
+                  {team.federation?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>{team.email}</td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>

@@ -2,7 +2,6 @@ import { MdOutlineCloudUpload } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { Badge } from '../../../components/Badge';
 import { useGlobal } from '../../../contexts/global.context';
-import { usePutAthlete } from '../../../dataAccess/hooks/athlete/usePutAthlete';
 import { usePutUser } from '../../../dataAccess/hooks/user/usePutUser';
 import { Status } from '../../../enums/Status';
 import { UploadFile } from '../../../utils/uploadFile';
@@ -32,7 +31,7 @@ export function AthletesRegisterContent() {
     const photoUrl = await UploadFile('/usersAvatar/', file);
 
     try {
-      mutateAsync({
+      await mutateAsync({
         ...user,
         photoUrl,
       });
@@ -91,7 +90,7 @@ export function AthletesRegisterContent() {
             )}
           </div>
           <p className="text-2xl text-light-on-surface-variant">
-            {user?.team?.name}
+            {user?.related?.name}
           </p>
         </div>
       </div>

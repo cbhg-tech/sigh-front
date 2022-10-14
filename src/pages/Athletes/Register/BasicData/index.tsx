@@ -75,10 +75,9 @@ export function BasicData() {
     }
   };
 
-  const birthDate = DataService().format(
-    user?.athleteProfile?.birthDate.seconds || 0,
-    'YYYY-MM-DD',
-  );
+  const birthDate = user?.athleteProfile?.birthDate
+    ? DataService().format(user?.athleteProfile?.birthDate, 'YYYY-MM-DD')
+    : undefined;
 
   return (
     <div>

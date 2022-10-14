@@ -32,7 +32,7 @@ interface IForm {
 interface IFiles {
   logo: File | undefined;
   presidentDocument: File | undefined;
-  federationDocument: File | undefined;
+  teamDocument: File | undefined;
   electionMinutes: File | undefined;
 }
 
@@ -46,7 +46,7 @@ export function TeamRegisterPage() {
   const [files, setFiles] = useState<IFiles>({
     logo: undefined,
     presidentDocument: undefined,
-    federationDocument: undefined,
+    teamDocument: undefined,
     electionMinutes: undefined,
   });
   const [error, setError] = useState('');
@@ -54,15 +54,9 @@ export function TeamRegisterPage() {
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
 
-    const { electionMinutes, federationDocument, logo, presidentDocument } =
-      files;
+    const { electionMinutes, teamDocument, logo, presidentDocument } = files;
 
-    if (
-      !electionMinutes ||
-      !federationDocument ||
-      !logo ||
-      !presidentDocument
-    ) {
+    if (!electionMinutes || !teamDocument || !logo || !presidentDocument) {
       return setError('Faça upload de todos os arquivos');
     }
 
@@ -84,15 +78,11 @@ export function TeamRegisterPage() {
 
       await mutateAsync({
         ...data,
-        federation: {
-          id: data.federation,
-          name:
-            federationData?.find(f => f.id === data.federation)?.initials || '',
-        },
+        federationId: data.federation,
         logo,
         electionMinutes,
         presidentDocument,
-        federationDocument,
+        teamDocument,
       });
 
       toast.success('Federação criada com sucesso!');
@@ -168,7 +158,7 @@ export function TeamRegisterPage() {
             name="federation-file"
             label="Anexo Estatuto da Entidade"
             onChange={e =>
-              setFiles({ ...files, federationDocument: e.target.files?.[0] })
+              setFiles({ ...files, teamDocument: e.target.files?.[0] })
             }
           />
         </div>
