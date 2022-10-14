@@ -34,7 +34,7 @@ export function RegisterPage() {
 
   async function handleSubmit(data: IForm) {
     try {
-      validateForm(data, {
+      await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
         email: Yup.string()
           .email('Email inválido')
@@ -49,12 +49,9 @@ export function RegisterPage() {
 
       await mutateAsync({
         ...data,
-        related: team!.name,
-        team: {
-          id: team!.id,
-          name: team!.name,
-        },
-        updatedAt: new Date().toISOString(),
+        relatedName: team!.name,
+        relatedId: team!.id,
+        relatedType: 'team',
       });
 
       toast.success('Cadastro realizado com sucesso!');

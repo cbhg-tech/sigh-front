@@ -43,12 +43,12 @@ export function AthletesListPage() {
       .map(team => team.id);
 
     tableData = tableData.filter(athlete =>
-      teamsFederation?.includes(athlete.team!.id),
+      teamsFederation?.includes(athlete.relatedId),
     );
   }
 
   if (filterTeam) {
-    tableData = tableData.filter(athlete => athlete.team!.id === filterTeam);
+    tableData = tableData.filter(athlete => athlete.relatedId === filterTeam);
   }
 
   if (filter) {
@@ -140,7 +140,7 @@ export function AthletesListPage() {
                   {athlete.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {athlete.team?.name}
+                  {athlete.related?.name || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
                   {athlete.athleteProfile?.gender || 'Não informado'}

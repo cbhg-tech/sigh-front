@@ -16,7 +16,9 @@ const COLUMN_NAME = ['Nome', 'Status', 'Time', 'Sexo', ''];
 
 export function AthleteApprovalListPage() {
   const { user } = useGlobal();
-  const { data, isLoading, isSuccess } = useGetAppovalList(user?.team?.id);
+  const { data, isLoading, isSuccess } = useGetAppovalList(
+    user?.relatedType === 'team' ? user?.relatedId : undefined,
+  );
   const [filter, setFilter] = useState('');
 
   let tableData = data || [];
@@ -81,7 +83,7 @@ export function AthleteApprovalListPage() {
                   {data.status}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {data.team.name}
+                  {data.team?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
                   {data.gender || 'Não informado'}

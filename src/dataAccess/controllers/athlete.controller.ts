@@ -21,11 +21,19 @@ import { IAthlete } from '../../types/Athlete';
 import { IUser } from '../../types/User';
 import { IUserApproval } from '../../types/UserApproval';
 import { UploadFile } from '../../utils/uploadFile';
+import { ITeam } from '../../types/Team';
 
 export interface ICreateAthlete
   extends Omit<
     IUser,
-    'id' | 'status' | 'role' | 'photo' | 'federation' | 'document'
+    | 'id'
+    | 'status'
+    | 'role'
+    | 'photo'
+    | 'federation'
+    | 'document'
+    | 'createdAt'
+    | 'updatedAt'
   > {
   password: string;
   birthDate: string;
@@ -40,7 +48,16 @@ export interface IUpdateAthlete extends Omit<IAthlete, 'birthDate'> {
 
 export class AthleteController {
   public async create(data: ICreateAthlete) {
-    const { email, name, password, team, birthDate, document } = data;
+    const {
+      email,
+      name,
+      password,
+      relatedName,
+      relatedId,
+      relatedType,
+      birthDate,
+      document,
+    } = data;
 
     await validateIfDocumentExist(document);
 
@@ -55,23 +72,44 @@ export class AthleteController {
       name,
       role: Roles.USER,
       status: Status.PENDING,
-      team,
+      relatedName,
+      relatedId,
+      relatedType,
       athleteProfile: {
         birthDate: new Date(birthDate),
       },
       document,
+      createdAt: new Date(),
       updatedAt: new Date(),
     });
 
     await setDoc(doc(db, 'userApproval', user.uid), {
       status: Status.PENDING,
       registerDate: new Date(),
-      team,
+      teamId: relatedId,
       name,
+      log: [],
       teamApproved: false,
+      federationApproved: false,
       cbhgApproved: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+    });
+  }
+
+  private async getRelatedData(list: IUser[]) {
+    const relatedReads = list.map(async athlete =>
+      getDoc(doc(db, athlete.relatedType!, athlete.relatedId!)),
+    );
+    const relatedResults = await Promise.all(relatedReads);
+
+    return list.map(athlete => {
+      const related = relatedResults.find(rr => rr.id === athlete.relatedId);
+
+      return {
+        ...athlete,
+        related: related?.data() as ITeam,
+      };
     });
   }
 
@@ -94,7 +132,7 @@ export class AthleteController {
       });
     });
 
-    return athletes;
+    return this.getRelatedData(athletes);
   }
 
   public async listAll() {
@@ -112,7 +150,7 @@ export class AthleteController {
       });
     });
 
-    return athletes;
+    return this.getRelatedData(athletes);
   }
 
   public async put(data: Partial<IUpdateAthlete>) {
@@ -182,32 +220,44 @@ export class AthleteController {
   public async getApprovalList(team?: string) {
     let q = query(
       collection(db, 'userApproval'),
-      where('status', '==', Status.PENDING),
+      where('status', '!=', Status.ACTIVE),
       limit(20),
     );
 
     if (team) {
       q = query(
         collection(db, 'userApproval'),
-        where('status', '==', Status.PENDING),
-        where('team.id', '==', team),
+        where('status', '!=', Status.ACTIVE),
+        where('teamId', '==', team),
         limit(20),
       );
     }
 
-    const users = await getDocs(q);
+    const usersTransfers = await getDocs(q);
 
-    const athletes = [] as Array<IUserApproval>;
+    const userApproval = [] as Array<IUserApproval>;
 
-    users.forEach(doc => {
+    usersTransfers.forEach(doc => {
       // @ts-ignore
-      athletes.push({
+      userApproval.push({
         id: doc.id,
         ...doc.data(),
       });
     });
 
-    return athletes;
+    const relatedReads = userApproval.map(async ua =>
+      getDoc(doc(db, 'teams', ua.teamId)),
+    );
+    const relatedResults = await Promise.all(relatedReads);
+
+    return userApproval.map(ua => {
+      const related = relatedResults.find(rr => rr.id === ua.teamId);
+
+      return {
+        ...ua,
+        team: related?.data() as ITeam,
+      };
+    });
   }
 
   public async getApprovalDetails(userId: string) {

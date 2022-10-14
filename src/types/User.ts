@@ -1,21 +1,16 @@
 import { IAthlete } from './Athlete';
 import { IFirebaseDate } from './FirebaseData';
+import { ITeam } from './Team';
+import { IFederation } from './Federation';
 
 export interface IUser {
   id: string;
   name: string;
   email: string;
-  related: string;
-  team?: {
-    id: string;
-    name: string;
-    logoUrl?: string;
-  };
-  federation?: {
-    id: string;
-    name: string;
-    logoUrl?: string;
-  };
+  relatedName: string;
+  relatedId: string;
+  relatedType: 'team' | 'federation';
+  related?: ITeam | IFederation;
   role: string;
   status: string;
   photoUrl?: string;

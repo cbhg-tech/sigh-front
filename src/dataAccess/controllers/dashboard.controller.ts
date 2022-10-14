@@ -1,10 +1,10 @@
 import {
-  getDocs,
   collection,
-  query,
-  where,
+  getDocs,
   limit,
   orderBy,
+  query,
+  where,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { Roles } from '../../enums/Roles';
@@ -45,12 +45,10 @@ export class DashboardController {
 
     const latestTransfersDocs = await getDocs(queryLatestTransfers);
 
-    const latestTransfers = latestTransfersDocs.docs.map(doc => ({
+    return latestTransfersDocs.docs.map(doc => ({
       ...(doc.data() as ITransfer),
       id: doc.id,
     }));
-
-    return latestTransfers;
   }
 
   public async getLatestAthletes() {
@@ -64,11 +62,9 @@ export class DashboardController {
 
     const latestAthletesDocs = await getDocs(queryLatestAthletes);
 
-    const latestAthletes = latestAthletesDocs.docs.map(doc => ({
+    return latestAthletesDocs.docs.map(doc => ({
       ...(doc.data() as IUser),
       id: doc.id,
     }));
-
-    return latestAthletes;
   }
 }

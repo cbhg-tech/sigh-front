@@ -20,13 +20,16 @@ export interface ICreateTeam
     ITeam,
     | 'id'
     | 'logo'
+    | 'federation'
     | 'electionMinutes'
     | 'presidentDocument'
-    | 'federationDocument'
+    | 'teamDocument'
+    | 'createdAt'
+    | 'updatedAt'
   > {
   logo: File;
   presidentDocument: File;
-  federationDocument: File;
+  teamDocument: File;
   electionMinutes: File;
 }
 
@@ -45,7 +48,19 @@ export class TeamController {
       }),
     );
 
-    return result;
+    const federationsReads = result.map(r =>
+      getDoc(doc(db, 'federations', r.federationId)),
+    );
+    const federationsReuslts = await Promise.all(federationsReads);
+
+    return result.map((r, i) => {
+      const fed = federationsReuslts.find(f => f.id === r.federationId);
+
+      return {
+        ...r,
+        federation: fed?.data(),
+      };
+    }) as Array<ITeam>;
   }
 
   public async create(data: ICreateTeam) {
@@ -58,12 +73,12 @@ export class TeamController {
       presidentName,
       coachName,
       description,
-      federation,
+      federationId,
       url,
       logo: logoFile,
       electionMinutes: electionMinutesFile,
       presidentDocument: presidentDocumentFile,
-      federationDocument: federationDocumentFile,
+      teamDocument: teamDocumentFile,
     } = data;
 
     const { id } = await addDoc(collection(db, 'teams'), {
@@ -75,11 +90,13 @@ export class TeamController {
       presidentName,
       coachName,
       description,
-      federation,
+      federationId,
       url,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
-    await updateDoc(doc(db, 'federations', federation.id), {
+    await updateDoc(doc(db, 'federations', federationId), {
       teams: arrayUnion(id),
     });
 
@@ -93,8 +110,8 @@ export class TeamController {
       presidentDocumentFile,
     );
     const federationDocument = await UploadFile(
-      `teams/${id}/${federationDocumentFile.name}`,
-      federationDocumentFile,
+      `teams/${id}/${teamDocumentFile.name}`,
+      teamDocumentFile,
     );
 
     await updateDoc(doc(db, 'teams', id), {
@@ -108,7 +125,7 @@ export class TeamController {
       list: arrayUnion({
         id,
         name,
-        federationId: federation.id,
+        federationId,
         logoUrl: logo,
       }),
     });

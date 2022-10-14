@@ -15,6 +15,8 @@ import { useCreateUser } from '../../../dataAccess/hooks/user/useCreateUser';
 import { Roles } from '../../../enums/Roles';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
+import { IUser } from '../../../types/User';
+import { ICreateUser } from '../../../dataAccess/controllers/user.controller';
 
 interface IForm {
   name: string;
@@ -25,18 +27,15 @@ interface IForm {
   federation: string;
 }
 
-interface IProps {
-  isEditing?: boolean;
-}
-
-export function UserRegisterPage({ isEditing = false }: IProps) {
+// TODO: adicionar funcionalidade de editar um usuário
+export function UserRegisterPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { mutateAsync, isLoading } = useCreateUser();
   const { data: publicTeams } = useGetPublicTeams();
   const { data: publicFederations } = useGetPublicFederations();
 
-  const [selectedRole, setSelectedRole] = useState<Roles>(Roles.USER);
+  const [selectedRole, setSelectedRole] = useState<Roles>(Roles.ADMIN);
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
@@ -64,28 +63,14 @@ export function UserRegisterPage({ isEditing = false }: IProps) {
         f => f.id === data.federation,
       );
 
-      if (team) {
-        // @ts-ignore
-        await mutateAsync({
-          ...data,
-          team: {
-            id: team!.id,
-            name: team!.name,
-            logoUrl: team!.logoUrl,
-          },
-        });
-      }
+      const userData: ICreateUser = {
+        ...data,
+        relatedId: team?.id || federation?.id || 'CBHG - Administração',
+        relatedType: team ? 'team' : 'federation',
+        relatedName: team?.name || federation?.name || 'CBHG - Administração',
+      };
 
-      if (federation) {
-        // @ts-ignore
-        await mutateAsync({
-          ...data,
-          federation: {
-            id: federation!.id,
-            name: federation!.name,
-          },
-        });
-      }
+      await mutateAsync(userData);
 
       toast.success('Usuário criado com sucesso!');
 
@@ -127,6 +112,14 @@ export function UserRegisterPage({ isEditing = false }: IProps) {
             </Select>
           </div>
           <div className="flex-1">
+            {selectedRole === Roles.ADMIN && (
+              <div className="p-4">
+                <p className="text-light-on-surface-variant">
+                  CBHG - Administração
+                </p>
+              </div>
+            )}
+
             {selectedRole === Roles.ADMINFEDERACAO && (
               <Select label="Federação" name="federation">
                 <option value="">Selecione uma federação</option>
@@ -141,7 +134,7 @@ export function UserRegisterPage({ isEditing = false }: IProps) {
               </Select>
             )}
 
-            {selectedRole !== Roles.ADMINFEDERACAO && (
+            {selectedRole === Roles.ADMINCLUBE && (
               <Select label="Clube" name="team">
                 <option value="">Selecione um clube</option>
                 {publicTeams &&

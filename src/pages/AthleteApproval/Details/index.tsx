@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { MdCheck, MdOpenInNew } from 'react-icons/md';
+import { useState } from 'react';
+import { MdOpenInNew } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { CgSpinner } from 'react-icons/cg';
 import { useGetAppovalDetails } from '../../../dataAccess/hooks/athlete/useGetApprovalDetails';
@@ -12,6 +11,7 @@ import { useGlobal } from '../../../contexts/global.context';
 import { Roles } from '../../../enums/Roles';
 import { Status } from '../../../enums/Status';
 import { DataService } from '../../../utils/DataService';
+import { Badge } from '../../../components/Badge';
 
 export function ApprovalDetailsPage() {
   const navigate = useNavigate();
@@ -21,24 +21,6 @@ export function ApprovalDetailsPage() {
   const { data } = useGetAppovalDetails(id);
   const { mutateAsync, isLoading } = useUpdateApprovalStatus();
   const [note, setNote] = useState('');
-
-  useEffect(() => {
-    if (data) {
-      const { approval } = data;
-
-      switch (user?.role) {
-        case Roles.ADMINCLUBE:
-          setNote(approval?.logTeam || '');
-          break;
-        case Roles.ADMINFEDERACAO:
-        case Roles.ADMIN:
-          setNote(approval?.logCbhg || '');
-          break;
-        default:
-          throw new Error('Você não tem permissão para aprovar');
-      }
-    }
-  }, [data, user]);
 
   const handleApprove = async (isApproved: boolean) => {
     const approvalData = data?.approval;
@@ -64,29 +46,37 @@ export function ApprovalDetailsPage() {
       if (!isAllowedToApprove)
         throw new Error('Você não tem permissão para aprovar');
 
-      if (isApproved) {
-        switch (user?.role) {
-          case Roles.ADMINCLUBE:
-            approvalData.teamApproved = isApproved;
-            approvalData.logTeam = note;
-            break;
-          case Roles.ADMINFEDERACAO:
-          case Roles.ADMIN:
-            approvalData.cbhgApproved = isApproved;
-            approvalData.logCbhg = note;
-            break;
-          default:
-            throw new Error('Você não tem permissão para aprovar');
-        }
+      switch (user?.role) {
+        case Roles.ADMINCLUBE:
+          approvalData.teamApproved = isApproved;
+          break;
+        case Roles.ADMINFEDERACAO:
+          approvalData.federationApproved = isApproved;
+          break;
+        case Roles.ADMIN:
+          approvalData.cbhgApproved = isApproved;
+          break;
+        default:
+          throw new Error('Você não tem permissão para aprovar');
+      }
 
-        if (approvalData.cbhgApproved && approvalData.teamApproved)
+      if (isApproved) {
+        if (
+          approvalData.teamApproved &&
+          approvalData.federationApproved &&
+          approvalData.cbhgApproved
+        )
           approvalData.status = Status.ACTIVE;
       } else {
         approvalData.status = Status.REJECTED;
-
-        if (user?.role === Roles.ADMINCLUBE) approvalData.logTeam = note;
-        if (user?.role === Roles.ADMINFEDERACAO) approvalData.logTeam = note;
       }
+
+      approvalData.log.push({
+        note,
+        status: isApproved ? Status.ACTIVE : Status.REJECTED,
+        author: user?.role,
+        createdAt: new Date(),
+      });
 
       await mutateAsync({ ...approvalData });
 
@@ -104,7 +94,12 @@ export function ApprovalDetailsPage() {
 
     const { user } = data;
 
-    if (!user.athleteProfile) return <p>Dados do usuário incompletos</p>;
+    if (!user.athleteProfile)
+      return (
+        <p className="text-light-on-surface-variant">
+          Dados do usuário incompletos
+        </p>
+      );
 
     const { athleteProfile } = user;
     const { emergencyContact, hospitalData, address } = athleteProfile;
@@ -116,12 +111,11 @@ export function ApprovalDetailsPage() {
       <>
         <h2 className="text-3xl text-light-on-surface mb-4">Dados pessoais</h2>
         <p className="text-light-on-surface-variant">
-          {user.name || ''} -{' '}
-          {DataService().format(athleteProfile?.birthDate.seconds)}
+          {user.name || ''} - {DataService().format(athleteProfile?.birthDate)}
           <br />
           {user.email || ''}
           <br />
-          {user.team?.name || ''}
+          {user.related?.name || ''}
           <br />
           {athleteProfile?.phone || ''}
           <br />
@@ -250,14 +244,48 @@ export function ApprovalDetailsPage() {
 
   const showApprovalActions =
     user?.role === Roles.ADMINCLUBE ||
-    (user?.role === Roles.ADMIN && data?.approval.teamApproved) ||
-    (user?.role === Roles.ADMINFEDERACAO && data?.approval.teamApproved);
+    (user?.role === Roles.ADMINFEDERACAO && data?.approval.teamApproved) ||
+    (user?.role === Roles.ADMIN && data?.approval.federationApproved);
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       {renderDetails()}
 
       <h2 className="text-3xl text-light-on-surface my-4">Aprovar ficha?</h2>
+
+      <div className="mb-4">
+        <h3 className="text-2xl text-light-on-surface-variant my-4">
+          Histórico
+        </h3>
+        <ul>
+          {data?.approval.log && data?.approval.log.length > 0 ? (
+            data?.approval.log.map(l => (
+              <li className="pb-4 border-b border-b-light-outline mb-4">
+                <div className="flex gap-2 items-center">
+                  <span className="text-light-on-surface-variant">
+                    <strong>{l.author}</strong>
+                  </span>
+                  <Badge
+                    type={l.status === Status.ACTIVE ? 'primary' : 'error'}
+                  >
+                    {l.status}
+                  </Badge>
+                </div>
+                <p className="text-light-on-surface-variant">
+                  <strong>Observação: </strong> {l.note || 'Sem observação'}
+                </p>
+              </li>
+            ))
+          ) : (
+            <li>
+              <p className="text-light-on-surface-variant">
+                Nenhum log registrado ainda
+              </p>
+            </li>
+          )}
+        </ul>
+      </div>
+
       {showApprovalActions ? (
         <div className="mt-8">
           <MultineTextfieldBare
@@ -303,7 +331,9 @@ export function ApprovalDetailsPage() {
         </div>
       ) : (
         <p className="text-light-on-surface-variant">
-          Aguardando aprovação do clube
+          {user?.role === Roles.ADMINFEDERACAO &&
+            'Aguardando a aprovação do Clube'}
+          {user?.role === Roles.ADMIN && 'Aguardando a aprovação da Federação'}
         </p>
       )}
     </div>

@@ -16,7 +16,8 @@ import { Status } from '../../enums/Status';
 import { Roles } from '../../enums/Roles';
 import { validateIfDocumentExist } from '../../services/validateIfDocumentExists';
 
-export interface ICreateUser extends Omit<IUser, 'id' | 'status'> {
+export interface ICreateUser
+  extends Omit<IUser, 'id' | 'status' | 'createdAt' | 'updatedAt'> {
   email: string;
   password: string;
 }
@@ -54,9 +55,16 @@ export class UserController {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
+      const user = {
         ...docSnap.data(),
+        id: docSnap.id,
+      } as IUser;
+
+      const related = await getDoc(doc(db, user.relatedType!, user.relatedId!));
+
+      return {
+        ...user,
+        related: related.data(),
       } as IUser;
     }
 
@@ -64,7 +72,16 @@ export class UserController {
   }
 
   public async create(data: ICreateUser) {
-    const { email, password, name, role, team, federation, document } = data;
+    const {
+      email,
+      password,
+      name,
+      role,
+      relatedName,
+      relatedType,
+      relatedId,
+      document,
+    } = data;
 
     if (role === Roles.USER && document) {
       await validateIfDocumentExist(document);
@@ -81,15 +98,19 @@ export class UserController {
       name,
       role,
       status: Status.ACTIVE,
-      related: team?.name || federation?.name,
-      team: team || {},
-      federation: federation || {},
+      relatedName,
+      relatedType,
+      relatedId,
       document: document || '',
+      createdAt: new Date(),
       updatedAt: new Date(),
     });
   }
 
   public async put(data: Partial<IUser>) {
+    // eslint-disable-next-line no-param-reassign
+    delete data.related;
+
     await updateDoc(doc(db, 'users', data.id!), {
       ...data,
       updatedAt: new Date(),

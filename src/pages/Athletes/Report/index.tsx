@@ -196,7 +196,7 @@ export function AthletesReportPage() {
                 {athlete.athleteProfile?.phone || ' - '}
               </td>
               <td className="p-2 border border-light-outline w-fit">
-                {athlete.team?.name || ' - '}
+                {athlete.related?.name || ' - '}
               </td>
               <td className="p-2 border border-light-outline w-fit">
                 {athlete.athleteProfile?.country || ' - '}

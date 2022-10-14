@@ -17,7 +17,7 @@ export function UserCard({ user }: IProps) {
       />
       <div>
         <p className="text-xl text-light-on-surface">{user.name}</p>
-        <p className="text-light-on-surface-variant">{user.team?.name}</p>
+        <p className="text-light-on-surface-variant">{user.related?.name}</p>
       </div>
     </div>
   );
