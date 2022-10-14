@@ -13,7 +13,7 @@ import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.contr
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { States } from '../../../../dataAccess/static/states';
 import { Status } from '../../../../enums/Status';
-import { DataService } from '../../../../utils/DataService';
+import { DateService } from '../../../../services/DateService';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
 import { validateForm } from '../../../../utils/validateForm';
 import { useAthletesRegister } from '../register.context';
@@ -76,7 +76,7 @@ export function BasicData() {
   };
 
   const birthDate = user?.athleteProfile?.birthDate
-    ? DataService().format(user?.athleteProfile?.birthDate, 'YYYY-MM-DD')
+    ? DateService().format(user?.athleteProfile?.birthDate, 'YYYY-MM-DD')
     : undefined;
 
   return (

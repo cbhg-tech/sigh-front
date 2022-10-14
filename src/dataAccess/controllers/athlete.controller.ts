@@ -99,7 +99,7 @@ export class AthleteController {
 
   private async getRelatedData(list: IUser[]) {
     const relatedReads = list.map(async athlete =>
-      getDoc(doc(db, athlete.relatedType!, athlete.relatedId!)),
+      getDoc(doc(db, 'teams', athlete.relatedId!)),
     );
     const relatedResults = await Promise.all(relatedReads);
 

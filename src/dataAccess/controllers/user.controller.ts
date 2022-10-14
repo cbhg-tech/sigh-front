@@ -55,15 +55,18 @@ export class UserController {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const user = {
+      const userDB = {
         ...docSnap.data(),
         id: docSnap.id,
       } as IUser;
 
-      const related = await getDoc(doc(db, user.relatedType!, user.relatedId!));
+      const collectionName =
+        userDB.relatedType === 'team' ? 'teams' : 'federa tions';
+
+      const related = await getDoc(doc(db, collectionName, userDB.relatedId!));
 
       return {
-        ...user,
+        ...userDB,
         related: related.data(),
       } as IUser;
     }

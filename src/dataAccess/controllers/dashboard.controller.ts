@@ -11,6 +11,7 @@ import { Roles } from '../../enums/Roles';
 import { Status } from '../../enums/Status';
 import { ITransfer } from '../../types/Transfer';
 import { IUser } from '../../types/User';
+import { joinTransfer } from '../../services/joinTransfers';
 
 export class DashboardController {
   public async getTotalizer() {
@@ -45,10 +46,14 @@ export class DashboardController {
 
     const latestTransfersDocs = await getDocs(queryLatestTransfers);
 
-    return latestTransfersDocs.docs.map(doc => ({
+    const latestTransfers = latestTransfersDocs.docs.map(doc => ({
       ...(doc.data() as ITransfer),
       id: doc.id,
     }));
+
+    const latestTransfersReads = latestTransfers.map(doc => joinTransfer(doc));
+
+    return Promise.all(latestTransfersReads);
   }
 
   public async getLatestAthletes() {

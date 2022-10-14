@@ -140,7 +140,7 @@ export function AthletesListPage() {
                   {athlete.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {athlete.related?.name || 'Não encontrado'}
+                  {athlete.relatedName || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
                   {athlete.athleteProfile?.gender || 'Não informado'}

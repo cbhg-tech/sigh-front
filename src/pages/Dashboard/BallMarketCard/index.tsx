@@ -5,6 +5,7 @@ import ImgNotFound from '../../../assets/image-not-found.png';
 import { Badge } from '../../../components/Badge';
 import { ITransfer } from '../../../types/Transfer';
 import { Status } from '../../../enums/Status';
+import { DateService } from '../../../services/DateService';
 
 interface IProps {
   transfer: ITransfer;
@@ -67,7 +68,7 @@ export function BallMarketCard({ transfer }: IProps) {
         )}
 
         <p className="text-light-on-surface-variant">
-          {dayjs(transfer.transferData).format('DD/MM/YYYY')}
+          {DateService().format(transfer.transferData, 'DD/MM/YYYY')}
         </p>
       </div>
     </div>

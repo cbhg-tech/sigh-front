@@ -8,14 +8,14 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import dayjs from 'dayjs';
 import { db } from '../../app/FirebaseConfig';
 import { Status } from '../../enums/Status';
 import { ITransfer } from '../../types/Transfer';
+import { joinTransfer } from '../../services/joinTransfers';
 
 export type ICreateTransfer = Omit<
   ITransfer,
-  'log' | 'status' | 'transferData' | 'createdAt' | 'updatedAt'
+  'log' | 'status' | 'createdAt' | 'updatedAt'
 >;
 
 export class TransferController {
@@ -24,7 +24,6 @@ export class TransferController {
       ...data,
       status: Status.PENDING,
       log: [],
-      transferData: dayjs().format('DD/MM/YYYY'),
       updateAt: new Date(),
       createdAt: new Date(),
     });
@@ -42,7 +41,9 @@ export class TransferController {
       transfers.push(data);
     });
 
-    return transfers;
+    const transfersRead = transfers.map(t => joinTransfer(t));
+
+    return Promise.all(transfersRead);
   }
 
   public async getPending() {
@@ -60,13 +61,17 @@ export class TransferController {
       transfers.push(data);
     });
 
-    return transfers;
+    const transfersRead = transfers.map(t => joinTransfer(t));
+
+    return Promise.all(transfersRead);
   }
 
   public async getOne(id: string) {
     const querySnapshot = await getDoc(doc(db, 'transfers', id));
 
-    return { id: querySnapshot.id, ...querySnapshot.data() } as ITransfer;
+    const data = { id: querySnapshot.id, ...querySnapshot.data() } as ITransfer;
+
+    return joinTransfer(data);
   }
 
   public async update(data: ITransfer) {
@@ -85,11 +90,9 @@ export class TransferController {
     // TODO: buscar dados do time para atualizar o usuário
     if (data.status === 'Aprovado') {
       await updateDoc(doc(db, 'users', data.userId), {
-        related: data.destinationTeam,
-        team: {
-          id: data.destinationTeam,
-          name: data.destinationTeam,
-        },
+        relatedName: data.destinationTeam?.name,
+        relatedId: data.destinationTeamId,
+        relatedType: 'team',
       });
     }
   }
