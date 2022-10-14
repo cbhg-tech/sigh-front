@@ -8,6 +8,8 @@ import { Button } from '../../../components/Inputs/Button';
 import { SelectBare } from '../../../components/Inputs/SelectBare';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { ActionButtons } from '../../TechnicalCommittee/List/ActionButtons';
+import { useGetAllPartnerProjects } from '../../../dataAccess/hooks/partnerProject/useGetAllPartnerProjects';
+import { DateService } from '../../../services/DateService';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -34,7 +36,7 @@ export function PartnerProjectListPage() {
     Roles.ADMIN,
     Roles.ADMINFEDERACAO,
   ]);
-  const { data, isLoading, isError, isSuccess } = useGetAllTechnicalComittee();
+  const { data, isLoading, isError, isSuccess } = useGetAllPartnerProjects();
   const { data: publicTeams } = useGetPublicTeams();
 
   const [filter, setFilter] = useState('');
@@ -43,11 +45,11 @@ export function PartnerProjectListPage() {
   let tableData = data || [];
 
   if (filterTeam)
-    tableData = tableData.filter(athlete => athlete.relatedId === filterTeam);
+    tableData = tableData.filter(team => team?.relatedId === filterTeam);
 
   if (filter) {
     tableData = tableData.filter(user =>
-      user.name.toLowerCase().includes(filter.toLowerCase()),
+      user?.name.toLowerCase().includes(filter.toLowerCase()),
     );
   }
 
@@ -115,24 +117,25 @@ export function PartnerProjectListPage() {
             </tr>
           </thead>
           <tbody>
-            {tableData.map(tc => (
+            {tableData.map(pp => (
               <tr
                 className="border-b last:border-none border-slate-200"
-                key={tc.id}
+                key={pp?.id}
               >
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{tc.name}</td>
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{pp?.name}</td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {tc.related.name || 'Não encontrado'}
+                  {DateService().format(pp!.initialDate) || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {tc.phone || 'Não encontrado'}
+                  {DateService().format(pp!.finalDate) || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {tc.email || 'Não encontrado'}
+                  {pp?.practitioners || '0'}
                 </td>
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
-                  <ActionButtons id={tc.id!} teamId={tc.relatedId} />
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                  {pp?.related.name || 'Não encontrado'}
                 </td>
+                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`} />
               </tr>
             ))}
           </tbody>

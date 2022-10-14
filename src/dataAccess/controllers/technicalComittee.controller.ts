@@ -33,6 +33,8 @@ export class TechnicalComitteeController {
 
     const res = await addDoc(collection(db, 'technicalComittee'), {
       ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const documentUrl = await UploadFile(

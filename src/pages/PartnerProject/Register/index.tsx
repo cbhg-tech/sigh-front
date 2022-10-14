@@ -3,12 +3,88 @@ import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { useNavigate } from 'react-router-dom';
 
+import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 import { Textfield } from '../../../components/Inputs/Textfield';
 import { Button } from '../../../components/Inputs/Button';
+import { validateForm } from '../../../utils/validateForm';
+import { handleFormErrors } from '../../../utils/handleFormErrors';
+import { useCreateProjectPartner } from '../../../dataAccess/hooks/partnerProject/useCreatePartnerProject';
+import { useGlobal } from '../../../contexts/global.context';
+import { Roles } from '../../../enums/Roles';
+
+interface IForm {
+  name: string;
+  initialDate: string;
+  finalDate: string;
+  contact: {
+    name: string;
+    phone: string;
+  };
+  practitioners: number;
+  malePractitioners: number;
+  femalePractitioners: number;
+  ageGroup: string;
+}
 
 export function PartnerProjectRegisterPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
+  const { user } = useGlobal();
+  const { mutateAsync, isLoading } = useCreateProjectPartner();
+
+  async function handleSubmit(data: IForm) {
+    formRef.current?.setErrors({});
+
+    try {
+      await validateForm(data, {
+        name: Yup.string().required('Nome obrigatório'),
+        initialDate: Yup.string().required('Data de início obrigatório'),
+        finalDate: Yup.date().required('Data final obrigatória'),
+        practitioners: Yup.number().required('Praticantes obrigatório'),
+        malePractitioners: Yup.number().required(
+          'Praticantes masculinos obrigatório',
+        ),
+        femalePractitioners: Yup.number().required(
+          'Praticantes femininos obrigatório',
+        ),
+        ageGroup: Yup.string().required('Faixa etária obrigatório'),
+        contact: Yup.object({
+          name: Yup.string().required('Nome de contato obrigatória'),
+          phone: Yup.string().required('Numero de contato obrigatório'),
+        }),
+      });
+
+      let relatedType: 'Team' | 'Federation' | 'Cofederation';
+
+      switch (user?.role) {
+        case Roles.ADMIN:
+          relatedType = 'Cofederation';
+          break;
+        case Roles.ADMINFEDERACAO:
+          relatedType = 'Federation';
+          break;
+        case Roles.ADMINCLUBE:
+        default:
+          relatedType = 'Team';
+          break;
+      }
+
+      await mutateAsync({ ...data, relatedId: user!.id, relatedType });
+
+      toast.success('Projeto cadastrado com sucesso');
+
+      navigate('/app/projetosparceiros/listagem');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = handleFormErrors(err);
+
+        return formRef.current?.setErrors(errors);
+      }
+
+      toast.error('Ops! Não foi possivel salvar dados!');
+    }
+  }
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -22,7 +98,7 @@ export function PartnerProjectRegisterPage() {
       </p>
       <Form
         ref={formRef}
-        onSubmit={data => console.log(data)}
+        onSubmit={data => handleSubmit(data)}
         className="flex flex-col gap-2"
       >
         <div className="flex-1">
@@ -76,7 +152,7 @@ export function PartnerProjectRegisterPage() {
             <Textfield
               label="Faixa Etária"
               hint="Exemplo: Entre 10 e 15 anos"
-              name="practitioners"
+              name="ageGroup"
             />
           </div>
         </div>
@@ -93,8 +169,8 @@ export function PartnerProjectRegisterPage() {
             aditionalClasses="w-auto px-2"
             type="submit"
             label="Salvar"
-            // isLoading={isLoading}
-            // disabled={isLoading}
+            isLoading={isLoading}
+            disabled={isLoading}
           />
         </div>
       </Form>
