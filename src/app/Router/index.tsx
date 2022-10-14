@@ -25,6 +25,8 @@ import { AthletesReportPage } from '../../pages/Athletes/Report';
 import { TechnicalCommitteeListPage } from '../../pages/TechnicalCommittee/List';
 import { ListTransfersPage } from '../../pages/Transfer/List';
 import { TechnicalCommitteeRegisterPage } from '../../pages/TechnicalCommittee/Register';
+import { PartnerProjectListPage } from '../../pages/PartnerProject/List';
+import { PartnerProjectRegisterPage } from '../../pages/PartnerProject/Register';
 
 export function Router() {
   return (
@@ -91,6 +93,22 @@ export function Router() {
             element={
               <Navigation title="Cadastro de comissão técnica">
                 <TechnicalCommitteeRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/projetosparceiros/listagem"
+            element={
+              <Navigation title="Projetos parceiros">
+                <PartnerProjectListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/projetosparceiros/cadastro"
+            element={
+              <Navigation title="Cadastro de projetos parceiros">
+                <PartnerProjectRegisterPage />
               </Navigation>
             }
           />

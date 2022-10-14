@@ -3,13 +3,13 @@ import {
   MdChecklist,
   MdCompareArrows,
   MdDashboard,
+  MdGroupWork,
   MdInsertDriveFile,
   MdOutlineClose,
   MdOutlineListAlt,
   MdShield,
 } from 'react-icons/md';
 import { SiGoogleassistant } from 'react-icons/si';
-import { useGlobal } from '../../../contexts/global.context';
 import { Roles } from '../../../enums/Roles';
 import { Divider } from '../../Divider';
 import { IconButton } from '../../Inputs/IconButton';
@@ -88,6 +88,12 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           href="/app/tecnico/listagem"
           label="Comissão técnica"
           icon={FaUserFriends}
+        />
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/projetosparceiros/listagem"
+          label="Projetos parceiros"
+          icon={MdGroupWork}
         />
         {isAdmin && (
           <ListItem
