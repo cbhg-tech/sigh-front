@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGetPendingTransfers } from '../../../dataAccess/hooks/transfer/useGetPendingTransfers';
-import { DataService } from '../../../utils/DataService';
+import { DateService } from '../../../services/DateService';
 import { ActionButton } from './ActionButton';
 
 const COLUMN_WIDTH = [
@@ -93,7 +93,7 @@ export function TransferListApprovalPage() {
                   {row.destinationTeam?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                  {DataService().format(row.transferData) ||
+                  {DateService().format(row.transferData) ||
                     'Data não informada'}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>

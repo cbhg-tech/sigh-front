@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import isBetweenPlugin from 'dayjs/plugin/isBetween';
 
-export function DataService() {
+export function DateService() {
   dayjs.extend(utc);
   dayjs.extend(isBetweenPlugin);
 

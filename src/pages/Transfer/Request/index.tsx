@@ -14,12 +14,12 @@ import { useGetCurrentConfigs } from '../../../dataAccess/hooks/configs/useGetCo
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { useCreateTransferRequest } from '../../../dataAccess/hooks/transfer/useCreateTransferRequest';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
-import { DataService } from '../../../utils/DataService';
+import { DateService } from '../../../services/DateService';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 
 interface IForm {
-  transferData: Date;
+  transferData: string;
   obs: string;
   destinationClub: string;
 }
@@ -44,17 +44,19 @@ export function TransferRequestPage() {
         destinationClub: Yup.string().required('Clube de destino obrigatório'),
       });
 
+      const currentTeam = publicTeams?.list.find(t => t.id === user.relatedId);
       const team = publicTeams?.list.find(t => t.id === data.destinationClub);
 
-      if (team?.id === user.related?.id) {
+      if (team?.id === user.relatedId) {
         throw new Error('Você não pode transferir para o mesmo clube');
       }
 
       await mutateAsync({
+        transferData: data.transferData,
         userId: user.id,
-        currentTeamId: user.related!.id,
+        currentTeamId: user.relatedId,
         destinationTeamId: team!.id,
-        currentFederationId: user.related!.id,
+        currentFederationId: currentTeam!.federationId!,
         destinationFederationId: team!.federationId!,
         obs: data.obs,
       });
@@ -77,12 +79,12 @@ export function TransferRequestPage() {
   if (!isLoadingConfigs && data) {
     const { nextTransferPeriod, transferPeriodBegin, transferPeriodEnd } = data;
 
-    const isTransferPeriod = DataService().isBetween(
+    const isTransferPeriod = DateService().isBetween(
       transferPeriodBegin.seconds,
       transferPeriodEnd.seconds,
     );
 
-    const transferPeriodEnds = DataService().format(transferPeriodEnd.seconds);
+    const transferPeriodEnds = DateService().format(transferPeriodEnd.seconds);
 
     return (
       <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -93,7 +95,7 @@ export function TransferRequestPage() {
             </h2>
             <p>
               O próximo período de transferência começa no dia{' '}
-              {DataService().format(nextTransferPeriod.seconds)}{' '}
+              {DateService().format(nextTransferPeriod.seconds)}{' '}
             </p>
           </>
         )}
