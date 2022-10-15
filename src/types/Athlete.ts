@@ -1,4 +1,5 @@
 export interface IAthlete {
+  registerNumber: number;
   phone: number;
   birthDate: string;
   nickname: string;

@@ -41,7 +41,7 @@ export function RegisterPage() {
           .required('Email obrigatório'),
         document: Yup.string().required('Documento obrigatório'),
         password: Yup.string().required('Senha obrigatória'),
-        birthDate: Yup.date(),
+        birthDate: Yup.string(),
         team: Yup.string().required('Clube obrigatório'),
       });
 
@@ -49,6 +49,7 @@ export function RegisterPage() {
 
       await mutateAsync({
         ...data,
+        birthDate: dayjs(data.birthDate).format('YYYY-MM-DD'),
         relatedName: team!.name,
         relatedId: team!.id,
         relatedType: 'team',

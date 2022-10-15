@@ -41,10 +41,9 @@ export interface ICreateAthlete
   document: string;
 }
 
-export interface IUpdateAthlete extends Omit<IAthlete, 'birthDate'> {
+export interface IUpdateAthlete extends Omit<IAthlete, 'registerNumber'> {
   userId?: string;
   documentFiles?: IAthletesDocuments;
-  birthDate: Date;
 }
 
 export class AthleteController {
@@ -68,6 +67,10 @@ export class AthleteController {
       password,
     );
 
+    const registerNumber =
+      new Date().getFullYear().toString() +
+      Math.floor(Math.random() * 1000000).toString();
+
     await setDoc(doc(db, 'users', user.uid), {
       email,
       name,
@@ -77,6 +80,7 @@ export class AthleteController {
       relatedId,
       relatedType,
       athleteProfile: {
+        registerNumber,
         birthDate: new Date(birthDate),
       },
       document,
@@ -152,6 +156,15 @@ export class AthleteController {
     });
 
     return this.getRelatedData(athletes);
+  }
+
+  public async getOne(id: string) {
+    const user = await getDoc(doc(db, 'users', id));
+
+    return {
+      id: user.id,
+      ...user.data(),
+    } as IUser;
   }
 
   public async put(data: Partial<IUpdateAthlete>) {

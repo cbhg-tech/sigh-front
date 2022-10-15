@@ -30,6 +30,7 @@ import { PartnerProjectRegisterPage } from '../../pages/PartnerProject/Register'
 import { PartnerProjectDetailsPage } from '../../pages/PartnerProject/Details';
 import { FederationDetailsPage } from '../../pages/Federation/Details';
 import { TeamDetailsPage } from '../../pages/Team/Details';
+import { AthleteDetailsPage } from '../../pages/Athletes/Details';
 
 export function Router() {
   return (
@@ -52,6 +53,14 @@ export function Router() {
             element={
               <Navigation title="Atletas">
                 <AthletesListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/atletas/detalhes/:id"
+            element={
+              <Navigation title="Detalhes do atleta">
+                <AthleteDetailsPage />
               </Navigation>
             }
           />

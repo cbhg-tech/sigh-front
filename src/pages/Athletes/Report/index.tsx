@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { useGetAthletesReport } from '../../../dataAccess/hooks/athlete/useGetAthletesReport';
+import { defineAthleteCategory } from '../../../services/defineAthleteCategory';
 
 export function AthletesReportPage() {
   const navigate = useNavigate();
@@ -14,35 +15,13 @@ export function AthletesReportPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  function defineCategory(date: string) {
-    const birthDate = dayjs(date);
-    const today = dayjs();
-    const age = today.diff(birthDate, 'year');
-
-    if (age < 15) {
-      return 'Sub-15';
-    }
-
-    if (age < 18 && age >= 15) {
-      return 'Sub-18';
-    }
-
-    if (age > 18 && age < 21) {
-      return 'Sub-21';
-    }
-
-    if (age > 21) {
-      return 'Adulto';
-    }
-  }
-
   function exportDataAsXLS() {
     setIsLoading(true);
 
     const dataToExport = data?.map(athlete => {
       const { name, email, related, document, athleteProfile } = athlete;
       const category = athlete.athleteProfile?.birthDate
-        ? defineCategory(athlete.athleteProfile?.birthDate)
+        ? defineAthleteCategory(athlete.athleteProfile?.birthDate)
         : ' - ';
 
       return {
@@ -178,7 +157,7 @@ export function AthletesReportPage() {
               </td>
               <td className="p-2 border border-light-outline w-fit">
                 {athlete.athleteProfile?.birthDate
-                  ? defineCategory(athlete.athleteProfile?.birthDate)
+                  ? defineAthleteCategory(athlete.athleteProfile?.birthDate)
                   : ' - '}
               </td>
               <td className="p-2 border border-light-outline w-fit">

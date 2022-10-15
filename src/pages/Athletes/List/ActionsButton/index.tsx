@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { ListActionButtons } from '../../../../components/ListActionButtons';
 import { useHasPermission } from '../../../../hooks/useHasPermission';
 import { Roles } from '../../../../enums/Roles';
@@ -7,6 +8,7 @@ interface IProps {
 }
 
 export function ActionsButtons({ id }: IProps) {
+  const navigate = useNavigate();
   const isAthlete = useHasPermission([Roles.USER]);
 
   return (
@@ -15,7 +17,7 @@ export function ActionsButtons({ id }: IProps) {
       viewPermission
       editPermission={isAthlete}
       editBtn={() => console.log('edit')}
-      viewBtn={() => console.log('view')}
+      viewBtn={() => navigate(`/app/atletas/detalhes/${id}`)}
     />
   );
 }

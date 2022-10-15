@@ -1,10 +1,11 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { useRef } from 'react';
+import dayjs from 'dayjs';
 import { MdOutlineAccountCircle, MdOutlineRoom } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import * as Yup from 'yup';
 
+import * as Yup from 'yup';
 import { Button } from '../../../../components/Inputs/Button';
 import { Select } from '../../../../components/Inputs/Select';
 import { Textfield } from '../../../../components/Inputs/Textfield';
@@ -35,7 +36,7 @@ export function BasicData() {
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
-        birthDate: Yup.date().required('Data de nascimento obrigatória'),
+        birthDate: Yup.string().required('Data de nascimento obrigatória'),
         phone: Yup.string().required('Celular obrigatório'),
         gender: Yup.string().required('Gênero obrigatório'),
         country: Yup.string().required('País de origem obrigatório'),
@@ -51,7 +52,7 @@ export function BasicData() {
       await mutateAsync({
         ...user?.athleteProfile,
         ...data,
-        birthDate: new Date(data.birthDate),
+        birthDate: dayjs(data.birthDate).format('YYYY-MM-DD'),
       });
 
       toast.success('Perfil atualizado com sucesso!');
