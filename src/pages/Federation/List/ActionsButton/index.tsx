@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ListActionButtons } from '../../../../components/ListActionButtons';
 import { useDeleteFederation } from '../../../../dataAccess/hooks/federation/useDeleteFederation';
@@ -9,13 +10,16 @@ interface IProps {
 }
 
 export function ActionsButtons({ id }: IProps) {
+  const navigate = useNavigate();
   const { mutateAsync } = useDeleteFederation();
   const isAdmin = useHasPermission([Roles.ADMIN]);
 
   return (
     <ListActionButtons
+      viewPermission
       editPermission={isAdmin}
       deletePermission={isAdmin}
+      viewBtn={() => navigate(`/app/federacoes/detalhes/${id}`)}
       editBtn={() => console.log('edit')}
       deleteBtn={async () => {
         if (window.confirm('Deseja realmente apagar essa FEDERAÇÃO?')) {

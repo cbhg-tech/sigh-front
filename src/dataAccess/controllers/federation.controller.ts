@@ -15,6 +15,7 @@ import { db } from '../../app/FirebaseConfig';
 import { IFederation } from '../../types/Federation';
 import { IPublicData } from '../../types/PublicData';
 import { UploadFile } from '../../utils/uploadFile';
+import { ITeam } from '../../types/Team';
 
 export interface ICreateFed
   extends Omit<
@@ -49,6 +50,35 @@ export class FederationController {
     );
 
     return result;
+  }
+
+  public async getOne(id: string) {
+    const res = await getDoc(doc(db, 'federations', id));
+
+    const data = {
+      id: res.id,
+      ...res.data(),
+    } as IFederation;
+
+    let formattedTeams: Array<ITeam> = [];
+
+    if (data.teams && data.teams.length > 0) {
+      const teamsReads = data.teams.map(async t => getDoc(doc(db, 'teams', t)));
+      const teamsData = await Promise.all(teamsReads);
+
+      formattedTeams = teamsData.map(
+        t =>
+          ({
+            ...t.data(),
+            id: t.id,
+          } as ITeam),
+      );
+    }
+
+    return {
+      ...data,
+      teamsList: formattedTeams,
+    };
   }
 
   public async create(data: ICreateFed) {

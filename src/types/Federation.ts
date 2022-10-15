@@ -14,7 +14,8 @@ export interface IFederation {
   electionMinutes: string;
   presidentDocument: string;
   federationDocument: string;
-  teams?: Array<ITeam>;
+  teams?: Array<string>;
+  teamsList?: Array<ITeam>;
   createdAt: Date | IFirebaseDate;
   updatedAt: Date | IFirebaseDate;
 }
