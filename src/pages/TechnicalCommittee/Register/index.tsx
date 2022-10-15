@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -15,6 +15,7 @@ import { useGlobal } from '../../../contexts/global.context';
 import { useHasPermission } from '../../../hooks/useHasPermission';
 import { Roles } from '../../../enums/Roles';
 import { Button } from '../../../components/Inputs/Button';
+import { useGetOneTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useGetOneTechnicalComittee';
 
 interface IForm {
   name: string;
@@ -24,17 +25,29 @@ interface IForm {
   birthDate: string;
 }
 
-export function TechnicalCommitteeRegisterPage() {
+interface IProps {
+  isDisplayMode?: boolean;
+}
+
+export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
   const navigate = useNavigate();
+  const { id } = useParams();
   const formRef = useRef<FormHandles>(null);
 
   const { user } = useGlobal();
   const { mutateAsync, isLoading } = useCreateTechnicalComittee();
+  const {
+    data,
+    isLoading: isLoadingData,
+    isSuccess,
+  } = useGetOneTechnicalComittee(id);
   const isTeamManager = useHasPermission([Roles.ADMINCLUBE]);
 
   const [document, setDocument] = useState<File | null>(null);
 
   async function handleSubmit(data: IForm) {
+    if (isDisplayMode) return;
+
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
@@ -69,10 +82,17 @@ export function TechnicalCommitteeRegisterPage() {
     }
   }
 
-  if (!isTeamManager) {
+  if (!isTeamManager && !isDisplayMode) {
     toast.warning('Você não tem permissão para acessar essa página');
     navigate('/app/tecnico/listagem');
   }
+
+  if (isDisplayMode && isLoadingData)
+    return (
+      <div className="bg-light-surface p-6 rounded-2xl h-full">
+        <h2 className="text-3xl text-light-on-surface mb-4">Carregando...</h2>
+      </div>
+    );
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -81,35 +101,46 @@ export function TechnicalCommitteeRegisterPage() {
         ref={formRef}
         onSubmit={data => handleSubmit(data)}
         className="flex flex-col"
+        initialData={isSuccess ? data : undefined}
       >
         <div className="flex-1">
-          <Textfield name="name" label="Nome" />
+          <Textfield name="name" label="Nome" disabled={isDisplayMode} />
         </div>
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2">
           <div className="col-span-1">
-            <Textfield name="phone" label="Telefone" />
+            <Textfield name="phone" label="Telefone" disabled={isDisplayMode} />
           </div>
           <div className="col-span-1">
             <Textfield
               type="date"
               name="birthDate"
               label="Data de nascimento"
+              disabled={isDisplayMode}
             />
           </div>
         </div>
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2">
           <div className="col-span-1">
-            <Textfield type="email" name="email" label="Email" />
+            <Textfield
+              type="email"
+              name="email"
+              label="Email"
+              disabled={isDisplayMode}
+            />
           </div>
           <div className="col-span-1">
-            <Select name="gender" label="Sexo*">
+            <Select name="gender" label="Sexo*" disabled={isDisplayMode}>
               <option value="feminino">Feminino</option>
               <option value="masculino">Masculino</option>
             </Select>
           </div>
         </div>
         <div className="flex-1">
-          <Textfield name="document" label="Número do documento" />
+          <Textfield
+            name="document"
+            label="Número do documento"
+            disabled={isDisplayMode}
+          />
         </div>
         <div className="p-4">
           <FileInput
@@ -117,24 +148,27 @@ export function TechnicalCommitteeRegisterPage() {
             label="Atestado Médico"
             hint="Obrigatório para todos"
             onChange={e => setDocument(e.target.files?.[0] || null)}
+            disabled={isDisplayMode}
           />
         </div>
-        <div className="flex justify-end gap-2">
-          <Button
-            aditionalClasses="w-auto px-2 text-light-on-surface-variant"
-            label="Cancelar"
-            variant="primary-border"
-            type="button"
-            onClick={() => navigate('/app/tecnico/listagem')}
-          />
-          <Button
-            aditionalClasses="w-auto px-2"
-            type="submit"
-            label="Salvar"
-            isLoading={isLoading}
-            disabled={isLoading}
-          />
-        </div>
+        {!isDisplayMode && (
+          <div className="flex justify-end gap-2">
+            <Button
+              aditionalClasses="w-auto px-2 text-light-on-surface-variant"
+              label="Cancelar"
+              variant="primary-border"
+              type="button"
+              onClick={() => navigate('/app/tecnico/listagem')}
+            />
+            <Button
+              aditionalClasses="w-auto px-2"
+              type="submit"
+              label="Salvar"
+              isLoading={isLoading}
+              disabled={isLoading}
+            />
+          </div>
+        )}
       </Form>
     </div>
   );

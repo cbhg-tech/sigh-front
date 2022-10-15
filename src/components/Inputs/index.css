@@ -25,3 +25,9 @@ textarea:not(:focus):placeholder-shown ~ label,
 select:not(:focus):placeholder-shown ~ label {
   @apply duration-200 origin-left ease-in-out transform scale-100 translate-x-0 translate-y-0 text-light-on-surface-variant;
 }
+
+input:not([type='radio']):not(:focus):not(:placeholder-shown):disabled,
+textarea:not(:focus):not(:placeholder-shown):disabled,
+select:not(:focus):not(:placeholder-shown):disabled {
+  @apply bg-light-surface opacity-50 px-1 text-light-on-surface-variant cursor-not-allowed;
+}

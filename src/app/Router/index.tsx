@@ -109,6 +109,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/tecnico/detalhes/:id"
+            element={
+              <Navigation title="Detalhes da comissão técnica">
+                <TechnicalCommitteeRegisterPage isDisplayMode />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/projetosparceiros/listagem"
             element={
               <Navigation title="Projetos parceiros">

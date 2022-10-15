@@ -74,4 +74,13 @@ export class TechnicalComitteeController {
       });
     });
   }
+
+  public async getOne(id: string) {
+    const res = await getDoc(doc(db, 'technicalComittee', id));
+
+    return {
+      id: res.id,
+      ...res.data(),
+    } as ITechnicialCommittee;
+  }
 }
