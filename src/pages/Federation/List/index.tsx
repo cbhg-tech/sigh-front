@@ -24,7 +24,6 @@ export function FederationListPage() {
   const navigate = useNavigate();
 
   const { data, isError, isLoading, isSuccess } = useGetFederations();
-  const isAthlete = useHasPermission([Roles.USER]);
   const isAdmin = useHasPermission([Roles.ADMIN]);
 
   const [filter, setFilter] = useState('');
@@ -116,7 +115,7 @@ export function FederationListPage() {
                   {federation.presidentName}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                  {!isAthlete && <ActionsButtons id={federation.id} />}
+                  <ActionsButtons id={federation.id} />
                 </td>
               </tr>
             ))}

@@ -1,7 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { ListActionButtons } from '../../../../components/ListActionButtons';
-import { useHasPermission } from '../../../../hooks/useHasPermission';
-import { Roles } from '../../../../enums/Roles';
 
 interface IProps {
   id: string;
@@ -9,14 +7,12 @@ interface IProps {
 
 export function ActionsButtons({ id }: IProps) {
   const navigate = useNavigate();
-  const isAthlete = useHasPermission([Roles.USER]);
 
   return (
     <ListActionButtons
-      deletePermission={false}
       viewPermission
-      editPermission={isAthlete}
-      editBtn={() => console.log('edit')}
+      deletePermission={false}
+      editPermission={false}
       viewBtn={() => navigate(`/app/atletas/detalhes/${id}`)}
     />
   );

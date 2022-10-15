@@ -30,8 +30,6 @@ export function AthletesListPage() {
   const { data: publicFederation } = useGetPublicFederations();
   const { data: publicTeams } = useGetPublicTeams();
 
-  const isAthlete = useHasPermission([Roles.USER]);
-
   const [filter, setFilter] = useState('');
   const [filterFederation, setFilterFederation] = useState('');
   const [filterTeam, setFilterTeam] = useState('');
@@ -150,11 +148,9 @@ export function AthletesListPage() {
                   {athlete.status}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                  {!isAthlete && (
-                    <div className="flex gap-2 items-center justify-end">
-                      <ActionsButtons id={athlete.id} />
-                    </div>
-                  )}
+                  <div className="flex gap-2 items-center justify-end">
+                    <ActionsButtons id={athlete.id} />
+                  </div>
                 </td>
               </tr>
             ))}

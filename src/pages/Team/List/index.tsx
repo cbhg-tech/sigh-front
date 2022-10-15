@@ -24,7 +24,6 @@ const COLUMN_NAMES = ['Nome', 'Federação', 'Email', 'Presidente', ''];
 export function TeamListPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
-  const isAthlete = useHasPermission([Roles.USER]);
   const isAdmin = useHasPermission([Roles.ADMIN]);
   const { data, isError, isLoading, isSuccess } = useGetTeams();
   const [filter, setFilter] = useState('');
@@ -122,7 +121,7 @@ export function TeamListPage() {
                   {team.presidentName}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
-                  {!isAthlete && <ActionsButtons id={team.id} />}
+                  <ActionsButtons id={team.id} />
                 </td>
               </tr>
             ))}
