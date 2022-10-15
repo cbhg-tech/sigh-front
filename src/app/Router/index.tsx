@@ -29,6 +29,7 @@ import { PartnerProjectListPage } from '../../pages/PartnerProject/List';
 import { PartnerProjectRegisterPage } from '../../pages/PartnerProject/Register';
 import { PartnerProjectDetailsPage } from '../../pages/PartnerProject/Details';
 import { FederationDetailsPage } from '../../pages/Federation/Details';
+import { TeamDetailsPage } from '../../pages/Team/Details';
 
 export function Router() {
   return (
@@ -159,6 +160,14 @@ export function Router() {
             element={
               <Navigation title="Clubes">
                 <TeamListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/clubes/detalhes/:id"
+            element={
+              <Navigation title="Detalhes do clube">
+                <TeamDetailsPage />
               </Navigation>
             }
           />

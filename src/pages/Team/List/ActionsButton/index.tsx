@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ListActionButtons } from '../../../../components/ListActionButtons';
 import { useDeleteTeam } from '../../../../dataAccess/hooks/team/useDeleteTeam';
@@ -9,13 +10,16 @@ interface IProps {
 }
 
 export function ActionsButtons({ id }: IProps) {
+  const navigate = useNavigate();
   const { mutateAsync } = useDeleteTeam();
   const isAdmin = useHasPermission([Roles.ADMIN]);
 
   return (
     <ListActionButtons
+      viewPermission
       deletePermission={isAdmin}
       editPermission={isAdmin}
+      viewBtn={() => navigate(`/app/clubes/detalhes/${id}`)}
       editBtn={() => console.log('edit')}
       deleteBtn={async () => {
         if (window.confirm('Deseja realmente apagar esse CLUBE?')) {

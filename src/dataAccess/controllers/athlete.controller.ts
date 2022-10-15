@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import {
+  arrayUnion,
   collection,
   doc,
   getDoc,
@@ -280,7 +281,7 @@ export class AthleteController {
   }
 
   public async updateApprovalStatus(data: IUserApproval) {
-    const { id, status } = data;
+    const { id, status, teamId } = data;
 
     await updateDoc(doc(db, 'userApproval', id), {
       ...data,
@@ -291,6 +292,12 @@ export class AthleteController {
       await updateDoc(doc(db, 'users', id), {
         status,
         updatedAt: new Date(),
+      });
+    }
+
+    if (status === Status.ACTIVE) {
+      await updateDoc(doc(db, 'teams', teamId), {
+        usersList: arrayUnion(id),
       });
     }
   }

@@ -14,6 +14,8 @@ import { db } from '../../app/FirebaseConfig';
 import { IPublicData } from '../../types/PublicData';
 import { ITeam } from '../../types/Team';
 import { UploadFile } from '../../utils/uploadFile';
+import { IUser } from '../../types/User';
+import { IFederation } from '../../types/Federation';
 
 export interface ICreateTeam
   extends Omit<
@@ -24,6 +26,8 @@ export interface ICreateTeam
     | 'electionMinutes'
     | 'presidentDocument'
     | 'teamDocument'
+    | 'users'
+    | 'usersList'
     | 'createdAt'
     | 'updatedAt'
   > {
@@ -63,6 +67,29 @@ export class TeamController {
     }) as Array<ITeam>;
   }
 
+  public async getOne(id: string) {
+    const res = await getDoc(doc(db, 'teams', id));
+
+    const data = { ...res.data() } as ITeam;
+
+    let userList: Array<IUser> = [];
+
+    if (data.usersList.length > 0) {
+      const users = data.usersList.map(async u => getDoc(doc(db, 'users', u)));
+      const results = await Promise.all(users);
+
+      userList = results.map(r => ({ id: r.id, ...r.data() } as IUser));
+    }
+
+    const federation = await getDoc(doc(db, 'federations', data.federationId));
+
+    return {
+      ...data,
+      federation: federation.data() as IFederation,
+      users: userList,
+    } as ITeam;
+  }
+
   public async create(data: ICreateTeam) {
     const {
       name,
@@ -92,6 +119,7 @@ export class TeamController {
       description,
       federationId,
       url,
+      usersList: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     });
