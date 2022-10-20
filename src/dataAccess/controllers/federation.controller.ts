@@ -16,6 +16,7 @@ import { IFederation } from '../../types/Federation';
 import { IPublicData } from '../../types/PublicData';
 import { UploadFile } from '../../utils/uploadFile';
 import { ITeam } from '../../types/Team';
+import { IPutTeam } from './team.controller';
 
 export interface ICreateFed
   extends Omit<
@@ -32,6 +33,22 @@ export interface ICreateFed
   presidentDocument: File;
   federationDocument: File;
   electionMinutes: File;
+}
+
+export interface IUpdateFed
+  extends Omit<
+    IFederation,
+    | 'logo'
+    | 'electionMinutes'
+    | 'presidentDocument'
+    | 'federationDocument'
+    | 'updatedAt'
+    | 'createdAt'
+  > {
+  logo: File | string;
+  presidentDocument: File | string;
+  federationDocument: File | string;
+  electionMinutes: File | string;
 }
 
 export class FederationController {
@@ -137,6 +154,71 @@ export class FederationController {
       electionMinutes,
       presidentDocument,
       federationDocument,
+    });
+  }
+
+  public async update(data: IUpdateFed) {
+    const {
+      id,
+      logo: logoFile,
+      electionMinutes: electionMinutesFile,
+      presidentDocument: presidentDocumentFile,
+      federationDocument: federationDocumentFile,
+    } = data;
+
+    const logo =
+      typeof logoFile !== 'string'
+        ? await UploadFile(`federations/${id}/${logoFile!.name}`, logoFile!)
+        : logoFile;
+    const electionMinutes =
+      typeof electionMinutesFile !== 'string'
+        ? await UploadFile(
+            `federations/${id}/${electionMinutesFile!.name}`,
+            electionMinutesFile!,
+          )
+        : electionMinutesFile;
+    const presidentDocument =
+      typeof presidentDocumentFile !== 'string'
+        ? await UploadFile(
+            `federations/${id}/${presidentDocumentFile!.name}`,
+            presidentDocumentFile!,
+          )
+        : presidentDocumentFile;
+    const federationDocument =
+      typeof federationDocumentFile !== 'string'
+        ? await UploadFile(
+            `federations/${id}/${federationDocumentFile!.name}`,
+            federationDocumentFile!,
+          )
+        : federationDocumentFile;
+
+    await updateDoc(doc(db, 'federations', id), {
+      ...data,
+      logo,
+      electionMinutes,
+      presidentDocument,
+      federationDocument,
+      updatedAt: new Date(),
+    });
+
+    const res = await getDoc(doc(db, 'public', 'federations'));
+
+    const obj = { ...res.data() } as IPublicData;
+
+    const team = obj.list.find(f => f.id === id);
+
+    await updateDoc(doc(db, 'public', 'federations'), {
+      list: arrayRemove({
+        ...team,
+      }),
+    });
+
+    await updateDoc(doc(db, 'public', 'federations'), {
+      list: arrayUnion({
+        id,
+        name: data.name,
+        logoUrl: logo,
+      }),
     });
   }
 

@@ -20,7 +20,7 @@ export function ActionsButtons({ id }: IProps) {
       editPermission={isAdmin}
       deletePermission={isAdmin}
       viewBtn={() => navigate(`/app/federacoes/detalhes/${id}`)}
-      editBtn={() => console.log('edit')}
+      editBtn={() => navigate(`/app/federacoes/editar/${id}`)}
       deleteBtn={async () => {
         if (window.confirm('Deseja realmente apagar essa FEDERAÇÃO?')) {
           await mutateAsync(id);

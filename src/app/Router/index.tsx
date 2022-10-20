@@ -189,6 +189,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/federacoes/editar/:id"
+            element={
+              <Navigation title="Editar de Federação">
+                <FederationRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/clubes/listagem"
             element={
               <Navigation title="Clubes">

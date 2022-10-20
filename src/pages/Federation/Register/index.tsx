@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import { toast } from 'react-toastify';
@@ -14,6 +14,8 @@ import { validateForm } from '../../../utils/validateForm';
 import { useCreateFederation } from '../../../dataAccess/hooks/federation/useCreateFederation';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { FileInput } from '../../../components/Inputs/FIleInput';
+import { useUpdateFederation } from '../../../dataAccess/hooks/federation/useUpdateFederation';
+import { useGetOneFederation } from '../../../dataAccess/hooks/federation/useGetOneFederation';
 
 interface IForm {
   name: string;
@@ -33,9 +35,14 @@ interface IFiles {
 }
 
 export function FederationRegisterPage() {
+  const { id } = useParams();
   const formRef = useRef<FormHandles>(null);
   const navigate = useNavigate();
-  const { mutateAsync, isLoading } = useCreateFederation();
+  const { data: federationData } = useGetOneFederation(id);
+  const { mutateAsync: createFedAsync, isLoading: createFedLoading } =
+    useCreateFederation();
+  const { mutateAsync: updateFedAsync, isLoading: updateFedLoading } =
+    useUpdateFederation();
 
   const [files, setFiles] = useState<IFiles>({
     logo: undefined,
@@ -45,20 +52,17 @@ export function FederationRegisterPage() {
   });
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (federationData) {
+      formRef.current?.setFieldValue('uf', federationData.uf);
+    }
+  }, [federationData]);
+
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
 
     const { electionMinutes, federationDocument, logo, presidentDocument } =
       files;
-
-    if (
-      !electionMinutes ||
-      !federationDocument ||
-      !logo ||
-      !presidentDocument
-    ) {
-      return setError('Faça upload de todos os arquivos');
-    }
 
     try {
       await validateForm(data, {
@@ -73,15 +77,39 @@ export function FederationRegisterPage() {
         endOfTerm: Yup.string().required('Fim do mandato obrigatória'),
       });
 
-      await mutateAsync({
-        ...data,
-        logo,
-        electionMinutes,
-        presidentDocument,
-        federationDocument,
-      });
+      if (!id) {
+        if (
+          !electionMinutes ||
+          !federationDocument ||
+          !logo ||
+          !presidentDocument
+        ) {
+          return setError('Faça upload de todos os arquivos');
+        }
 
-      toast.success('Federação criada com sucesso!');
+        await createFedAsync({
+          ...data,
+          logo,
+          electionMinutes,
+          presidentDocument,
+          federationDocument,
+        });
+
+        toast.success('Federação criada com sucesso!');
+      } else {
+        await updateFedAsync({
+          ...data,
+          id,
+          logo: logo || federationData!.logo,
+          electionMinutes: electionMinutes || federationData!.electionMinutes,
+          presidentDocument:
+            presidentDocument || federationData!.presidentDocument,
+          federationDocument:
+            federationDocument || federationData!.federationDocument,
+        });
+
+        toast.success('Federação atualizada com sucesso!');
+      }
 
       navigate('/app/federacoes/listagem');
     } catch (err) {
@@ -105,6 +133,7 @@ export function FederationRegisterPage() {
         ref={formRef}
         className="grid grid-cols-1 md:grid-cols-6 gap-2"
         onSubmit={data => handleSubmit(data)}
+        initialData={federationData}
       >
         <div className="col-span-1 md:col-span-4">
           <Textfield name="name" label="Nome" />
@@ -187,9 +216,9 @@ export function FederationRegisterPage() {
           <Button
             aditionalClasses="w-auto px-2"
             type="submit"
-            label="Criar federação"
-            isLoading={isLoading}
-            disabled={isLoading}
+            label="Salvar"
+            isLoading={createFedLoading || updateFedLoading}
+            disabled={createFedLoading || updateFedLoading}
           />
         </div>
       </Form>

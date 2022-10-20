@@ -9,7 +9,6 @@ export function useGetOneTeam(id?: string) {
   }
 
   return useQuery(['getOneTeam', id], () => getOne(id!), {
-    refetchOnWindowFocus: false,
     enabled: !!id,
   });
 }
