@@ -18,6 +18,8 @@ import { ListSubtitle } from './ListSubtitle';
 
 import CBHGLogo from '../../../assets/cbhg-logo.png';
 import { useHasPermission } from '../../../hooks/useHasPermission';
+import { useGlobal } from '../../../contexts/global.context';
+import { Status } from '../../../enums/Status';
 
 interface IProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ interface IProps {
 
 export function Aside({ isOpen, toogleSideMenu }: IProps) {
   const isOpenStyle = isOpen ? 'translate-x-0' : '-translate-x-full';
+  const { user } = useGlobal();
 
   const isAdmin = useHasPermission([Roles.ADMIN]);
   const isAthlete = useHasPermission([Roles.USER]);
@@ -62,20 +65,20 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
         <Divider />
         <ListSubtitle label={isAdmin ? 'Cadastros' : 'Menu'} />
         {isAthlete && (
-          <>
-            <ListItem
-              closeModal={() => toogleSideMenu(false)}
-              href="/app/perfil"
-              label="Meu perfil"
-              icon={FaUserAlt}
-            />
-            <ListItem
-              closeModal={() => toogleSideMenu(false)}
-              href="/app/transferencia/solicitacao"
-              label="Transferências"
-              icon={MdCompareArrows}
-            />
-          </>
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/perfil"
+            label="Meu perfil"
+            icon={FaUserAlt}
+          />
+        )}
+        {isAthlete && user?.status === Status.ACTIVE && (
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/transferencia/solicitacao"
+            label="Transferências"
+            icon={MdCompareArrows}
+          />
         )}
         <ListItem
           closeModal={() => toogleSideMenu(false)}
@@ -138,13 +141,15 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
               icon={MdOutlineListAlt}
               end
             />
-            <ListItem
-              closeModal={() => toogleSideMenu(false)}
-              href="/app/restrito/atletas/relatorio"
-              label="Relatório de atletas"
-              icon={MdInsertDriveFile}
-            />
           </>
+        )}
+        {isAdmin && (
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/restrito/atletas/relatorio"
+            label="Relatório de atletas"
+            icon={MdInsertDriveFile}
+          />
         )}
       </div>
     </aside>
