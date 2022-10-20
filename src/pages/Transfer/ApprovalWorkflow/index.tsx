@@ -28,6 +28,10 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   function canApproveWorkflow() {
     if (isDisplayOnly) return false;
 
+    const logExist = transferData?.log.find(log => log.role === user?.role);
+
+    if (logExist) return false;
+
     if (transferData?.status !== Status.ACTIVE) {
       if (
         user?.role === Roles.ADMINCLUBE &&
@@ -130,36 +134,18 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   }
 
   function waitingMessage() {
-    if (
-      user?.role === Roles.ADMINCLUBE &&
-      transferData?.destinationTeamId === user?.relatedId &&
-      transferData?.currentTeamStatus !== Status.ACTIVE
-    ) {
-      return 'Aguardando aprovação do time de origem';
-    }
+    if (transferData?.currentTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de origem';
+    if (transferData?.destinationTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de destino';
+    if (transferData?.currentFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de origem';
+    if (transferData?.destinationFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de destino';
+    if (transferData?.cbhgStatus !== Status.ACTIVE)
+      return 'Pendente confederação';
 
-    if (
-      user?.role === Roles.ADMINFEDERACAO &&
-      transferData?.currentFederationId === user?.relatedId &&
-      transferData?.destinationTeamStatus !== Status.ACTIVE
-    ) {
-      return 'Aguardando aprovação do time de destino';
-    }
-
-    if (
-      user?.role === Roles.ADMINFEDERACAO &&
-      transferData?.destinationFederationId === user?.relatedId &&
-      transferData?.currentFederationStatus !== Status.ACTIVE
-    ) {
-      return 'Aguardando aprovação da federação de origem';
-    }
-
-    if (
-      user?.role === Roles.ADMIN &&
-      transferData?.destinationFederationStatus !== Status.ACTIVE
-    ) {
-      return 'Aguardando aprovação da federação de destino';
-    }
+    return 'Transferência concluída';
   }
 
   return (

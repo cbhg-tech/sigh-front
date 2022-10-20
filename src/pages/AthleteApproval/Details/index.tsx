@@ -247,6 +247,10 @@ export function ApprovalDetailsPage() {
     (user?.role === Roles.ADMINFEDERACAO && data?.approval.teamApproved) ||
     (user?.role === Roles.ADMIN && data?.approval.federationApproved);
 
+  const aprovalLogExist = data?.approval.log.find(
+    log => log.author === user?.role,
+  );
+
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       {renderDetails()}
@@ -286,7 +290,7 @@ export function ApprovalDetailsPage() {
         </ul>
       </div>
 
-      {showApprovalActions ? (
+      {showApprovalActions && !aprovalLogExist ? (
         <div className="mt-8">
           <MultineTextfieldBare
             name="note"
