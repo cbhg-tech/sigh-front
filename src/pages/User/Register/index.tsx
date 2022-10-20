@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
@@ -17,6 +17,8 @@ import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 import { IUser } from '../../../types/User';
 import { ICreateUser } from '../../../dataAccess/controllers/user.controller';
+import { useGetUserById } from '../../../dataAccess/hooks/user/useGetUserById';
+import { usePutUser } from '../../../dataAccess/hooks/user/usePutUser';
 
 interface IForm {
   name: string;
@@ -27,15 +29,38 @@ interface IForm {
   federation: string;
 }
 
-// TODO: adicionar funcionalidade de editar um usuário
-export function UserRegisterPage() {
+interface IProps {
+  isDisplayOnly?: boolean;
+}
+
+export function UserRegisterPage({ isDisplayOnly = false }: IProps) {
   const navigate = useNavigate();
+  const { id } = useParams();
   const formRef = useRef<FormHandles>(null);
-  const { mutateAsync, isLoading } = useCreateUser();
+  const { mutateAsync: createUserAsync, isLoading: createUserLoading } =
+    useCreateUser();
+  const { mutateAsync: putUserAsync, isLoading: putUserLoading } = usePutUser();
   const { data: publicTeams } = useGetPublicTeams();
   const { data: publicFederations } = useGetPublicFederations();
+  const { data: userByIdData } = useGetUserById(id);
 
   const [selectedRole, setSelectedRole] = useState<Roles>(Roles.ADMIN);
+
+  useEffect(() => {
+    if (userByIdData) {
+      setSelectedRole(userByIdData.role as Roles);
+      formRef.current?.setFieldValue('role', userByIdData.role);
+    }
+  }, [userByIdData]);
+
+  useEffect(() => {
+    if (userByIdData) {
+      if (selectedRole === Roles.ADMINCLUBE)
+        formRef.current?.setFieldValue('team', userByIdData.relatedId);
+      if (selectedRole === Roles.ADMINFEDERACAO)
+        formRef.current?.setFieldValue('federation', userByIdData.relatedId);
+    }
+  }, [selectedRole, userByIdData]);
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
@@ -47,7 +72,7 @@ export function UserRegisterPage() {
       throw new Error('Selecione uma federação ou um clube');
 
     try {
-      await validateForm(data, {
+      const yupDataValdiation = {
         name: Yup.string().required('Nome obrigatório'),
         role: Yup.string().required('RoleAccess obrigatório'),
         team: Yup.string(),
@@ -55,8 +80,14 @@ export function UserRegisterPage() {
         email: Yup.string()
           .required('Email obrigatório')
           .email('Email inválido'),
-        password: Yup.string().required('Senha obrigatória'),
-      });
+      };
+
+      if (!id && !isDisplayOnly) {
+        // @ts-ignore
+        yupDataValdiation.password = Yup.string().required('Senha obrigatória');
+      }
+
+      await validateForm(data, yupDataValdiation);
 
       const team = publicTeams?.list.find(t => t.id === data.team);
       const federation = publicFederations?.list.find(
@@ -70,9 +101,18 @@ export function UserRegisterPage() {
         relatedName: team?.name || federation?.name || 'CBHG - Administração',
       };
 
-      await mutateAsync(userData);
+      if (!id && !isDisplayOnly) {
+        await createUserAsync(userData);
 
-      toast.success('Usuário criado com sucesso!');
+        toast.success('Usuário criado com sucesso!');
+      } else {
+        // @ts-ignore
+        delete userData.password;
+
+        await putUserAsync({ id, ...userData });
+
+        toast.success('Usuário atualizado com sucesso!');
+      }
 
       navigate('/app/usuarios/listagem');
     } catch (err) {
@@ -96,19 +136,23 @@ export function UserRegisterPage() {
         certeza do acesso que esteja sendo criado. O usuário terá permissões
         para alterar dados da plataforma de acordo com o seu nível de acesso.
       </p>
-      <Form ref={formRef} onSubmit={data => handleSubmit(data)}>
-        <Textfield label="Nome" name="name" />
+      <Form
+        ref={formRef}
+        onSubmit={data => handleSubmit(data)}
+        initialData={userByIdData}
+      >
+        <Textfield label="Nome" name="name" disabled={isDisplayOnly} />
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
             <Select
               label="AccessRole"
               name="role"
               onChange={e => setSelectedRole(e.target.value as Roles)}
+              disabled={isDisplayOnly}
             >
               <option value={Roles.ADMIN}>Admin</option>
               <option value={Roles.ADMINFEDERACAO}>AdminFederacao</option>
               <option value={Roles.ADMINCLUBE}>AdminClube</option>
-              <option value={Roles.OFICIAL}>Oficial</option>
             </Select>
           </div>
           <div className="flex-1">
@@ -121,7 +165,11 @@ export function UserRegisterPage() {
             )}
 
             {selectedRole === Roles.ADMINFEDERACAO && (
-              <Select label="Federação" name="federation">
+              <Select
+                label="Federação"
+                name="federation"
+                disabled={isDisplayOnly}
+              >
                 <option value="">Selecione uma federação</option>
                 {publicFederations &&
                   publicFederations.list &&
@@ -135,7 +183,7 @@ export function UserRegisterPage() {
             )}
 
             {selectedRole === Roles.ADMINCLUBE && (
-              <Select label="Clube" name="team">
+              <Select label="Clube" name="team" disabled={isDisplayOnly}>
                 <option value="">Selecione um clube</option>
                 {publicTeams &&
                   publicTeams.list &&
@@ -151,28 +199,42 @@ export function UserRegisterPage() {
         </div>
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
-            <Textfield type="email" name="email" label="Email" />
+            <Textfield
+              type="email"
+              name="email"
+              label="Email"
+              disabled={isDisplayOnly}
+            />
           </div>
-          <div className="flex-1">
-            <Textfield type="password" name="password" label="Senha" />
+          {!id && !isDisplayOnly && (
+            <div className="flex-1">
+              <Textfield
+                type="password"
+                name="password"
+                label="Senha"
+                disabled={isDisplayOnly}
+              />
+            </div>
+          )}
+        </div>
+        {!isDisplayOnly && (
+          <div className="flex gap-2 justify-end">
+            <Button
+              aditionalClasses="w-auto px-2 text-light-on-surface-variant"
+              variant="primary-border"
+              type="submit"
+              label="Cancelar"
+              onClick={() => navigate('/app/usuarios/listagem')}
+            />
+            <Button
+              aditionalClasses="w-auto px-2"
+              type="submit"
+              label="Salvar"
+              isLoading={createUserLoading || putUserLoading}
+              disabled={createUserLoading || putUserLoading}
+            />
           </div>
-        </div>
-        <div className="flex gap-2 justify-end">
-          <Button
-            aditionalClasses="w-auto px-2 text-light-on-surface-variant"
-            variant="primary-border"
-            type="submit"
-            label="Cancelar"
-            onClick={() => navigate('/app/usuarios/listagem')}
-          />
-          <Button
-            aditionalClasses="w-auto px-2"
-            type="submit"
-            label="Criar usuário"
-            isLoading={isLoading}
-            disabled={isLoading}
-          />
-        </div>
+        )}
       </Form>
     </div>
   );

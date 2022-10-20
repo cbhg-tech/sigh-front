@@ -62,7 +62,31 @@ export class UserController {
       } as IUser;
 
       const collectionName =
-        userDB.relatedType === 'team' ? 'teams' : 'federa tions';
+        userDB.relatedType === 'team' ? 'teams' : 'federations';
+
+      const related = await getDoc(doc(db, collectionName, userDB.relatedId!));
+
+      return {
+        ...userDB,
+        related: related.data(),
+      } as IUser;
+    }
+
+    throw new Error('User not found');
+  }
+
+  public async getById(id: string) {
+    const docRef = doc(db, 'users', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const userDB = {
+        ...docSnap.data(),
+        id: docSnap.id,
+      } as IUser;
+
+      const collectionName =
+        userDB.relatedType === 'team' ? 'teams' : 'federations';
 
       const related = await getDoc(doc(db, collectionName, userDB.relatedId!));
 

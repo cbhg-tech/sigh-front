@@ -93,6 +93,22 @@ export function Router() {
             }
           />
           <Route
+            path="/app/usuarios/detalhes/:id"
+            element={
+              <Navigation title="Detalhe do usuário do sistema">
+                <UserRegisterPage isDisplayOnly />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/usuarios/editar/:id"
+            element={
+              <Navigation title="Editar do usuário do sistema">
+                <UserRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/tecnico/listagem"
             element={
               <Navigation title="Comissão técnica">
