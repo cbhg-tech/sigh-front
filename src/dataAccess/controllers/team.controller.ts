@@ -230,8 +230,17 @@ export class TeamController {
     const res = await getDoc(doc(db, 'public', 'teams'));
 
     const obj = { ...res.data() } as IPublicData;
-
     const team = obj.list.find(f => f.id === id);
+
+    if (data.federationId !== team?.federationId) {
+      await updateDoc(doc(db, 'federations', team!.federationId!), {
+        teams: arrayRemove(id),
+      });
+
+      await updateDoc(doc(db, 'federations', data!.federationId!), {
+        teams: arrayUnion(id),
+      });
+    }
 
     await updateDoc(doc(db, 'public', 'teams'), {
       list: arrayRemove({
