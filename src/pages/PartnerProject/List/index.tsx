@@ -125,7 +125,13 @@ export function PartnerProjectListPage() {
         </p>
       )}
 
-      {isSuccess && (
+      {isSuccess && tableData.length === 0 && (
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Nenhum projeto parceiro cadastrado
+        </p>
+      )}
+
+      {isSuccess && tableData.length > 0 && (
         <table className="w-full">
           <thead>
             <tr>
