@@ -20,7 +20,7 @@ export function ActionsButtons({ id }: IProps) {
       deletePermission={isAdmin}
       editPermission={isAdmin}
       viewBtn={() => navigate(`/app/clubes/detalhes/${id}`)}
-      editBtn={() => console.log('edit')}
+      editBtn={() => navigate(`/app/clubes/editar/${id}`)}
       deleteBtn={async () => {
         if (window.confirm('Deseja realmente apagar esse CLUBE?')) {
           await mutateAsync(id);

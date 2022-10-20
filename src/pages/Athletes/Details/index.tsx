@@ -44,7 +44,7 @@ export function AthleteDetailsPage() {
                 )}
               </div>
               <p className="text-2xl text-light-on-surface-variant">
-                {data?.relatedName} -{' '}
+                {data?.related?.name || 'Sem time'} -{' '}
                 {defineAthleteCategory(data!.athleteProfile!.birthDate)}
               </p>
             </div>

@@ -205,6 +205,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/clubes/editar/:id"
+            element={
+              <Navigation title="Editar do clube">
+                <TeamRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/clubes/cadastro"
             element={
               <Navigation title="Cadastro de Clubes">

@@ -1,8 +1,8 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MdError } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
@@ -15,6 +15,8 @@ import { useGetFederations } from '../../../dataAccess/hooks/federation/useGetFe
 import { useCreateTeam } from '../../../dataAccess/hooks/team/useCreateTeam';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
+import { useGetOneTeam } from '../../../dataAccess/hooks/team/useGetOneTeam';
+import { useUpdateTeam } from '../../../dataAccess/hooks/team/useUpdateTeam';
 
 interface IForm {
   name: string;
@@ -39,9 +41,14 @@ interface IFiles {
 export function TeamRegisterPage() {
   const formRef = useRef<FormHandles>(null);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const { data: federationData } = useGetFederations();
-  const { mutateAsync, isLoading } = useCreateTeam();
+  const { data: teamData } = useGetOneTeam(id);
+  const { mutateAsync: createTeamAsync, isLoading: createTeamLoading } =
+    useCreateTeam();
+  const { mutateAsync: updateTeamAsync, isLoading: updateTeamLoading } =
+    useUpdateTeam();
 
   const [files, setFiles] = useState<IFiles>({
     logo: undefined,
@@ -51,14 +58,16 @@ export function TeamRegisterPage() {
   });
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (teamData) {
+      formRef.current?.setFieldValue('federation', teamData.federationId);
+    }
+  }, [teamData]);
+
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
 
     const { electionMinutes, teamDocument, logo, presidentDocument } = files;
-
-    if (!electionMinutes || !teamDocument || !logo || !presidentDocument) {
-      return setError('Faça upload de todos os arquivos');
-    }
 
     try {
       await validateForm(data, {
@@ -76,16 +85,34 @@ export function TeamRegisterPage() {
         endOfTerm: Yup.string().required('Fim do mandato obrigatória'),
       });
 
-      await mutateAsync({
-        ...data,
-        federationId: data.federation,
-        logo,
-        electionMinutes,
-        presidentDocument,
-        teamDocument,
-      });
+      if (!id) {
+        if (!electionMinutes || !teamDocument || !logo || !presidentDocument) {
+          return setError('Faça upload de todos os arquivos');
+        }
 
-      toast.success('Federação criada com sucesso!');
+        await createTeamAsync({
+          ...data,
+          federationId: data.federation,
+          logo,
+          electionMinutes,
+          presidentDocument,
+          teamDocument,
+        });
+
+        toast.success('Clube criado com sucesso!');
+      } else {
+        await updateTeamAsync({
+          ...data,
+          id,
+          federationId: data.federation,
+          logo: logo || teamData!.logo,
+          electionMinutes: electionMinutes || teamData!.electionMinutes,
+          presidentDocument: presidentDocument || teamData!.presidentDocument,
+          teamDocument: teamDocument || teamData!.teamDocument,
+        });
+
+        toast.success('Clube atualizado com sucesso!');
+      }
 
       navigate('/app/clubes/listagem');
     } catch (err) {
@@ -95,7 +122,7 @@ export function TeamRegisterPage() {
         return formRef.current?.setErrors(errors);
       }
 
-      toast.error('Ops! Houve um erro ao criara federação!');
+      toast.error('Ops! Houve um erro ao criar ou editar Clube!');
     }
   }
 
@@ -105,6 +132,7 @@ export function TeamRegisterPage() {
         ref={formRef}
         className="grid grid-cols-1 md:grid-cols-6 gap-2"
         onSubmit={data => handleSubmit(data)}
+        initialData={teamData}
       >
         <div className="col-span-1 md:col-span-4">
           <Textfield name="name" label="Nome" />
@@ -195,9 +223,9 @@ export function TeamRegisterPage() {
           <Button
             aditionalClasses="w-auto px-2"
             type="submit"
-            label="Criar clube"
-            isLoading={isLoading}
-            disabled={isLoading}
+            label="Salvar"
+            isLoading={createTeamLoading || updateTeamLoading}
+            disabled={createTeamLoading || updateTeamLoading}
           />
         </div>
       </Form>

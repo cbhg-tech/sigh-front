@@ -38,6 +38,25 @@ export interface ICreateTeam
   electionMinutes: File;
 }
 
+export interface IPutTeam
+  extends Omit<
+    ITeam,
+    | 'logo'
+    | 'federation'
+    | 'electionMinutes'
+    | 'presidentDocument'
+    | 'teamDocument'
+    | 'users'
+    | 'usersList'
+    | 'createdAt'
+    | 'updatedAt'
+  > {
+  logo: File | string;
+  presidentDocument: File | string;
+  teamDocument: File | string;
+  electionMinutes: File | string;
+}
+
 export class TeamController {
   public async list() {
     const q = query(collection(db, 'teams'));
@@ -138,7 +157,7 @@ export class TeamController {
       `teams/${id}/${presidentDocumentFile.name}`,
       presidentDocumentFile,
     );
-    const federationDocument = await UploadFile(
+    const teamDocument = await UploadFile(
       `teams/${id}/${teamDocumentFile.name}`,
       teamDocumentFile,
     );
@@ -147,7 +166,7 @@ export class TeamController {
       logo,
       electionMinutes,
       presidentDocument,
-      federationDocument,
+      teamDocument,
     });
 
     await updateDoc(doc(db, 'public', 'teams'), {
@@ -161,6 +180,60 @@ export class TeamController {
 
     await updateDoc(doc(db, 'public', 'totalizer'), {
       teams: increment(1),
+    });
+  }
+
+  public async update(data: IPutTeam) {
+    const {
+      id,
+      logo: logoFile,
+      electionMinutes: electionMinutesFile,
+      presidentDocument: presidentDocumentFile,
+      teamDocument: teamDocumentFile,
+    } = data;
+
+    const logo =
+      typeof logoFile !== 'string'
+        ? await UploadFile(`teams/${id}/${logoFile!.name}`, logoFile!)
+        : logoFile;
+    const electionMinutes =
+      typeof electionMinutesFile !== 'string'
+        ? await UploadFile(
+            `teams/${id}/${electionMinutesFile!.name}`,
+            electionMinutesFile!,
+          )
+        : electionMinutesFile;
+    const presidentDocument =
+      typeof presidentDocumentFile !== 'string'
+        ? await UploadFile(
+            `teams/${id}/${presidentDocumentFile!.name}`,
+            presidentDocumentFile!,
+          )
+        : presidentDocumentFile;
+    const teamDocument =
+      typeof teamDocumentFile !== 'string'
+        ? await UploadFile(
+            `teams/${id}/${teamDocumentFile!.name}`,
+            teamDocumentFile!,
+          )
+        : teamDocumentFile;
+
+    await updateDoc(doc(db, 'teams', id), {
+      ...data,
+      logo,
+      electionMinutes,
+      presidentDocument,
+      teamDocument,
+      updatedAt: new Date(),
+    });
+
+    await updateDoc(doc(db, 'public', 'teams'), {
+      list: arrayUnion({
+        id,
+        name: data.name,
+        federationId: data.federationId,
+        logoUrl: logo,
+      }),
     });
   }
 
