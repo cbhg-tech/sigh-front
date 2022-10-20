@@ -17,6 +17,7 @@ import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthl
 import { DateService } from '../../../services/DateService';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
+import { Status } from '../../../enums/Status';
 
 interface IForm {
   transferData: string;
@@ -54,9 +55,13 @@ export function TransferRequestPage() {
       await mutateAsync({
         transferData: data.transferData,
         userId: user.id,
+        currentTeamStatus: Status.PENDING,
         currentTeamId: user.relatedId,
+        destinationTeamStatus: Status.PENDING,
         destinationTeamId: team!.id,
+        currentFederationStatus: Status.PENDING,
         currentFederationId: currentTeam!.federationId!,
+        destinationFederationStatus: Status.PENDING,
         destinationFederationId: team!.federationId!,
         obs: data.obs,
       });

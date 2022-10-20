@@ -28,35 +28,39 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   function canApproveWorkflow() {
     if (isDisplayOnly) return false;
 
-    const logExist = transferData?.log.find(log => log.role === user?.role);
-
-    if (logExist) return false;
-
     if (transferData?.status !== Status.ACTIVE) {
       if (
         user?.role === Roles.ADMINCLUBE &&
-        transferData?.currentTeamId === user?.relatedId
+        transferData?.currentTeamId === user?.relatedId &&
+        !transferData?.log.find(log => log.role === TransferRole.CLUBEORIGEM)
       )
         return true;
 
       if (
         user?.role === Roles.ADMINCLUBE &&
         transferData?.destinationTeamId === user?.relatedId &&
-        transferData?.currentTeamStatus === Status.ACTIVE
+        transferData?.currentTeamStatus === Status.ACTIVE &&
+        !transferData?.log.find(log => log.role === TransferRole.CLUBEDESTINO)
       )
         return true;
 
       if (
         user?.role === Roles.ADMINFEDERACAO &&
         transferData?.currentFederationId === user?.relatedId &&
-        transferData?.destinationTeamStatus === Status.ACTIVE
+        transferData?.destinationTeamStatus === Status.ACTIVE &&
+        !transferData?.log.find(
+          log => log.role === TransferRole.FEDERACAOORIGEM,
+        )
       )
         return true;
 
       if (
         user?.role === Roles.ADMINFEDERACAO &&
         transferData?.destinationFederationId === user?.relatedId &&
-        transferData?.currentFederationStatus === Status.ACTIVE
+        transferData?.currentFederationStatus === Status.ACTIVE &&
+        !transferData?.log.find(
+          log => log.role === TransferRole.FEDERACAODESTINO,
+        )
       )
         return true;
 
@@ -83,17 +87,31 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
       if (!canApproveWorkflow())
         throw new Error('Você não pode aprovar essa transferência');
 
+      const newTransferData = { ...transferData };
+
       switch (user?.relatedId) {
-        case transferData?.currentTeamId:
+        case newTransferData?.currentTeamId:
+          newTransferData.currentTeamStatus = isApproved
+            ? Status.ACTIVE
+            : Status.REJECTED;
           role = TransferRole.CLUBEORIGEM;
           break;
-        case transferData?.destinationTeamId:
+        case newTransferData?.destinationTeamId:
+          newTransferData.destinationTeamStatus = isApproved
+            ? Status.ACTIVE
+            : Status.REJECTED;
           role = TransferRole.CLUBEDESTINO;
           break;
-        case transferData?.currentFederationId:
+        case newTransferData?.currentFederationId:
+          newTransferData.currentFederationStatus = isApproved
+            ? Status.ACTIVE
+            : Status.REJECTED;
           role = TransferRole.FEDERACAOORIGEM;
           break;
-        case transferData?.destinationFederationId:
+        case newTransferData?.destinationFederationId:
+          newTransferData.destinationTeamStatus = isApproved
+            ? Status.ACTIVE
+            : Status.REJECTED;
           role = TransferRole.FEDERACAODESTINO;
           break;
         case 'CBHG - Administração':
@@ -109,20 +127,20 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
         createdAt: new Date(),
       };
 
-      transferData.log.push(log);
+      newTransferData.log.push(log);
 
       if (
-        transferData.currentTeamStatus === Status.ACTIVE &&
-        transferData.destinationTeamStatus === Status.ACTIVE &&
-        transferData.currentFederationStatus === Status.ACTIVE &&
-        transferData.destinationFederationStatus === Status.ACTIVE &&
+        newTransferData.currentTeamStatus === Status.ACTIVE &&
+        newTransferData.destinationTeamStatus === Status.ACTIVE &&
+        newTransferData.currentFederationStatus === Status.ACTIVE &&
+        newTransferData.destinationFederationStatus === Status.ACTIVE &&
         user?.relatedId === 'CBHG - Administração' &&
         isApproved
       ) {
-        transferData.status = Status.ACTIVE;
+        newTransferData.status = Status.ACTIVE;
       }
 
-      await mutateAsync(transferData);
+      await mutateAsync(newTransferData);
 
       setObs('');
 
