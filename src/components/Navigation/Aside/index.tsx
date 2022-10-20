@@ -40,9 +40,9 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
 
   return (
     <aside
-      className={`absolute duration-200 ease-in-out ${isOpenStyle} lg:translate-x-0 lg:p-4 top-0 left-0 z-10 w-full h-full lg:relative lg:w-full lg:col-span-1 bg-transparent`}
+      className={`absolute duration-200 ease-in-out ${isOpenStyle} lg:translate-x-0 lg:p-4 top-0 left-0 z-10 w-full min-h-screen h-full lg:relative lg:w-full lg:col-span-1 bg-light-surface-1`}
     >
-      <div className="bg-light-surface-1 flex flex-col h-full p-4 lg:rounded-3xl">
+      <div className="bg-light-surface-1 overflow-y-auto flex flex-col min-h-screen h-full p-4 lg:rounded-3xl">
         <div className="flex justify-between mb-4 lg:hidden">
           <img
             className="w-20 object-contain"
