@@ -28,7 +28,7 @@ export function AthletesRegisterContent() {
   const { mutateAsync, isLoading } = usePutUser();
 
   async function handleProfilePhotoUpload(file: File) {
-    const photoUrl = await UploadFile('/usersAvatar/', file);
+    const photoUrl = await UploadFile(`/usersAvatar/${file.name}`, file);
 
     try {
       await mutateAsync({
