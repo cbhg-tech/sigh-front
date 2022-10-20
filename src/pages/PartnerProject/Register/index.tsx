@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
@@ -13,6 +13,8 @@ import { useCreateProjectPartner } from '../../../dataAccess/hooks/partnerProjec
 import { useGlobal } from '../../../contexts/global.context';
 import { Roles } from '../../../enums/Roles';
 import { DateService } from '../../../services/DateService';
+import { useUpdatePartnerProject } from '../../../dataAccess/hooks/partnerProject/useUpdatePartnerProject';
+import { useGetOnePartnerProject } from '../../../dataAccess/hooks/partnerProject/useGetOnePartnerProject';
 
 interface IForm {
   name: string;
@@ -29,10 +31,15 @@ interface IForm {
 }
 
 export function PartnerProjectRegisterPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();
-  const { mutateAsync, isLoading } = useCreateProjectPartner();
+  const { mutateAsync: createAsync, isLoading: createLoading } =
+    useCreateProjectPartner();
+  const { mutateAsync: updateASync, isLoading: updateLoading } =
+    useUpdatePartnerProject();
+  const { data: partnerProjectData } = useGetOnePartnerProject(id);
 
   async function handleSubmit(data: IForm) {
     formRef.current?.setErrors({});
@@ -76,9 +83,24 @@ export function PartnerProjectRegisterPage() {
           break;
       }
 
-      await mutateAsync({ ...data, relatedId: user!.relatedId, relatedType });
+      if (!id) {
+        await createAsync({
+          ...data,
+          relatedId: user!.relatedId,
+          relatedType,
+        });
 
-      toast.success('Projeto cadastrado com sucesso');
+        toast.success('Projeto cadastrado com sucesso');
+      } else {
+        await updateASync({
+          ...data,
+          id,
+          relatedId: partnerProjectData!.relatedId,
+          relatedType,
+        });
+
+        toast.success('Projeto atualizado com sucesso');
+      }
 
       navigate('/app/projetosparceiros/listagem');
     } catch (err) {
@@ -106,6 +128,7 @@ export function PartnerProjectRegisterPage() {
         ref={formRef}
         onSubmit={data => handleSubmit(data)}
         className="flex flex-col gap-2"
+        initialData={partnerProjectData}
       >
         <div className="flex-1">
           <Textfield label="Nome do projeto" name="name" />
@@ -175,8 +198,8 @@ export function PartnerProjectRegisterPage() {
             aditionalClasses="w-auto px-2"
             type="submit"
             label="Salvar"
-            isLoading={isLoading}
-            disabled={isLoading}
+            isLoading={createLoading || updateLoading}
+            disabled={createLoading || updateLoading}
           />
         </div>
       </Form>

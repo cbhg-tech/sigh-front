@@ -157,6 +157,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/projetosparceiros/editar/:id"
+            element={
+              <Navigation title="Editar projeto parceiro">
+                <PartnerProjectRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/projetosparceiros/cadastro"
             element={
               <Navigation title="Cadastro de projetos parceiros">

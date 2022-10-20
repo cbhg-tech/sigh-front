@@ -7,6 +7,7 @@ import {
   limit,
   getDoc,
   deleteDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { ITeam } from '../../types/Team';
@@ -15,10 +16,16 @@ import {
   IPartnerProjectCofederationRelated,
 } from '../../types/ProjectPartner';
 import { IFederation } from '../../types/Federation';
+import { UploadFile } from '../../utils/uploadFile';
 
 export type ICreatePartnerProject = Omit<
   IPartnerProject,
   'createdAt' | 'updatedAt' | 'id' | 'related'
+>;
+
+export type IUpdatePartnerProject = Omit<
+  IPartnerProject,
+  'createdAt' | 'updatedAt' | 'related'
 >;
 
 export class PartnerProjectController {
@@ -89,6 +96,15 @@ export class PartnerProjectController {
     };
 
     return this.joinProjects(data);
+  }
+
+  public async update(data: IUpdatePartnerProject) {
+    const { id } = data;
+
+    await updateDoc(doc(db, 'partnerProject', id!), {
+      ...data,
+      updatedAt: new Date(),
+    });
   }
 
   public async delete(id: string) {

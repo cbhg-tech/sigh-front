@@ -94,10 +94,16 @@ export class TechnicalComitteeController {
   }
 
   public async update(data: IUpdateTechnicalComittee) {
-    const { id } = data;
+    const { id, documentFile, relatedId } = data;
+
+    const documentUrl =
+      typeof documentFile !== 'string'
+        ? await UploadFile(`technicalComittee/${relatedId}`, documentFile)
+        : documentFile;
 
     await updateDoc(doc(db, 'technicalComittee', id!), {
       ...data,
+      documentUrl,
       updatedAt: new Date(),
     });
   }

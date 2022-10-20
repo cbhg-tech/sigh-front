@@ -29,7 +29,7 @@ export function ActionsButtons({ id, relatedId }: IProps) {
       deletePermission={isAdmin && user?.relatedId === relatedId}
       editPermission={isAdmin && user?.relatedId === relatedId}
       viewBtn={() => navigate(`/app/projetosparceiros/detalhes/${id}`)}
-      editBtn={() => console.log('edit')}
+      editBtn={() => navigate(`/app/projetosparceiros/editar/${id}`)}
       deleteBtn={async () => {
         if (
           window.confirm('Deseja realmente apagar esse Projeto de Parceiro?')
