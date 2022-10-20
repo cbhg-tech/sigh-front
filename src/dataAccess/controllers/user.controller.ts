@@ -27,6 +27,7 @@ export class UserController {
     const q = query(
       collection(db, 'users'),
       where('role', '!=', Roles.USER),
+      where('status', '==', Status.ACTIVE),
       limit(20),
     );
     const querySnapshot = await getDocs(q);

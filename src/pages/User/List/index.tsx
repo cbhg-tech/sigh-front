@@ -93,7 +93,7 @@ export function UserListPage() {
                   {user.status}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  <Badge type="tertiary">{user.status}</Badge>
+                  <Badge type="tertiary">{user.role}</Badge>
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
                   {user.relatedName}

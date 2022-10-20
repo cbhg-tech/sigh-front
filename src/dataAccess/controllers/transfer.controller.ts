@@ -8,6 +8,7 @@ import {
   query,
   updateDoc,
   where,
+  increment,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { Status } from '../../enums/Status';
@@ -27,6 +28,10 @@ export class TransferController {
       log: [],
       updatedAt: new Date(),
       createdAt: new Date(),
+    });
+
+    await updateDoc(doc(db, 'public', 'totalizer'), {
+      transfers: increment(1),
     });
   }
 

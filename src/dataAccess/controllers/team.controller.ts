@@ -9,6 +9,7 @@ import {
   arrayUnion,
   getDoc,
   arrayRemove,
+  increment,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { IPublicData } from '../../types/PublicData';
@@ -157,6 +158,10 @@ export class TeamController {
         logoUrl: logo,
       }),
     });
+
+    await updateDoc(doc(db, 'public', 'totalizer'), {
+      teams: increment(1),
+    });
   }
 
   public async delete(id: string) {
@@ -176,6 +181,10 @@ export class TeamController {
       list: arrayRemove({
         ...team,
       }),
+    });
+
+    await updateDoc(doc(db, 'public', 'totalizer'), {
+      teams: increment(-1),
     });
   }
 }

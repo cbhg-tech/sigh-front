@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { DashboardController } from '../../controllers/dashboard.controller';
+import { PublicController } from '../../controllers/public.controller';
 
-const dashboardController = new DashboardController();
+const publicController = new PublicController();
 
 export function useGetDashboardTotalizer() {
-  async function getTotalizer() {
-    return dashboardController.getTotalizer();
+  async function get() {
+    return publicController.getTotalizer();
   }
 
-  return useQuery(['getDashboardTotalizer'], () => getTotalizer(), {
+  return useQuery(['getDashboardTotalizer'], () => get(), {
     refetchOnWindowFocus: false,
   });
 }

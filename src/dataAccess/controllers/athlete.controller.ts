@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   limit,
   query,
   setDoc,
@@ -311,6 +312,10 @@ export class AthleteController {
     if (status === Status.ACTIVE) {
       await updateDoc(doc(db, 'teams', teamId), {
         usersList: arrayUnion(id),
+      });
+
+      await updateDoc(doc(db, 'public', 'totalizer'), {
+        athletes: increment(1),
       });
     }
   }

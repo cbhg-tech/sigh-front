@@ -21,17 +21,17 @@ export function DashboardPage() {
         <ResumeCard
           icon={FaUsers}
           title="Total de atletas"
-          value={totalizerData?.totalAthletes || 0}
+          value={totalizerData?.athletes || 0}
         />
         <ResumeCard
           icon={BiTransferAlt}
           title="Transferencias no ano"
-          value={totalizerData?.totalTransfers || 0}
+          value={totalizerData?.transfers || 0}
         />
         <ResumeCard
           icon={BsFillShieldFill}
           title="Total de clubes"
-          value={totalizerData?.totalTeams || 0}
+          value={totalizerData?.teams || 0}
         />
       </div>
       <div className="col-span-3 lg:col-span-2 row-span-4 overflow-y-auto">
