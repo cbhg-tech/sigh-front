@@ -133,6 +133,14 @@ export function Router() {
             }
           />
           <Route
+            path="/app/tecnico/editar/:id"
+            element={
+              <Navigation title="Editar da comissão técnica">
+                <TechnicalCommitteeRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
             path="/app/projetosparceiros/listagem"
             element={
               <Navigation title="Projetos parceiros">

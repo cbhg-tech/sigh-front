@@ -88,7 +88,13 @@ export function TechnicalCommitteeListPage() {
         </p>
       )}
 
-      {isSuccess && (
+      {isSuccess && tableData.length === 0 && (
+        <p className="text-center mt-8 text-light-on-surface-variant">
+          Nenhuma comissão técnicas cadastrada
+        </p>
+      )}
+
+      {isSuccess && tableData.length > 0 && (
         <table className="w-full">
           <thead>
             <tr>
@@ -110,7 +116,7 @@ export function TechnicalCommitteeListPage() {
               >
                 <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{tc.name}</td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {tc.related.name || 'Não encontrado'}
+                  {tc.related?.name || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
                   {tc.phone || 'Não encontrado'}

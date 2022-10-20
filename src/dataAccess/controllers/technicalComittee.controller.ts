@@ -8,6 +8,7 @@ import {
   where,
   limit,
   getDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db } from '../../app/FirebaseConfig';
 import { ITechnicialCommittee } from '../../types/TechnicialCommittee';
@@ -21,6 +22,14 @@ export interface ICreateTechnicalComittee
     'createdAt' | 'updatedAt' | 'documentFile' | 'id' | 'related'
   > {
   documentFile: File;
+}
+
+export interface IUpdateTechnicalComittee
+  extends Omit<
+    ITechnicialCommittee,
+    'createdAt' | 'updatedAt' | 'documentFile' | 'related'
+  > {
+  documentFile: File | string;
 }
 
 export class TechnicalComitteeController {
@@ -82,5 +91,18 @@ export class TechnicalComitteeController {
       id: res.id,
       ...res.data(),
     } as ITechnicialCommittee;
+  }
+
+  public async update(data: IUpdateTechnicalComittee) {
+    const { id } = data;
+
+    await updateDoc(doc(db, 'technicalComittee', id!), {
+      ...data,
+      updatedAt: new Date(),
+    });
+  }
+
+  public async delete(id: string) {
+    await deleteDoc(doc(db, 'technicalComittee', id));
   }
 }

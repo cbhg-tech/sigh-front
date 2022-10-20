@@ -16,6 +16,7 @@ import { useHasPermission } from '../../../hooks/useHasPermission';
 import { Roles } from '../../../enums/Roles';
 import { Button } from '../../../components/Inputs/Button';
 import { useGetOneTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useGetOneTechnicalComittee';
+import { useUpdateTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useUpdateTechnicalComittee';
 
 interface IForm {
   name: string;
@@ -35,9 +36,12 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
   const formRef = useRef<FormHandles>(null);
 
   const { user } = useGlobal();
-  const { mutateAsync, isLoading } = useCreateTechnicalComittee();
+  const { mutateAsync: createAsync, isLoading: createLoading } =
+    useCreateTechnicalComittee();
+  const { mutateAsync: updateAsync, isLoading: updateLoading } =
+    useUpdateTechnicalComittee();
   const {
-    data,
+    data: technicalComitteeData,
     isLoading: isLoadingData,
     isSuccess,
   } = useGetOneTechnicalComittee(id);
@@ -48,6 +52,8 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
   async function handleSubmit(data: IForm) {
     if (isDisplayMode) return;
 
+    if (!technicalComitteeData) return;
+
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
@@ -57,18 +63,29 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
         email: Yup.string().required('Email obrigatório'),
       });
 
-      if (!document) {
-        toast.error('É necessário enviar o documento de identificação');
-        return;
+      if (!id) {
+        if (!document) {
+          toast.error('É necessário enviar o documento de identificação');
+          return;
+        }
+
+        await createAsync({
+          ...data,
+          relatedId: user!.relatedId,
+          documentFile: document,
+        });
+
+        toast.success('Comissão técnica criada com sucesso');
+      } else {
+        await updateAsync({
+          ...data,
+          id,
+          relatedId: technicalComitteeData!.relatedId,
+          documentFile: document || technicalComitteeData!.documentFile,
+        });
+
+        toast.success('Comissão técnica atualizada com sucesso');
       }
-
-      await mutateAsync({
-        ...data,
-        relatedId: user!.relatedId,
-        documentFile: document,
-      });
-
-      toast.success('Comissão técnica criada com sucesso');
 
       navigate('/app/tecnico/listagem');
     } catch (err) {
@@ -101,7 +118,7 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
         ref={formRef}
         onSubmit={data => handleSubmit(data)}
         className="flex flex-col"
-        initialData={isSuccess ? data : undefined}
+        initialData={isSuccess ? technicalComitteeData : undefined}
       >
         <div className="flex-1">
           <Textfield name="name" label="Nome" disabled={isDisplayMode} />
@@ -164,8 +181,8 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
               aditionalClasses="w-auto px-2"
               type="submit"
               label="Salvar"
-              isLoading={isLoading}
-              disabled={isLoading}
+              isLoading={createLoading || updateLoading}
+              disabled={createLoading || updateLoading}
             />
           </div>
         )}
