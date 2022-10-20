@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 import { Button } from '../../../../components/Inputs/Button';
-import { FileInput } from '../../../../components/Inputs/FIleInput';
+import { FileInput } from '../../../../components/Inputs/FileInput';
 import { useGlobal } from '../../../../contexts/global.context';
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { Status } from '../../../../enums/Status';
@@ -61,6 +61,7 @@ export function DocumentationUpload() {
               personalDocument: e.target.files?.[0] || null,
             }))
           }
+          url={user?.athleteProfile?.documents.personalDocument}
         />
       </div>
       <div className="col-span-1">
@@ -74,6 +75,7 @@ export function DocumentationUpload() {
               medicalCertificate: e.target.files?.[0] || null,
             }))
           }
+          url={user?.athleteProfile?.documents.medicalCertificate}
         />
       </div>
       <div className="col-span-1">
@@ -87,6 +89,7 @@ export function DocumentationUpload() {
               commitmentTerm: e.target.files?.[0] || null,
             }))
           }
+          url={user?.athleteProfile?.documents.commitmentTerm}
         />
       </div>
       <div className="col-span-1">
@@ -100,6 +103,7 @@ export function DocumentationUpload() {
               noc: e.target.files?.[0] || null,
             }))
           }
+          url={user?.athleteProfile?.documents.noc}
         />
       </div>
       <div className="col-span-1 lg:col-span-2 mt-4">

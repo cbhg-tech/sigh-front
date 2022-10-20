@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 import { Textfield } from '../../../components/Inputs/Textfield';
 import { Select } from '../../../components/Inputs/Select';
-import { FileInput } from '../../../components/Inputs/FIleInput';
+import { FileInput } from '../../../components/Inputs/FileInput';
 import { validateForm } from '../../../utils/validateForm';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { useCreateTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useCreateTechnicalComittee';
@@ -166,6 +166,7 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
             hint="Obrigatório para todos"
             onChange={e => setDocument(e.target.files?.[0] || null)}
             disabled={isDisplayMode}
+            url={technicalComitteeData?.documentFile}
           />
         </div>
         {!isDisplayMode && (
