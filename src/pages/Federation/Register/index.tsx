@@ -157,7 +157,7 @@ export function FederationRegisterPage() {
             label="Logo da federação"
             onChange={e => setFiles({ ...files, logo: e.target.files?.[0] })}
             accept="image/png, image/jpeg, image/jpg"
-            url={federationData?.logo}
+            url={federationData?.logo || ''}
           />
           <FileInput
             name="federation-file"
@@ -165,7 +165,7 @@ export function FederationRegisterPage() {
             onChange={e =>
               setFiles({ ...files, federationDocument: e.target.files?.[0] })
             }
-            url={federationData?.federationDocument}
+            url={federationData?.federationDocument || ''}
           />
         </div>
         <div className="col-span-1 md:col-span-6">
@@ -192,7 +192,7 @@ export function FederationRegisterPage() {
             onChange={e =>
               setFiles({ ...files, presidentDocument: e.target.files?.[0] })
             }
-            url={federationData?.presidentDocument}
+            url={federationData?.presidentDocument || ''}
           />
           <FileInput
             name="election-file"
@@ -200,7 +200,7 @@ export function FederationRegisterPage() {
             onChange={e =>
               setFiles({ ...files, electionMinutes: e.target.files?.[0] })
             }
-            url={federationData?.electionMinutes}
+            url={federationData?.electionMinutes || ''}
           />
         </div>
         {error && (

@@ -181,7 +181,7 @@ export function TeamRegisterPage() {
             label="Logo do clube"
             onChange={e => setFiles({ ...files, logo: e.target.files?.[0] })}
             accept="image/png, image/jpeg, image/jpg"
-            url={teamData?.logo}
+            url={teamData?.logo || ''}
           />
           <FileInput
             name="federation-file"
@@ -189,7 +189,7 @@ export function TeamRegisterPage() {
             onChange={e =>
               setFiles({ ...files, teamDocument: e.target.files?.[0] })
             }
-            url={teamData?.teamDocument}
+            url={teamData?.teamDocument || ''}
           />
         </div>
         <div className="col-span-1 md:col-span-6 mb-2 md:flex md:justify-between">
@@ -199,7 +199,7 @@ export function TeamRegisterPage() {
             onChange={e =>
               setFiles({ ...files, presidentDocument: e.target.files?.[0] })
             }
-            url={teamData?.presidentDocument}
+            url={teamData?.presidentDocument || ''}
           />
           <FileInput
             name="election-file"
@@ -207,7 +207,7 @@ export function TeamRegisterPage() {
             onChange={e =>
               setFiles({ ...files, electionMinutes: e.target.files?.[0] })
             }
-            url={teamData?.electionMinutes}
+            url={teamData?.electionMinutes || ''}
           />
         </div>
         {error && (

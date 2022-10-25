@@ -166,7 +166,7 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
             hint="Obrigatório para todos"
             onChange={e => setDocument(e.target.files?.[0] || null)}
             disabled={isDisplayMode}
-            url={technicalComitteeData?.documentFile}
+            url={technicalComitteeData?.documentFile || ''}
           />
         </div>
         {!isDisplayMode && (
