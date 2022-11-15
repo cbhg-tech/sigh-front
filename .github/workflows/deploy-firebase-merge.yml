@@ -43,10 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        run: cd ./functions && npm ci
+        working-directory: ./functions
+        run: npm ci
       - name: Build functions
+        working-directory: ./functions
         run: npm run build
       - name: Deploy to Firebase
+        working-directory: ./functions
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
