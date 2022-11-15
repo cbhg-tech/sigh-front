@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { MdBarChart, MdCalendarToday, MdLink, MdPhone } from 'react-icons/all';
+import {
+  MdBarChart,
+  MdCalendarToday,
+  MdDescription,
+  MdLink,
+  MdOutlineMapsHomeWork,
+  MdPhone,
+} from 'react-icons/all';
 import { useGetOnePartnerProject } from '../../../dataAccess/hooks/partnerProject/useGetOnePartnerProject';
 import { DateService } from '../../../services/DateService';
 
@@ -44,6 +51,22 @@ export function PartnerProjectDetailsPage() {
           </section>
           <section className="mt-8 flex gap-4">
             <div>
+              <MdOutlineMapsHomeWork
+                size="1.75rem"
+                className="text-light-on-surface"
+              />
+            </div>
+            <div>
+              <h3 className="text-xl text-light-on-surface">Endereço</h3>
+              <p className="text-light-on-surface-variant">
+                {data?.address.city} - {data?.address.state}
+                <br />
+                {data?.address.place}
+              </p>
+            </div>
+          </section>
+          <section className="mt-8 flex gap-4">
+            <div>
               <MdPhone size="1.75rem" className="text-light-on-surface" />
             </div>
             <div>
@@ -71,6 +94,15 @@ export function PartnerProjectDetailsPage() {
               <p className="text-light-on-surface-variant">
                 <strong>Mulheres: </strong> {`${data?.femalePractitioners}%`}
               </p>
+            </div>
+          </section>
+          <section className="mt-8 flex gap-4">
+            <div>
+              <MdDescription size="1.75rem" className="text-light-on-surface" />
+            </div>
+            <div>
+              <h3 className="text-xl text-light-on-surface">Descrição</h3>
+              <p>{data?.description}</p>
             </div>
           </section>
         </>

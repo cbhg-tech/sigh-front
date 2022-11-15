@@ -21,6 +21,12 @@ export interface IPartnerProject {
     phone: string;
     name: string;
   };
+  address: {
+    city: string;
+    state: string;
+    place: string;
+  };
+  description: string;
   createdAt: string;
   updatedAt: string;
 }

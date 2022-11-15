@@ -27,7 +27,7 @@ Quando a federação de origem é a mesma da federação de destino, basta uma a
 
 - [x] Incluir o Número do registro no relatorio que é exportado
 
-- [ ] Incluir no cadastro do projeto:
+- [x] Incluir no cadastro do projeto:
   - CIDADE E ESTADO
   - LOCAL DAS ATIVIDADES (campo string)
   - DETALHES DO PROJETO (paragrafo)

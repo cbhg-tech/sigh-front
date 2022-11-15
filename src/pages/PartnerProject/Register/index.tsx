@@ -15,6 +15,9 @@ import { Roles } from '../../../enums/Roles';
 import { DateService } from '../../../services/DateService';
 import { useUpdatePartnerProject } from '../../../dataAccess/hooks/partnerProject/useUpdatePartnerProject';
 import { useGetOnePartnerProject } from '../../../dataAccess/hooks/partnerProject/useGetOnePartnerProject';
+import { Select } from '../../../components/Inputs/Select';
+import { States } from '../../../dataAccess/static/states';
+import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 
 interface IForm {
   name: string;
@@ -28,6 +31,12 @@ interface IForm {
   malePractitioners: number;
   femalePractitioners: number;
   ageGroup: string;
+  description: string;
+  address: {
+    city: string;
+    state: string;
+    place: string;
+  };
 }
 
 export function PartnerProjectRegisterPage() {
@@ -57,9 +66,15 @@ export function PartnerProjectRegisterPage() {
           'Praticantes femininos obrigatório',
         ),
         ageGroup: Yup.string().required('Faixa etária obrigatório'),
+        description: Yup.string().required('Descrição é obrigatório'),
         contact: Yup.object({
           name: Yup.string().required('Nome de contato obrigatória'),
           phone: Yup.string().required('Numero de contato obrigatório'),
+        }),
+        address: Yup.object({
+          city: Yup.string().required('Cidade é obrigatória'),
+          state: Yup.string().required('Estado é obrigatório'),
+          place: Yup.string().required('Local das atividades é obrigatório'),
         }),
       });
 
@@ -183,6 +198,30 @@ export function PartnerProjectRegisterPage() {
               hint="Exemplo: Entre 10 e 15 anos"
               name="ageGroup"
             />
+          </div>
+        </div>
+
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-2">
+          <div>
+            <Select label="Estado" name="address.state">
+              {States.map(state => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <Textfield label="Cidade" name="address.city" />
+          </div>
+          <div>
+            <Textfield label="Local das atividades" name="address.place" />
+          </div>
+        </div>
+
+        <div className="flex-1 grid grid-cols-1">
+          <div>
+            <MultineTextfield label="Detalhes do projeto" name="description" />
           </div>
         </div>
 
