@@ -41,15 +41,13 @@ jobs:
   deploy-function:
     name: Deploy Functions
     runs-on: ubuntu-latest
+    working-directory: ./functions
     steps:
       - name: Install dependencies
-        working-directory: ./functions
         run: npm ci
       - name: Build functions
-        working-directory: ./functions
         run: npm run build
       - name: Deploy to Firebase
-        working-directory: ./functions
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
