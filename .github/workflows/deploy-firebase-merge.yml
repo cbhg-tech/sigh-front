@@ -41,7 +41,9 @@ jobs:
   deploy-function:
     name: Deploy Functions
     runs-on: ubuntu-latest
-    working-directory: ./functions
+    defaults:
+      run:
+        working-directory: ./functions
     steps:
       - name: Install dependencies
         run: npm ci
