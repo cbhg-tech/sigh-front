@@ -160,12 +160,16 @@ export class AthleteController {
   }
 
   public async getOne(id: string) {
-    const user = await getDoc(doc(db, 'users', id));
+    const res = await getDoc(doc(db, 'users', id));
 
-    return {
-      id: user.id,
-      ...user.data(),
+    const user = {
+      id: res.id,
+      ...res.data(),
     } as IUser;
+
+    const fullAthlete = await this.getRelatedData([user]);
+
+    return fullAthlete[0];
   }
 
   public async put(data: Partial<IUpdateAthlete>) {

@@ -1,42 +1,34 @@
-======== taskes
-- [x] ajustar css do input de select
-- [x] logo da CBHG ser clicavel para voltar pro login
-- [x] garantir que o cadastro de usuário está funcionando corretamente
-- [x] garantir que o cadastro de usuário por admin está funcionando corretamento
-- [x] garantir que o cadsatro de federação está funcionando corretamente e salvando apenas uma federação por id no public
-- [x] garantir que o cadastro de clube está funcionando corretamente e salvando apenas uma federaçao por id no public
-- [x] garantir que o cadastro de usuário é unico por CPF
-- [x] usuário tipo atleta não pode ter ação na lista
-- [x] aprovação de ficha de atleta ter dois botões para ação
-- [x] usuário pode navegar por paginas sem ter completado a ficha mas deve aparecer um warning
-- [x] usuário com ficha negada pode acessar conta novamente
-- [x] ficha de usuário ser um wizard
-- [x] usuário com ficha negada pode enviar ficha novamente para analise
-- [x] usuário pode fazer upload de foto de perfil
-- [x] filtro das listagens devem funcionar corretamente
-- [ ] editar abrir pagina de formulario com os dados preenchidos
-- [ ] input file abrir com links já preenchidos
-- [x] preencher dados do dashboard
-- [x] criar cadastro de comissão tecnica (só clube pode cadastrar, mas geral pode ver pode geral sem CPF)
-- [x] listagem de atleta mostrar aviso de que nao há atleta cadastrado (mesmo para ficha de atletas e transferencia)
-- [x] criar pagina de relatório do atleta
-- [x] pagina de relatorio do atleta ter export para excel
-- [x] criar tela de listagem de transferencias
-- [ ] fazer envio de emails de notificações
-- [x] colocar o logo da CBHG no menu do sidebar
-- [x] na listagem de clube, ao lado do nome, colocar a logo
+- [x] Incluir na ficha de cadastro do atleta os campos:
+      Numero do RG
+      Data de Expedição do RG
+      Orgão Expeditor
 
-======== bugs
-- [x] data de transferencia pode ser qualquer uma
-- [x] label do input de data ser "Data real da solicitação de transferencia"
-- [x] usar parametrizaçao do periodo de transfenrecia
-- [x] fluxo de transferencia não ta funcionando corretamente (não está indo para confederaçao (clube > federaçao > confederaçao))
-- [ ] id do atleta ser formado por: ano de cadastro + sequencial de usuário atleta
-- [x] cadastro do club a logo está como logo da federaçao
+- [x] Ultimos cadastros: excluir isso do dashboard
 
-======== fluxos
-- [x] aprovaçao da ficha de atleta: clube > federaçao > confederaçao
-- [x] cadastro de projetos parceiros: ADMINCLUBE, ADMINFED & GOD
-- [ ] metrica de envio de email: todas vez que alguem aprova ou rejeita uma ficha ou transferencia (quem recebe é o atleta e o proximo aprovador)
-- [x] funcao (texto) nome, cpf e genero (não é usuário mas o CPF só pode estar vinculado aquele clube)
+- [x] status da transf no mercado da bolinha (pendente fed origem), pode ser abaixo do negociando...
 
+
+- [ ] BUG: ficha do atleta fica SEM TIME abaixo do nome e foto em details de atleta
+https://sigh-f656a.web.app/app/atletas/detalhes/6Gr2Dp7R4QaK1VGoarkZSsUCjOy1
+
+
+- [ ] A Data real e HORA da solicitação de transferencia tem que ser HOJE, apenas, entao mostrar só uma LABEL informando que aquela será a data e hora salva para transferencia.
+
+- [ ] Incluir dois anexos na solicitação de transferência
+  - Comprovante de pagamento da FEDERAÇÃO (opcional)
+  - Comprovante de pagamento da CBHG (obrigatório)
+  - Inserir esses anexos nos detalhes na hora de aprovar a transferencia para as federações, clube e confederação poder baixar e ve.
+
+
+- [ ] BUG - O FLUXO ESTÁ TRAVANDO QUANDO A FED DE ORIGEM É A MESMA DA DE DESTINO
+Quando a federação de origem é a mesma da federação de destino, basta uma aprovação. No sistema o fluxo trava.
+
+- [ ] BUG: Quando rejeita uma transferencia ele não encerra a transferencia e no mercado de bolinha tem que ficar que "MELOU" ou "transferencia negada"
+
+- [x] Incluir o Número do registro no relatorio que é exportado
+
+- [ ] Incluir no cadastro do projeto:
+  - CIDADE E ESTADO
+  - LOCAL DAS ATIVIDADES (campo string)
+  - DETALHES DO PROJETO (paragrafo)
+  - Inserir isso nos detalhes do projeto

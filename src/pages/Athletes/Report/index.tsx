@@ -25,6 +25,7 @@ export function AthletesReportPage() {
         : ' - ';
 
       return {
+        'Número do registro': athleteProfile?.registerNumber,
         Nome: name,
         Categoria: category,
         Email: email,

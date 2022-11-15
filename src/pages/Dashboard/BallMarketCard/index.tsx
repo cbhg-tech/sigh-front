@@ -15,6 +15,20 @@ const USER_NOT_FOUND_IMG =
   'https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/96/1A1A1A/external-user-user-tanah-basah-glyph-tanah-basah-4.png';
 
 export function BallMarketCard({ transfer }: IProps) {
+  function badgerGenerator(transfer: ITransfer) {
+    if (transfer.currentTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de origem';
+    if (transfer.destinationTeamStatus !== Status.ACTIVE)
+      return 'Pendente clube de destino';
+    if (transfer.currentFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de origem';
+    if (transfer.destinationFederationStatus !== Status.ACTIVE)
+      return 'Pendente federação de destino';
+    if (transfer.cbhgStatus !== Status.ACTIVE) return 'Pendente confederação';
+
+    return 'Transferência concluída';
+  }
+
   return (
     <div className="flex flex-col bg-light-surface rounded-2xl p-6 mb-3">
       <div className="flex mb-4 gap-4 items-center">
@@ -69,6 +83,11 @@ export function BallMarketCard({ transfer }: IProps) {
 
         <p className="text-light-on-surface-variant">
           {DateService().format(transfer.transferData, 'DD/MM/YYYY')}
+        </p>
+      </div>
+      <div className="flex justify-center mt-2">
+        <p className="text-light-on-surface-variant">
+          {badgerGenerator(transfer)}
         </p>
       </div>
     </div>

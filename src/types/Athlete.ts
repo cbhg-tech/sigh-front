@@ -15,6 +15,9 @@ export interface IAthlete {
     complement: string;
   };
   documents: {
+    rgNumber: string;
+    rgEmissionDate: string;
+    rgEmissionOrg: string;
     personalDocument: string;
     noc: string;
     medicalCertificate: string;

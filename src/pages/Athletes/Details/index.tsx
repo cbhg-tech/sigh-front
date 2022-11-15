@@ -13,6 +13,8 @@ export function AthleteDetailsPage() {
   const { id } = useParams();
   const { data, isLoading, isSuccess } = useGetOneAthlete(id);
 
+  console.log(data);
+
   return (
     <div className="bg-light-surface p-6 rounded-2xl h-full">
       {!isLoading && isSuccess && data ? (
@@ -44,7 +46,7 @@ export function AthleteDetailsPage() {
                 )}
               </div>
               <p className="text-2xl text-light-on-surface-variant">
-                {data?.related?.name || 'Sem time'} -{' '}
+                {data?.related.name || 'Sem time'} -{' '}
                 {defineAthleteCategory(data!.athleteProfile!.birthDate)}
               </p>
             </div>
