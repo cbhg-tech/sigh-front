@@ -42,7 +42,11 @@ export class DashboardController {
   }
 
   public async getLatestTransfers() {
-    const queryLatestTransfers = query(collection(db, 'transfers'), limit(20));
+    const queryLatestTransfers = query(
+      collection(db, 'transfers'),
+      orderBy('updatedAt', 'desc'),
+      limit(20),
+    );
 
     const latestTransfersDocs = await getDocs(queryLatestTransfers);
 

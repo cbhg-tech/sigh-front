@@ -38,6 +38,8 @@ export function ListTransfersPage() {
   }
 
   function badgerGenerator(transfer: ITransfer) {
+    if (transfer?.status === Status.REJECTED) return 'Transferência rejeitada';
+
     if (transfer.currentTeamStatus !== Status.ACTIVE)
       return 'Pendente clube de origem';
     if (transfer.destinationTeamStatus !== Status.ACTIVE)

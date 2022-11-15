@@ -31,10 +31,11 @@ export function DashboardPage() {
           value={totalizerData?.teams || 0}
         />
       </div>
-      <div className="overflow-y-auto">
+      <div className="overflow-y-auto bg-light-surface-1">
         <h2 className="text-3xl text-light-on-surface mb-4">
           Mercado da bolinha
         </h2>
+
         {isLoading && (
           <p className="text-center text-light-on-surface-variant">
             Carregando mercado da bolinha

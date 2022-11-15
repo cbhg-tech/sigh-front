@@ -16,6 +16,8 @@ const USER_NOT_FOUND_IMG =
 
 export function BallMarketCard({ transfer }: IProps) {
   function badgerGenerator(transfer: ITransfer) {
+    if (transfer.status === Status.REJECTED) return 'Transferencia negada';
+
     if (transfer.currentTeamStatus !== Status.ACTIVE)
       return 'Pendente clube de origem';
     if (transfer.destinationTeamStatus !== Status.ACTIVE)
@@ -78,7 +80,7 @@ export function BallMarketCard({ transfer }: IProps) {
         )}
 
         {transfer.status === Status.REJECTED && (
-          <Badge type="error">Negado</Badge>
+          <Badge type="error">Melou!</Badge>
         )}
 
         <p className="text-light-on-surface-variant">

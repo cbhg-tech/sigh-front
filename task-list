@@ -20,10 +20,10 @@ https://sigh-f656a.web.app/app/atletas/detalhes/6Gr2Dp7R4QaK1VGoarkZSsUCjOy1
   - Inserir esses anexos nos detalhes na hora de aprovar a transferencia para as federações, clube e confederação poder baixar e ve.
 
 
-- [ ] BUG - O FLUXO ESTÁ TRAVANDO QUANDO A FED DE ORIGEM É A MESMA DA DE DESTINO
+- [x] BUG - O FLUXO ESTÁ TRAVANDO QUANDO A FED DE ORIGEM É A MESMA DA DE DESTINO
 Quando a federação de origem é a mesma da federação de destino, basta uma aprovação. No sistema o fluxo trava.
 
-- [ ] BUG: Quando rejeita uma transferencia ele não encerra a transferencia e no mercado de bolinha tem que ficar que "MELOU" ou "transferencia negada"
+- [x] BUG: Quando rejeita uma transferencia ele não encerra a transferencia e no mercado de bolinha tem que ficar que "MELOU" ou "transferencia negada"
 
 - [x] Incluir o Número do registro no relatorio que é exportado
 

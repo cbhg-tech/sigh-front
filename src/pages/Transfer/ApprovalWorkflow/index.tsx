@@ -29,6 +29,17 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   function canApproveWorkflow() {
     if (isDisplayOnly) return false;
 
+    if (
+      user?.role === Roles.ADMINFEDERACAO &&
+      transferData?.status !== Status.ACTIVE &&
+      transferData?.currentFederationId ===
+        transferData?.destinationFederationId &&
+      transferData?.destinationFederationStatus === Status.ACTIVE &&
+      transferData?.currentFederationStatus === Status.ACTIVE
+    ) {
+      return false;
+    }
+
     if (transferData?.status !== Status.ACTIVE) {
       if (
         user?.role === Roles.ADMINCLUBE &&
@@ -90,35 +101,61 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
 
       const newTransferData = { ...transferData };
 
-      switch (user?.relatedId) {
-        case newTransferData?.currentTeamId:
-          newTransferData.currentTeamStatus = isApproved
-            ? Status.ACTIVE
-            : Status.REJECTED;
-          role = TransferRole.CLUBEORIGEM;
-          break;
-        case newTransferData?.destinationTeamId:
-          newTransferData.destinationTeamStatus = isApproved
-            ? Status.ACTIVE
-            : Status.REJECTED;
-          role = TransferRole.CLUBEDESTINO;
-          break;
-        case newTransferData?.currentFederationId:
-          newTransferData.currentFederationStatus = isApproved
-            ? Status.ACTIVE
-            : Status.REJECTED;
-          role = TransferRole.FEDERACAOORIGEM;
-          break;
-        case newTransferData?.destinationFederationId:
-          newTransferData.destinationTeamStatus = isApproved
-            ? Status.ACTIVE
-            : Status.REJECTED;
-          role = TransferRole.FEDERACAODESTINO;
-          break;
-        case 'CBHG - Administração':
-        default:
-          role = TransferRole.CONFEDERACAO;
-          break;
+      const isAprovedByTeams =
+        transferData.currentTeamStatus === Status.ACTIVE &&
+        transferData.destinationTeamStatus === Status.ACTIVE;
+      const isNotAprovedByFederations =
+        transferData.currentFederationStatus !== Status.ACTIVE &&
+        transferData.destinationFederationStatus !== Status.ACTIVE;
+
+      if (
+        transferData.destinationFederationId ===
+          transferData.currentFederationId &&
+        isAprovedByTeams &&
+        isNotAprovedByFederations
+      ) {
+        newTransferData.destinationFederationStatus = isApproved
+          ? Status.ACTIVE
+          : Status.REJECTED;
+        newTransferData.currentFederationStatus = isApproved
+          ? Status.ACTIVE
+          : Status.REJECTED;
+
+        role = TransferRole.FEDERACAOORIGEM;
+      } else {
+        switch (user?.relatedId) {
+          case newTransferData?.currentTeamId:
+            newTransferData.currentTeamStatus = isApproved
+              ? Status.ACTIVE
+              : Status.REJECTED;
+            role = TransferRole.CLUBEORIGEM;
+            break;
+          case newTransferData?.destinationTeamId:
+            newTransferData.destinationTeamStatus = isApproved
+              ? Status.ACTIVE
+              : Status.REJECTED;
+            role = TransferRole.CLUBEDESTINO;
+            break;
+          case newTransferData?.currentFederationId:
+            newTransferData.currentFederationStatus = isApproved
+              ? Status.ACTIVE
+              : Status.REJECTED;
+            role = TransferRole.FEDERACAOORIGEM;
+            break;
+          case newTransferData?.destinationFederationId:
+            newTransferData.destinationTeamStatus = isApproved
+              ? Status.ACTIVE
+              : Status.REJECTED;
+            role = TransferRole.FEDERACAODESTINO;
+            break;
+          case 'CBHG - Administração':
+          default:
+            newTransferData.cbhgStatus = isApproved
+              ? Status.ACTIVE
+              : Status.REJECTED;
+            role = TransferRole.CONFEDERACAO;
+            break;
+        }
       }
 
       const log = {
@@ -141,6 +178,10 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
         newTransferData.status = Status.ACTIVE;
       }
 
+      if (!isApproved) {
+        newTransferData.status = Status.REJECTED;
+      }
+
       await mutateAsync(newTransferData);
 
       setObs('');
@@ -153,6 +194,9 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   }
 
   function waitingMessage() {
+    if (transferData?.status === Status.REJECTED)
+      return 'Transferência rejeitada';
+
     if (transferData?.currentTeamStatus !== Status.ACTIVE)
       return 'Pendente clube de origem';
     if (transferData?.destinationTeamStatus !== Status.ACTIVE)
