@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        run: cd functions && npm ci
+        run: cd ./functions && npm ci
       - name: Build functions
         run: npm run build
       - name: Deploy to Firebase
