@@ -1,10 +1,11 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
+import dayjs from 'dayjs';
 import { Button } from '../../../components/Inputs/Button';
 import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 import { Select } from '../../../components/Inputs/Select';
@@ -18,11 +19,17 @@ import { DateService } from '../../../services/DateService';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 import { Status } from '../../../enums/Status';
+import { FileInput } from '../../../components/Inputs/FileInput';
 
 interface IForm {
   transferData: string;
   obs: string;
   destinationClub: string;
+}
+
+interface IFile {
+  federationPaymentVoucher: File | null;
+  cbhgPaymentVoucher: File | null;
 }
 
 export function TransferRequestPage() {
@@ -35,8 +42,16 @@ export function TransferRequestPage() {
   const { mutateAsync } = useCreateTransferRequest();
   const { data: publicTeams, isLoading } = useGetPublicTeams();
 
+  const [files, setFiles] = useState<IFile>({
+    cbhgPaymentVoucher: null,
+    federationPaymentVoucher: null,
+  });
+
   const handeSubmit = async (data: IForm) => {
     if (!user) return;
+
+    if (!files.cbhgPaymentVoucher)
+      return toast.error('Comprovante de pagamento da CBHG é obrigatório');
 
     try {
       await validateForm(data, {
@@ -64,6 +79,10 @@ export function TransferRequestPage() {
         destinationFederationStatus: Status.PENDING,
         destinationFederationId: team!.federationId!,
         obs: data.obs,
+        documents: {
+          cbhgPaymentVoucher: files.cbhgPaymentVoucher!,
+          federationPaymentVoucher: files.federationPaymentVoucher,
+        },
       });
 
       toast.success('Solicitação enviada com sucesso!');
@@ -123,6 +142,8 @@ export function TransferRequestPage() {
                 type="date"
                 label="Data real da solicitação de transferência"
                 name="transferData"
+                value={dayjs().format('YYYY-MM-DD')}
+                disabled
               />
               <Select name="destinationClub" label="Clube de destino">
                 <option value="">Selecione um clube</option>
@@ -132,6 +153,35 @@ export function TransferRequestPage() {
                   ))}
               </Select>
               <MultineTextfield name="obs" label="Observações" />
+
+              <div className="flex flex-col md:flex-row gap-4 mt-4">
+                <div className="w-full">
+                  <FileInput
+                    name="federationPaymentVoucher"
+                    label="Comprovante de pagamento do federação"
+                    hint="Opcional"
+                    onChange={e =>
+                      setFiles({
+                        ...files,
+                        federationPaymentVoucher: e.target.files![0],
+                      })
+                    }
+                  />
+                </div>
+                <div className="w-full">
+                  <FileInput
+                    name="cbhgPaymentVoucher"
+                    label="Comprovante de pagamento da CBHG"
+                    hint="Obrigatório"
+                    onChange={e =>
+                      setFiles({
+                        ...files,
+                        cbhgPaymentVoucher: e.target.files![0],
+                      })
+                    }
+                  />
+                </div>
+              </div>
 
               <div className="col-span-6 lg:col-span-12 mt-4">
                 <div className="flex gap-2 justify-end">

@@ -32,6 +32,10 @@ export interface ITransfer {
   obs: string;
   status: string;
   transferData: string;
+  documents: {
+    federationPaymentVoucher?: string;
+    cbhgPaymentVoucher: string;
+  };
   log: Array<ITransferLog>;
   createdAt: Date | IFirebaseDate;
   updatedAt: Date | IFirebaseDate;

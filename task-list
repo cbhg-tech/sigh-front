@@ -8,13 +8,13 @@
 - [x] status da transf no mercado da bolinha (pendente fed origem), pode ser abaixo do negociando...
 
 
-- [ ] BUG: ficha do atleta fica SEM TIME abaixo do nome e foto em details de atleta
+- [x] BUG: ficha do atleta fica SEM TIME abaixo do nome e foto em details de atleta
 https://sigh-f656a.web.app/app/atletas/detalhes/6Gr2Dp7R4QaK1VGoarkZSsUCjOy1
 
 
-- [ ] A Data real e HORA da solicitação de transferencia tem que ser HOJE, apenas, entao mostrar só uma LABEL informando que aquela será a data e hora salva para transferencia.
+- [x] A Data real e HORA da solicitação de transferencia tem que ser HOJE, apenas, entao mostrar só uma LABEL informando que aquela será a data e hora salva para transferencia.
 
-- [ ] Incluir dois anexos na solicitação de transferência
+- [x] Incluir dois anexos na solicitação de transferência
   - Comprovante de pagamento da FEDERAÇÃO (opcional)
   - Comprovante de pagamento da CBHG (obrigatório)
   - Inserir esses anexos nos detalhes na hora de aprovar a transferencia para as federações, clube e confederação poder baixar e ve.

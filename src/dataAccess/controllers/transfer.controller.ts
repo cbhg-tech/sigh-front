@@ -14,16 +14,43 @@ import { db } from '../../app/FirebaseConfig';
 import { Status } from '../../enums/Status';
 import { ITransfer } from '../../types/Transfer';
 import { joinTransfer } from '../../services/joinTransfers';
+import { UploadFile } from '../../utils/uploadFile';
 
-export type ICreateTransfer = Omit<
-  ITransfer,
-  'log' | 'status' | 'createdAt' | 'updatedAt'
->;
+export interface ICreateTransfer
+  extends Omit<
+    ITransfer,
+    'log' | 'status' | 'createdAt' | 'updatedAt' | 'documents'
+  > {
+  documents: {
+    federationPaymentVoucher: File | null;
+    cbhgPaymentVoucher: File;
+  };
+}
 
 export class TransferController {
   public async create(data: ICreateTransfer) {
+    const filesUrl = {
+      federationPaymentVoucher: '',
+      cbhgPaymentVoucher: '',
+    };
+
+    if (data.documents.federationPaymentVoucher) {
+      filesUrl.federationPaymentVoucher = await UploadFile(
+        `/athletes/${data.userId}/transfers/${data.id}/federationPaymentVoucher`,
+        data.documents.federationPaymentVoucher,
+      );
+    }
+
+    filesUrl.cbhgPaymentVoucher = await UploadFile(
+      `/athletes/${data.userId}/transfers/${data.id}/cbhgPaymentVoucher`,
+      data.documents.cbhgPaymentVoucher,
+    );
+
     await addDoc(collection(db, 'transfers'), {
       ...data,
+      documents: {
+        ...filesUrl,
+      },
       status: Status.PENDING,
       log: [],
       updatedAt: new Date(),

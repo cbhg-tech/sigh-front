@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { MdOpenInNew } from 'react-icons/md';
 import { Badge } from '../../../components/Badge';
 import { Divider } from '../../../components/Divider';
 import { Button } from '../../../components/Inputs/Button';
@@ -191,6 +192,32 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
             <strong>Observação: </strong>
             {transferData.obs || 'Nenhuma observação'}
           </p>
+          <a
+            href={transferData.documents.cbhgPaymentVoucher}
+            target="_blank"
+            download
+            rel="noreferrer"
+            className="flex items-center gap-2"
+          >
+            <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+            Comprovante de pagamento da CBHG
+          </a>
+          <br />
+          {transferData.documents.federationPaymentVoucher && (
+            <>
+              <a
+                href={transferData.documents.federationPaymentVoucher}
+                target="_blank"
+                download
+                rel="noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+                Comprovante de pagamento da federação
+              </a>
+              <br />
+            </>
+          )}
         </>
       )}
       <div>
