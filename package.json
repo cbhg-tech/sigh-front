@@ -9,9 +9,9 @@
     "preview": "vite preview",
     "prepare": "husky install && chmod ug+x .husky/* && chmod ug+x .git/hooks/*",
     "emulator": "firebase emulators:start --import=./seed --export-on-exit=./seed",
-    "patch": "yarn version --patch",
-    "minor": "yarn version --minor",
-    "major": "yarn version --major"
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.7.2",
