@@ -3,13 +3,12 @@ import {
   query,
   getDocs,
   limit,
-  setDoc,
   doc,
   updateDoc,
   where,
   getDoc,
 } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import axios from 'axios';
 import { db, auth } from '../../app/FirebaseConfig';
 import { IUser } from '../../types/User';
 import { Status } from '../../enums/Status';
@@ -100,39 +99,20 @@ export class UserController {
   }
 
   public async create(data: ICreateUser) {
-    const {
-      email,
-      password,
-      name,
-      role,
-      relatedName,
-      relatedType,
-      relatedId,
-      document,
-    } = data;
+    const { role, document } = data;
 
     if (role === Roles.USER && document) {
       await validateIfDocumentExist(document);
     }
 
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
+    await axios.post(
+      'https://us-central1-sigh-f656a.cloudfunctions.net/api/user/create',
+      {
+        ...data,
+        status: Status.ACTIVE,
+        document: document || '',
+      },
     );
-
-    await setDoc(doc(db, 'users', user.uid), {
-      email,
-      name,
-      role,
-      status: Status.ACTIVE,
-      relatedName,
-      relatedType,
-      relatedId,
-      document: document || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
   }
 
   public async put(data: Partial<IUser>) {
