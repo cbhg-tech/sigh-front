@@ -47,9 +47,11 @@ export function RegisterPage() {
 
       const team = publicTeams?.list.find(t => t.id === data.team);
 
+      const birthDate = dayjs(data.birthDate).format('YYYY-MM-DD');
+
       await mutateAsync({
         ...data,
-        birthDate: dayjs(data.birthDate).format('YYYY-MM-DD'),
+        birthDate,
         relatedName: team!.name,
         relatedId: team!.id,
         relatedType: 'team',
@@ -90,7 +92,9 @@ export function RegisterPage() {
             <option value="">Selecione um clube</option>
             {publicTeams &&
               publicTeams.list.map(team => (
-                <option value={team.id}>{team.name}</option>
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
               ))}
           </Select>
           <Textfield type="password" name="password" label="Senha" />

@@ -82,7 +82,7 @@ export class AthleteController {
       relatedType,
       athleteProfile: {
         registerNumber,
-        birthDate: new Date(birthDate),
+        birthDate,
       },
       document,
       createdAt: new Date(),
