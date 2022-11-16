@@ -52,8 +52,6 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
   async function handleSubmit(data: IForm) {
     if (isDisplayMode) return;
 
-    if (!technicalComitteeData) return;
-
     try {
       await validateForm(data, {
         name: Yup.string().required('Nome obrigatório'),
