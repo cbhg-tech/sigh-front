@@ -85,9 +85,9 @@ export function DocumentationUpload() {
         ref={formRef}
         onSubmit={data => handleFileUpload(data)}
         initialData={{
-          rgNumber: user?.athleteProfile?.documents.rgNumber,
-          rgEmissionDate: user?.athleteProfile?.documents.rgEmissionDate,
-          rgEmissionOrg: user?.athleteProfile?.documents.rgEmissionOrg,
+          rgNumber: user?.athleteProfile?.documents?.rgNumber,
+          rgEmissionDate: user?.athleteProfile?.documents?.rgEmissionDate,
+          rgEmissionOrg: user?.athleteProfile?.documents?.rgEmissionOrg,
         }}
       >
         <h2 className="mb-4 text-2xl text-light-on-surface">Dados do RG</h2>
