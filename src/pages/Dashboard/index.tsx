@@ -51,7 +51,9 @@ export function DashboardPage() {
         {!isLoading &&
           transfersData &&
           transfersData?.length > 0 &&
-          transfersData.map(transfer => <BallMarketCard transfer={transfer} />)}
+          transfersData.map(transfer => (
+            <BallMarketCard key={transfer.id} transfer={transfer} />
+          ))}
       </div>
     </div>
   );

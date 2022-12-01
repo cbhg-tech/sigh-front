@@ -40,6 +40,8 @@ export class PartnerProjectController {
   private async joinProjects(project: IPartnerProject) {
     const { relatedType } = project;
 
+    console.log(relatedType);
+
     if (relatedType === 'Cofederation') {
       return {
         ...project,

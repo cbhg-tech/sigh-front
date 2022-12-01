@@ -162,7 +162,7 @@ export function PartnerProjectListPage() {
                   {pp?.practitioners || '0'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {pp?.related.name || 'Não encontrado'}
+                  {pp?.related?.name || 'Não encontrado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
                   <ActionsButtons id={pp!.id!} relatedId={pp!.relatedId} />

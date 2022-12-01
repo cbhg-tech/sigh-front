@@ -26,7 +26,7 @@ export function PartnerProjectDetailsPage() {
             <div>
               <h3 className="text-xl text-light-on-surface">Relacionado</h3>
               <p className="text-light-on-surface-variant">
-                <strong>{data?.related.name}</strong>
+                <strong>{data?.related?.name || 'Não encontrado'}</strong>
               </p>
             </div>
           </section>
