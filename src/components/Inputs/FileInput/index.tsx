@@ -1,5 +1,6 @@
 import { InputHTMLAttributes, useState } from 'react';
 import { IoCloseCircleOutline } from 'react-icons/io5';
+import { MdFileDownload } from 'react-icons/md';
 import { IconButton } from '../IconButton';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -17,7 +18,20 @@ export function FileInput({ name, label, hint, url, ...rest }: IProps) {
       {!showInput && (
         <div className="flex gap-4">
           <p className="block leading-10 max-w-prose line-clamp-1">{url}</p>
-          {/* TODO: adicionar botão para baixar documento */}
+          {url && (
+            <IconButton
+              icon={MdFileDownload}
+              onClick={() => {
+                const link = document.createElement('a');
+                link.target = '_blank';
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
+              className="text-light-surface-tint"
+            />
+          )}
           <IconButton
             icon={IoCloseCircleOutline}
             onClick={() => setShowInput(true)}
