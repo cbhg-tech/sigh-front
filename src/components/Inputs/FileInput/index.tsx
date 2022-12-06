@@ -21,7 +21,7 @@ export function FileInput({ name, label, hint, url, ...rest }: IProps) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'employees.json';
+        a.download = 'file.';
         a.click();
       });
       // window.location.href = response.url;
@@ -33,7 +33,6 @@ export function FileInput({ name, label, hint, url, ...rest }: IProps) {
       {!showInput && (
         <div className="flex gap-4">
           <p className="block leading-10 max-w-prose line-clamp-1">{url}</p>
-          {console.log(url)}
           {url && (
             <IconButton
               icon={MdFileDownload}
