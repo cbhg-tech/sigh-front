@@ -19,7 +19,7 @@ export function AthleteDetailsPage() {
     <div className="bg-light-surface p-6 rounded-2xl h-full">
       {!isLoading && isSuccess && data ? (
         <>
-          <div className="flex gap-2 items-center mb-4">
+          <div className="flex flex-col md:flex-row gap-2 items-center mb-4">
             <figure className="w-24 h-24 rounded-full">
               <img
                 src={data?.photoUrl || USER_NOT_FOUND_IMG}

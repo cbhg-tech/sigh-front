@@ -42,7 +42,7 @@ export function AthletesRegisterContent() {
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
-      <div className="flex gap-2 items-center mb-4">
+      <div className="flex flex-col md:flex-row gap-2 items-center mb-4">
         <div className="w-24 h-24 rounded-full">
           {!isLoading && (
             <label
@@ -71,11 +71,16 @@ export function AthletesRegisterContent() {
             <div className="w-24 h-24 rounded-full bg-light-secondary-container animate-pulse" />
           )}
         </div>
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-4xl text-light-on-surface-variant">
-              {user?.name}
-            </h2>
+        <div className="flex flex-col gap-2">
+          <h2 className="text-4xl text-light-on-surface-variant">
+            {user?.name}
+          </h2>
+
+          <p className="text-2xl text-light-on-surface-variant">
+            {user?.related?.name}
+          </p>
+
+          <div>
             {user?.status === Status.ACTIVE && (
               <Badge type="primary">Ativo</Badge>
             )}
@@ -89,35 +94,29 @@ export function AthletesRegisterContent() {
               <Badge type="error">Inativo</Badge>
             )}
           </div>
-          <p className="text-2xl text-light-on-surface-variant">
-            {user?.related?.name}
-          </p>
         </div>
       </div>
       <div className="mb-8 flex flex-nowrap overflow-x-auto scroll-smooth snap-x snap-mandatory">
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 0 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTab === 0 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+            }`}
           onClick={() => setActiveTab(0)}
         >
           Dados básicos
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 1 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTab === 1 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+            }`}
           onClick={() => setActiveTab(1)}
         >
           Documentação
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 2 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTab === 2 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+            }`}
           onClick={() => setActiveTab(2)}
         >
           Dados hospitalares
