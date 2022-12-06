@@ -1,7 +1,9 @@
 import { InputHTMLAttributes, useState } from 'react';
+import { ref, getDownloadURL, getBlob } from 'firebase/storage';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { MdFileDownload } from 'react-icons/md';
 import { IconButton } from '../IconButton';
+import { storage } from '../../../app/FirebaseConfig';
 
 interface IProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -13,22 +15,29 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
 export function FileInput({ name, label, hint, url, ...rest }: IProps) {
   const [showInput, setShowInput] = useState(!url);
 
+  const handleDownload = (url: string) => {
+    fetch(url).then(response => {
+      response.blob().then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'employees.json';
+        a.click();
+      });
+      // window.location.href = response.url;
+    });
+  };
+
   return (
     <div className="flex-1">
       {!showInput && (
         <div className="flex gap-4">
           <p className="block leading-10 max-w-prose line-clamp-1">{url}</p>
+          {console.log(url)}
           {url && (
             <IconButton
               icon={MdFileDownload}
-              onClick={() => {
-                const link = document.createElement('a');
-                link.target = '_blank';
-                link.href = url;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
+              onClick={e => handleDownload(url)}
               className="text-light-surface-tint"
             />
           )}
