@@ -34,7 +34,7 @@ export function UserListPage() {
   }
 
   return (
-    <div className="bg-light-surface p-6 rounded-2xl h-full">
+    <div className="bg-light-surface p-6 rounded-2xl h-full overflow-y-auto">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">
           Listagem de usuários {`(${data?.length || 0})`}
@@ -46,6 +46,7 @@ export function UserListPage() {
           onClick={() => navigate('/app/usuarios/cadastro')}
         />
       </div>
+
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
           <TextfieldBare
@@ -56,56 +57,60 @@ export function UserListPage() {
         </div>
       </div>
 
-      {isLoading && (
-        <p className="text-center mt-8 text-light-on-surface-variant">
-          Buscando dados ...
-        </p>
-      )}
+      <div>
+        {isLoading && (
+          <p className="text-center mt-8 text-light-on-surface-variant">
+            Buscando dados ...
+          </p>
+        )}
 
-      {isError && (
-        <p className="text-center mt-8 text-light-on-surface-variant">
-          Error ao buscar dados, tente novamente
-        </p>
-      )}
+        {isError && (
+          <p className="text-center mt-8 text-light-on-surface-variant">
+            Error ao buscar dados, tente novamente
+          </p>
+        )}
 
-      {isSuccess && (
-        <table className="w-full">
-          <thead>
-            <tr>
-              {COLUMN_NAMES.map((columnName, index) => (
-                <th
-                  className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
-                  key={columnName}
-                >
-                  {columnName}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map(user => (
-              <tr
-                className="border-b last:border-none border-slate-200"
-                key={user.id}
-              >
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>{user.name}</td>
-                <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {user.status}
-                </td>
-                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  <Badge type="tertiary">{user.role}</Badge>
-                </td>
-                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {user.relatedName}
-                </td>
-                <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
-                  <ActionButtons id={user.id} />
-                </td>
+        {isSuccess && (
+          <table className="w-full">
+            <thead>
+              <tr>
+                {COLUMN_NAMES.map((columnName, index) => (
+                  <th
+                    className={`${COLUMN_WIDTH[index]} text-left py-4 px-2 bg-slate-100`}
+                    key={columnName}
+                  >
+                    {columnName}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {tableData.map(user => (
+                <tr
+                  className="border-b last:border-none border-slate-200"
+                  key={user.id}
+                >
+                  <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                    {user.name}
+                  </td>
+                  <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
+                    {user.status}
+                  </td>
+                  <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                    <Badge type="tertiary">{user.role}</Badge>
+                  </td>
+                  <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                    {user.relatedName}
+                  </td>
+                  <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
+                    <ActionButtons id={user.id} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 }

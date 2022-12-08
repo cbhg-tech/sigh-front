@@ -99,24 +99,27 @@ export function AthletesRegisterContent() {
       <div className="mb-8 flex flex-nowrap overflow-x-auto scroll-smooth snap-x snap-mandatory">
         <button
           type="button"
-          className={`${BTN_STYLE} ${activeTab === 0 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-            }`}
+          className={`${BTN_STYLE} ${
+            activeTab === 0 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+          }`}
           onClick={() => setActiveTab(0)}
         >
           Dados básicos
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${activeTab === 1 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-            }`}
+          className={`${BTN_STYLE} ${
+            activeTab === 1 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+          }`}
           onClick={() => setActiveTab(1)}
         >
           Documentação
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${activeTab === 2 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-            }`}
+          className={`${BTN_STYLE} ${
+            activeTab === 2 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
+          }`}
           onClick={() => setActiveTab(2)}
         >
           Dados hospitalares
