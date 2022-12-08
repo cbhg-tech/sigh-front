@@ -81,7 +81,7 @@ export function RegisterPage() {
         <Form onSubmit={data => handleSubmit(data)} ref={formRef}>
           <Textfield type="text" name="name" label="Nome completo" />
           <Textfield type="email" name="email" label="Email" />
-          <Textfield type="text" name="document" label="Documento" />
+          <Textfield type="text" name="document" label="CPF" />
           <Textfield
             type="date"
             name="birthDate"

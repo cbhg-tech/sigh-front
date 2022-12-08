@@ -24,4 +24,6 @@ const auth = getAuth(app);
 //   connectStorageEmulator(storage, 'localhost', 9199);
 // }
 
+auth.languageCode = 'pt-BR';
+
 export { app, db, auth, storage };
