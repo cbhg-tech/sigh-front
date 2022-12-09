@@ -14,6 +14,7 @@ import { useCreateAthlete } from '../../../dataAccess/hooks/athlete/useCreateAth
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
+import { maskCPF, validateCPF } from '../../../utils/cpfInputMask';
 
 interface IForm {
   name: string;
@@ -39,7 +40,9 @@ export function RegisterPage() {
         email: Yup.string()
           .email('Email inválido')
           .required('Email obrigatório'),
-        document: Yup.string().required('Documento obrigatório'),
+        document: Yup.string()
+          .required('Documento obrigatório')
+          .test('validate-cpf', 'CPF inválido', val => validateCPF(val)),
         password: Yup.string().required('Senha obrigatória'),
         birthDate: Yup.string(),
         team: Yup.string().required('Clube obrigatório'),
@@ -81,7 +84,7 @@ export function RegisterPage() {
         <Form onSubmit={data => handleSubmit(data)} ref={formRef}>
           <Textfield type="text" name="name" label="Nome completo" />
           <Textfield type="email" name="email" label="Email" />
-          <Textfield type="text" name="document" label="CPF" />
+          <Textfield type="text" name="document" label="CPF" mask={maskCPF} />
           <Textfield
             type="date"
             name="birthDate"
