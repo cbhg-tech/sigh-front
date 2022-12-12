@@ -13,6 +13,7 @@ import { Roles } from '../../../enums/Roles';
 import { Status } from '../../../enums/Status';
 import { DateService } from '../../../services/DateService';
 import { Badge } from '../../../components/Badge';
+import { IUserApproval } from '../../../types/UserApproval';
 
 export function ApprovalDetailsPage() {
   const navigate = useNavigate();
@@ -252,6 +253,13 @@ export function ApprovalDetailsPage() {
     log => log.author === user?.role,
   );
 
+  const renderWaitingPhrase = (data?: IUserApproval) => {
+    if (!data) return 'Aguardando a aprovação';
+    if (!data?.teamApproved) return 'Aguardando a aprovação do Clube';
+    if (!data?.federationApproved) return 'Aguardando a aprovação do Federação';
+    if (!data?.cbhgApproved) return 'Aguardando a aprovação do Confederação';
+  };
+
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       {renderDetails()}
@@ -342,9 +350,7 @@ export function ApprovalDetailsPage() {
         </div>
       ) : (
         <p className="text-light-on-surface-variant">
-          {user?.role === Roles.ADMINFEDERACAO &&
-            'Aguardando a aprovação do Clube'}
-          {user?.role === Roles.ADMIN && 'Aguardando a aprovação da Federação'}
+          {renderWaitingPhrase(data?.approval)}
         </p>
       )}
     </div>
