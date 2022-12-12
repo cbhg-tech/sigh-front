@@ -240,7 +240,6 @@ export class AthleteController {
     let q = query(
       collection(db, 'userApproval'),
       where('status', '!=', Status.ACTIVE),
-      limit(20),
     );
 
     if (team) {
@@ -248,7 +247,6 @@ export class AthleteController {
         collection(db, 'userApproval'),
         where('status', '!=', Status.ACTIVE),
         where('teamId', '==', team),
-        limit(20),
       );
     }
 
