@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { MdOpenInNew } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { CgSpinner } from 'react-icons/cg';
+import dayjs from 'dayjs';
 import { useGetAppovalDetails } from '../../../dataAccess/hooks/athlete/useGetApprovalDetails';
 import { MultineTextfieldBare } from '../../../components/Inputs/MultilineTextfieldBare';
 import { Button } from '../../../components/Inputs/Button';
@@ -275,6 +276,12 @@ export function ApprovalDetailsPage() {
                     {l.status}
                   </Badge>
                 </div>
+                <p className="mb-2 text-sm text-light-on-surface-variant">
+                  {/* @ts-ignore */}
+                  {dayjs(l.createdAt.seconds * 1000).format(
+                    'HH:mm - DD/MM/YYYY',
+                  )}
+                </p>
                 <p className="text-light-on-surface-variant">
                   <strong>Observação: </strong> {l.note || 'Sem observação'}
                 </p>
