@@ -35,7 +35,7 @@ export function TeamListPage() {
   );
 
   return (
-    <div className="bg-light-surface p-6 rounded-2xl h-full">
+    <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">
           Listagem de clubes {`(${data?.length || 0})`}
@@ -87,9 +87,8 @@ export function TeamListPage() {
             <tr>
               {COLUMN_NAMES.map((columnName, index) => (
                 <th
-                  className={`${
-                    COLUMN_WIDTH[index]
-                  } text-left py-4 px-2 bg-slate-100 ${index === 0 && 'pl-14'}`}
+                  className={`${COLUMN_WIDTH[index]
+                    } text-left py-4 px-2 bg-slate-100 ${index === 0 && 'pl-14'}`}
                   key={columnName}
                 >
                   {columnName}

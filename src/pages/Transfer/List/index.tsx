@@ -54,7 +54,7 @@ export function ListTransfersPage() {
   }
 
   return (
-    <div className="bg-light-surface p-6 rounded-2xl h-full">
+    <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex justify-start">
         <h2 className="text-3xl text-light-on-surface">
           Listagem de transferencias

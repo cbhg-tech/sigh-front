@@ -57,7 +57,7 @@ export function AthletesListPage() {
   }
 
   return (
-    <div className="bg-light-surface p-6 rounded-2xl h-full">
+    <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex justify-start mb-4">
         <h2 className="text-3xl text-light-on-surface mb-4">
           Listagem de atletas

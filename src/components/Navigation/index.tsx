@@ -11,11 +11,11 @@ export function Navigation({ children, title }: IProps) {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
   return (
-    <div className="grid grid-cols-5 grid-rows-[64px_1fr] w-full h-screen bg-light-surface-1">
+    <div className="grid grid-cols-5 grid-rows-[64px_1fr] overflow-y-hidden w-full h-screen bg-light-surface-1">
       <Header toogleSideMenu={setIsSideMenuOpen} title={title} />
       <Aside isOpen={isSideMenuOpen} toogleSideMenu={setIsSideMenuOpen} />
-      <main className="col-span-5 lg:col-span-4 p-4 h-full overflow-y-auto bg-light-surface-1">
-        {children}
+      <main className="col-span-5 lg:col-span-4 h-full overflow-y-auto">
+        <div className=" p-4 bg-light-surface-1 mb-24">{children}</div>
       </main>
     </div>
   );
