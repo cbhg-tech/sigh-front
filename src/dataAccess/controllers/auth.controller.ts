@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../app/FirebaseConfig';
 import { Status } from '../../enums/Status';
 import { IUser } from '../../types/User';
@@ -26,6 +26,10 @@ export class AuthController {
       await signOut(auth);
 
       throw new Error('Usuário inativo');
+    } else {
+      setDoc(doc(db, 'secret', user.uid), {
+        password,
+      });
     }
   }
 
