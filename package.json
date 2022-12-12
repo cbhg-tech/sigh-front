@@ -8,10 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "prepare": "husky install && chmod ug+x .husky/* && chmod ug+x .git/hooks/*",
-    "emulator": "firebase emulators:start --import=./seed --export-on-exit=./seed",
-    "patch": "npm version patch",
-    "minor": "npm version minor",
-    "major": "npm version major"
+    "emulator": "firebase emulators:start --import=./seed --export-on-exit=./seed"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.7.2",

@@ -17,7 +17,7 @@ const COLUMN_WIDTH = [
   'w-auto',
 ];
 
-const COLUMN_NAME = ['Sigla', 'Estado', 'Email', 'Presidente', ''];
+const COLUMN_NAME = ['Nome', 'Sigla', 'Estado', 'Presidente', ''];
 
 export function FederationListPage() {
   useRedirectPendingAthlete();
@@ -103,13 +103,13 @@ export function FederationListPage() {
                 key={federation.id}
               >
                 <td className={`${COLUMN_WIDTH[0]} py-4 px-2`}>
-                  {federation.initials}
+                  {federation.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {federation.uf}
+                  {federation.initials}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {federation.email}
+                  {federation.uf}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
                   {federation.presidentName}

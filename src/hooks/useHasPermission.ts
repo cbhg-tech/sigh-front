@@ -2,7 +2,7 @@ import { auth } from '../app/FirebaseConfig';
 import { useGlobal } from '../contexts/global.context';
 import { Roles } from '../enums/Roles';
 
-export function useHasPermission(arr: Array<Roles>) {
+export const useHasPermission = (arr: Array<Roles>) => {
   const { currentUser } = auth;
   const { user } = useGlobal();
 
@@ -11,4 +11,4 @@ export function useHasPermission(arr: Array<Roles>) {
   }
 
   return false;
-}
+};
