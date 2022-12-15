@@ -35,20 +35,20 @@ export function TechnicalCommitteeListPage() {
 
   let tableData = data || [];
 
+  if (isTeamManager) {
+    tableData = tableData.filter(ct => ct.relatedId === user?.relatedId);
+  } else if (isFederationManager) {
+    tableData = tableData.filter(
+      ct => ct.related.federationId === user?.relatedId,
+    );
+  }
+
   if (filterTeam)
     tableData = tableData.filter(athlete => athlete.relatedId === filterTeam);
 
   if (filter) {
     tableData = tableData.filter(user =>
       user.name.toLowerCase().includes(filter.toLowerCase()),
-    );
-  }
-
-  if (isTeamManager) {
-    tableData = tableData.filter(ct => ct.relatedId === user?.relatedId);
-  } else if (isFederationManager) {
-    tableData = tableData.filter(
-      ct => ct.related.federationId === user?.relatedId,
     );
   }
 

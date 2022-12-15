@@ -12,6 +12,7 @@ import { useGetAllPartnerProjects } from '../../../dataAccess/hooks/partnerProje
 import { DateService } from '../../../services/DateService';
 import { useGetPublicFederations } from '../../../dataAccess/hooks/public/useGetPublicFederation';
 import { ActionsButtons } from './ActionsButton';
+import { useGlobal } from '../../../contexts/global.context';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -33,11 +34,16 @@ const COLUMN_NAMES = [
 
 export function PartnerProjectListPage() {
   const navigate = useNavigate();
-  const isAdmin = useHasPermission([
+  const canCreate = useHasPermission([
     Roles.ADMINCLUBE,
     Roles.ADMIN,
     Roles.ADMINFEDERACAO,
   ]);
+  const isTeamManager = useHasPermission([Roles.ADMINCLUBE]);
+  const isFederationManager = useHasPermission([Roles.ADMINFEDERACAO]);
+  const isAdmin = useHasPermission([Roles.ADMIN]);
+
+  const { user } = useGlobal();
   const { data, isLoading, isError, isSuccess } = useGetAllPartnerProjects();
   const { data: publicFederation } = useGetPublicFederations();
   const { data: publicTeams } = useGetPublicTeams();
@@ -47,6 +53,19 @@ export function PartnerProjectListPage() {
   const [filterTeam, setFilterTeam] = useState('');
 
   let tableData = data || [];
+
+  if (isTeamManager) {
+    tableData = tableData.filter(pp => pp?.relatedId === user?.relatedId);
+  } else if (isFederationManager) {
+    tableData = tableData.filter(ct => {
+      return (
+        (ct?.relatedType === 'Team' &&
+          // @ts-ignore
+          ct?.related.federationId === user?.relatedId) ||
+        (ct?.relatedType === 'Federation' && ct?.relatedId === user?.relatedId)
+      );
+    });
+  }
 
   if (filterFederation) {
     tableData = tableData.filter(pp => pp?.relatedId === filterFederation);
@@ -65,7 +84,7 @@ export function PartnerProjectListPage() {
     <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">Projeto de parceiros</h2>
-        {isAdmin && (
+        {canCreate && (
           <Button
             aditionalClasses="w-full lg:w-auto px-6"
             type="button"
@@ -76,33 +95,37 @@ export function PartnerProjectListPage() {
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
-          <SelectBare
-            label="Federação"
-            name="federation-filter"
-            onChange={e => setFilterFederation(e.target.value)}
-          >
-            <option value="">Todas</option>
-            <option value="CBHG - Administração">CBHG - Administração</option>
-            {publicFederation?.list.map(federation => (
-              <option key={federation.id} value={federation.id}>
-                {federation.name}
-              </option>
-            ))}
-          </SelectBare>
+          {isAdmin && (
+            <SelectBare
+              label="Federação"
+              name="federation-filter"
+              onChange={e => setFilterFederation(e.target.value)}
+            >
+              <option value="">Todas</option>
+              <option value="CBHG - Administração">CBHG - Administração</option>
+              {publicFederation?.list.map(federation => (
+                <option key={federation.id} value={federation.id}>
+                  {federation.name}
+                </option>
+              ))}
+            </SelectBare>
+          )}
         </div>
         <div className="w-full lg:w-1/3">
-          <SelectBare
-            label="Clube"
-            name="team-filter"
-            onChange={e => setFilterTeam(e.target.value)}
-          >
-            <option value="">Todos</option>
-            {publicTeams?.list.map(team => (
-              <option value={team.id} key={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </SelectBare>
+          {isAdmin || isFederationManager || (
+            <SelectBare
+              label="Clube"
+              name="team-filter"
+              onChange={e => setFilterTeam(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {publicTeams?.list.map(team => (
+                <option value={team.id} key={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </SelectBare>
+          )}
         </div>
         <div className="w-full lg:w-1/3">
           <TextfieldBare
