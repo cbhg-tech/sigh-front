@@ -160,7 +160,7 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
         <div className="p-4">
           <FileInput
             name="document"
-            label="Atestado Médico"
+            label="Documento de identificação (RG ou CNH)"
             hint="Obrigatório para todos"
             onChange={e => setDocument(e.target.files?.[0] || null)}
             disabled={isDisplayMode}
