@@ -87,21 +87,20 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
           icon={FaUsers}
         />
         {isManager && (
-          <>
-            <ListItem
-              closeModal={() => toogleSideMenu(false)}
-              href="/app/tecnico/listagem"
-              label="Comissão técnica"
-              icon={FaUserFriends}
-            />
-            <ListItem
-              closeModal={() => toogleSideMenu(false)}
-              href="/app/projetosparceiros/listagem"
-              label="Projetos parceiros"
-              icon={MdGroupWork}
-            />
-          </>
+          <ListItem
+            closeModal={() => toogleSideMenu(false)}
+            href="/app/tecnico/listagem"
+            label="Comissão técnica"
+            icon={FaUserFriends}
+          />
         )}
+
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/projetosparceiros/listagem"
+          label="Projetos parceiros"
+          icon={MdGroupWork}
+        />
 
         {isAdmin && (
           <ListItem
