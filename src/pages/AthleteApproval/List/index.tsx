@@ -23,6 +23,20 @@ export function AthleteApprovalListPage() {
 
   let tableData = data || [];
 
+  console.log(tableData);
+
+  if (user?.relatedType === 'team') {
+    tableData = tableData.filter(ap => !ap.teamApproved);
+  } else if (user?.relatedType === 'federation') {
+    tableData = tableData.filter(
+      ap => ap.teamApproved && !ap.federationApproved,
+    );
+  } else {
+    tableData = tableData.filter(
+      ap => ap.federationApproved && !ap.cbhgApproved,
+    );
+  }
+
   if (filter) {
     tableData = tableData.filter(athlete =>
       athlete.name.toLowerCase().includes(filter.toLowerCase()),

@@ -9,7 +9,7 @@ export interface IUser {
   email: string;
   relatedName: string;
   relatedId: string;
-  relatedType: 'team' | 'federation';
+  relatedType: 'team' | 'federation' | 'cofederation';
   related?: ITeam | IFederation;
   role: string;
   status: string;

@@ -101,6 +101,9 @@ export function UserRegisterPage({ isDisplayOnly = false }: IProps) {
         relatedName: team?.name || federation?.name || 'CBHG - Administração',
       };
 
+      if (userData.relatedId === 'CBHG - Administração')
+        userData.relatedType = 'cofederation';
+
       if (!id && !isDisplayOnly) {
         await createUserAsync(userData);
 
