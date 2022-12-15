@@ -23,7 +23,11 @@ export function AthleteApprovalListPage() {
 
   let tableData = data || [];
 
-  console.log(tableData);
+  if (user?.relatedType === 'federation') {
+    tableData = tableData.filter(
+      ap => ap.team?.federationId === user?.relatedId,
+    );
+  }
 
   if (user?.relatedType === 'team') {
     tableData = tableData.filter(ap => !ap.teamApproved);

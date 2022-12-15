@@ -281,7 +281,7 @@ export function ApprovalDetailsPage() {
                   <Badge
                     type={l.status === Status.ACTIVE ? 'primary' : 'error'}
                   >
-                    {l.status}
+                    {l.status === Status.ACTIVE ? 'Aprovado' : 'Reprovado'}
                   </Badge>
                 </div>
                 <p className="mb-2 text-sm text-light-on-surface-variant">
