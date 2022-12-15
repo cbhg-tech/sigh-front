@@ -101,143 +101,146 @@ export function AthletesReportPage() {
         />
       </header>
 
-      <table>
-        <thead>
-          <tr>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Nome
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Categoria
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Data de nascimento
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              CPF
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Email
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Telefone
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Clube
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              País de Origem
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Estado
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Cidade
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              CEP
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Endereço
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Número
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Tipo Sanguíneo
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Lista de alergias
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Doenças cronicas
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Medicamentos regulares
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Contato de emergencia
-            </th>
-            <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
-              Telefone de emergencia
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {cleanedData?.map(athlete => (
-            <tr key={athlete.id}>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.name}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.birthDate
-                  ? defineAthleteCategory(athlete.athleteProfile?.birthDate)
-                  : ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {dayjs(athlete.athleteProfile?.birthDate).format(
-                  'DD/MM/YYYY',
-                ) || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.document || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.email || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.phone || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.related?.name || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.country || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.address?.state || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.address?.city || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.address?.cep || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.address?.street || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.address?.number || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.hospitalData?.bloodType || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.hospitalData?.allergies || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.hospitalData?.chronicDiseases || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.hospitalData?.medications || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.emergencyContact?.name || ' - '}
-              </td>
-              <td className="p-2 border border-light-outline w-fit">
-                {athlete.athleteProfile?.emergencyContact?.phone || ' - '}
-              </td>
+      <main className="w-full overflow-x-auto">
+        <table className="">
+          <thead>
+            <tr>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Nome
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Categoria
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Data de nascimento
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                CPF
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Email
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Telefone
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Clube
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                País de Origem
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Estado
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Cidade
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                CEP
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Endereço
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Número
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Tipo Sanguíneo
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Lista de alergias
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Doenças cronicas
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Medicamentos regulares
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Contato de emergencia
+              </th>
+              <th className="p-2 border border-light-outline w-fit bg-light-tertiary-container text-light-on-tertiary-container">
+                Telefone de emergencia
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      {cleanedData && cleanedData.length === 0 && (
-        <p className="text-light-on-surface w-full text-center mt-8">
-          Nenhum atleta encontrado
-        </p>
-      )}
+          <tbody>
+            {cleanedData?.map(athlete => (
+              <tr key={athlete.id}>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.name}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.birthDate
+                    ? defineAthleteCategory(athlete.athleteProfile?.birthDate)
+                    : ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {dayjs(athlete.athleteProfile?.birthDate).format(
+                    'DD/MM/YYYY',
+                  ) || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.document || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.email || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.phone || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.related?.name || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.country || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.address?.state || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.address?.city || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.address?.cep || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.address?.street || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.address?.number || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.hospitalData?.bloodType || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.hospitalData?.allergies || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.hospitalData?.chronicDiseases ||
+                    ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.hospitalData?.medications || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.emergencyContact?.name || ' - '}
+                </td>
+                <td className="p-2 border border-light-outline w-fit">
+                  {athlete.athleteProfile?.emergencyContact?.phone || ' - '}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {cleanedData && cleanedData.length === 0 && (
+          <p className="text-light-on-surface w-full text-center mt-8">
+            Nenhum atleta encontrado
+          </p>
+        )}
+      </main>
     </div>
   );
 }
