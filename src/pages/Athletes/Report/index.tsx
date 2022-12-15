@@ -7,18 +7,32 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/Inputs/Button';
 import { useGetAthletesReport } from '../../../dataAccess/hooks/athlete/useGetAthletesReport';
 import { defineAthleteCategory } from '../../../services/defineAthleteCategory';
+import { useGlobal } from '../../../contexts/global.context';
 
 export function AthletesReportPage() {
   const navigate = useNavigate();
+
+  const { user } = useGlobal();
 
   const { data } = useGetAthletesReport();
 
   const [isLoading, setIsLoading] = useState(false);
 
+  let cleanedData = data || [];
+
+  if (data && user?.relatedType === 'team') {
+    cleanedData = data.filter(athlete => athlete.relatedId === user?.relatedId);
+  } else if (data && user?.relatedType === 'federation') {
+    cleanedData = data.filter(
+      // @ts-ignore
+      athlete => athlete.related.federationId === user?.relatedId,
+    );
+  }
+
   function exportDataAsXLS() {
     setIsLoading(true);
 
-    const dataToExport = data?.map(athlete => {
+    const dataToExport = cleanedData?.map(athlete => {
       const { name, email, related, document, athleteProfile } = athlete;
       const category = athlete.athleteProfile?.birthDate
         ? defineAthleteCategory(athlete.athleteProfile?.birthDate)
@@ -151,7 +165,7 @@ export function AthletesReportPage() {
         </thead>
 
         <tbody>
-          {data?.map(athlete => (
+          {cleanedData?.map(athlete => (
             <tr key={athlete.id}>
               <td className="p-2 border border-light-outline w-fit">
                 {athlete.name}
@@ -219,7 +233,7 @@ export function AthletesReportPage() {
         </tbody>
       </table>
 
-      {data && data.length === 0 && (
+      {cleanedData && cleanedData.length === 0 && (
         <p className="text-light-on-surface w-full text-center mt-8">
           Nenhum atleta encontrado
         </p>
