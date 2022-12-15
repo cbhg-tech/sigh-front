@@ -57,7 +57,7 @@ export class TechnicalComitteeController {
   }
 
   public async list() {
-    const q = query(collection(db, 'technicalComittee'), limit(20));
+    const q = query(collection(db, 'technicalComittee'));
 
     const res = await getDocs(q);
 

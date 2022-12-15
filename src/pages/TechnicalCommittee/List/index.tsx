@@ -8,6 +8,7 @@ import { useGetAllTechnicalComittee } from '../../../dataAccess/hooks/technicalC
 import { ActionButtons } from './ActionButtons';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
 import { SelectBare } from '../../../components/Inputs/SelectBare';
+import { useGlobal } from '../../../contexts/global.context';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -22,6 +23,10 @@ const COLUMN_NAMES = ['Nome', 'Clube', 'Telefone', 'Email', ''];
 export function TechnicalCommitteeListPage() {
   const navigate = useNavigate();
   const isTeamManager = useHasPermission([Roles.ADMINCLUBE]);
+  const isFederationManager = useHasPermission([Roles.ADMINFEDERACAO]);
+  const isAdmin = useHasPermission([Roles.ADMIN]);
+
+  const { user } = useGlobal();
   const { data, isLoading, isError, isSuccess } = useGetAllTechnicalComittee();
   const { data: publicTeams } = useGetPublicTeams();
 
@@ -36,6 +41,14 @@ export function TechnicalCommitteeListPage() {
   if (filter) {
     tableData = tableData.filter(user =>
       user.name.toLowerCase().includes(filter.toLowerCase()),
+    );
+  }
+
+  if (isTeamManager) {
+    tableData = tableData.filter(ct => ct.relatedId === user?.relatedId);
+  } else if (isFederationManager) {
+    tableData = tableData.filter(
+      ct => ct.related.federationId === user?.relatedId,
     );
   }
 
@@ -54,18 +67,20 @@ export function TechnicalCommitteeListPage() {
       </div>
       <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
         <div className="w-full lg:w-1/3">
-          <SelectBare
-            label="Clube"
-            name="team-filter"
-            onChange={e => setFilterTeam(e.target.value)}
-          >
-            <option value="">Todos</option>
-            {publicTeams?.list.map(team => (
-              <option value={team.id} key={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </SelectBare>
+          {(isAdmin || isFederationManager) && (
+            <SelectBare
+              label="Clube"
+              name="team-filter"
+              onChange={e => setFilterTeam(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {publicTeams?.list.map(team => (
+                <option value={team.id} key={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </SelectBare>
+          )}
         </div>
         <div className="w-full lg:w-2/3">
           <TextfieldBare

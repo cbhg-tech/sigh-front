@@ -87,8 +87,9 @@ export function TeamListPage() {
             <tr>
               {COLUMN_NAMES.map((columnName, index) => (
                 <th
-                  className={`${COLUMN_WIDTH[index]
-                    } text-left py-4 px-2 bg-slate-100 ${index === 0 && 'pl-14'}`}
+                  className={`${
+                    COLUMN_WIDTH[index]
+                  } text-left py-4 px-2 bg-slate-100 ${index === 0 && 'pl-14'}`}
                   key={columnName}
                 >
                   {columnName}
