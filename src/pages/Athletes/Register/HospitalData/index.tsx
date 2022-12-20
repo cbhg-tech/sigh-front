@@ -11,10 +11,13 @@ import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.contr
 import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { validateForm } from '../../../../utils/validateForm';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
+import { Status } from '../../../../enums/Status';
+import { useAthletesRegister } from '../register.context';
 
 export function HospitalData() {
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();
+  const { setActiveTab } = useAthletesRegister();
 
   const { mutateAsync, isLoading } = usePutAthlete();
 
@@ -42,6 +45,10 @@ export function HospitalData() {
       await mutateAsync({ ...user?.athleteProfile, ...data });
 
       toast.success('Dados hospitalares atualizado!');
+
+      if (user?.status !== Status.ACTIVE) {
+        setActiveTab(3);
+      }
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = handleFormErrors(err);
@@ -107,7 +114,9 @@ export function HospitalData() {
             <Button
               type="submit"
               aditionalClasses="w-auto px-2"
-              label="Salvar"
+              label={
+                user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'
+              }
               variant="primary"
               isLoading={isLoading}
               disabled={isLoading}

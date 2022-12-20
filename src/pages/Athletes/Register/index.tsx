@@ -8,6 +8,7 @@ import { UploadFile } from '../../../utils/uploadFile';
 import { BasicData } from './BasicData';
 import { DocumentationUpload } from './DocumentationUpload';
 import { HospitalData } from './HospitalData';
+import { LGPDTab } from './LGPDTab';
 import {
   AthletesRegisterProvider,
   useAthletesRegister,
@@ -39,6 +40,9 @@ export function AthletesRegisterContent() {
       toast.error('Erro ao atualizar foto de perfil');
     }
   }
+
+  const activeTabStyle = (tabIndex: number) =>
+    activeTab === tabIndex ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE;
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
@@ -99,36 +103,38 @@ export function AthletesRegisterContent() {
       <div className="mb-8 flex flex-nowrap overflow-x-auto scroll-smooth snap-x snap-mandatory">
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 0 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTabStyle(0)}`}
           onClick={() => setActiveTab(0)}
         >
           Dados básicos
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 1 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTabStyle(1)}`}
           onClick={() => setActiveTab(1)}
         >
           Documentação
         </button>
         <button
           type="button"
-          className={`${BTN_STYLE} ${
-            activeTab === 2 ? ACTIVE_BTN_STYLE : DEACTIVE_BTN_STYLE
-          }`}
+          className={`${BTN_STYLE} ${activeTabStyle(2)}`}
           onClick={() => setActiveTab(2)}
         >
           Dados hospitalares
+        </button>
+        <button
+          type="button"
+          className={`${BTN_STYLE} ${activeTabStyle(3)}`}
+          onClick={() => setActiveTab(3)}
+        >
+          Finalizar registro
         </button>
       </div>
       <div>
         {activeTab === 0 && <BasicData />}
         {activeTab === 1 && <DocumentationUpload />}
         {activeTab === 2 && <HospitalData />}
+        {activeTab === 3 && <LGPDTab />}
       </div>
     </div>
   );
