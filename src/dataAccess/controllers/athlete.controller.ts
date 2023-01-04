@@ -120,11 +120,7 @@ export class AthleteController {
   }
 
   public async list() {
-    const q = query(
-      collection(db, 'users'),
-      where('role', '==', Roles.USER),
-      limit(20),
-    );
+    const q = query(collection(db, 'users'), where('role', '==', Roles.USER));
 
     const users = await getDocs(q);
 

@@ -153,10 +153,10 @@ export function AthletesListPage() {
                   {athlete.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
-                  {athlete.related?.name || 'Não encontrado'}
+                  {athlete.related?.name || '-'}
                 </td>
                 <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
-                  {athlete.athleteProfile?.gender || 'Não informado'}
+                  {athlete.athleteProfile?.gender || '-'}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
                   {renderUserStatus(athlete)}
