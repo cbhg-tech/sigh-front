@@ -145,7 +145,7 @@ export function LGPDTab() {
           <Button
             type="button"
             aditionalClasses="w-auto px-2"
-            label={user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'}
+            label="Salvar"
             variant="primary"
             onClick={handleSave}
             isLoading={isLoading}

@@ -12,6 +12,10 @@ import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublic
 import { useHasPermission } from '../../../hooks/useHasPermission';
 import { Roles } from '../../../enums/Roles';
 import { ActionsButtons } from './ActionsButton';
+import { UserCard } from '../../Dashboard/UserCard';
+import { IUser } from '../../../types/User';
+import { Status } from '../../../enums/Status';
+import { checkIfAthleteIsActiveOrPending } from '../../../utils/checkIfAthleteIsActiveOrPending';
 
 const COLUMN_WIDTH = [
   'w-1/2 lg:w-1/4',
@@ -55,6 +59,16 @@ export function AthletesListPage() {
       athlete.name.toLowerCase().includes(filter.toLowerCase()),
     );
   }
+
+  const renderUserStatus = (user: IUser) => {
+    if (user.status !== Status.ACTIVE) return user.status;
+
+    const realStatus = checkIfAthleteIsActiveOrPending(user);
+
+    if (realStatus === 'Pending') return 'Pendente';
+
+    return 'Ativo';
+  };
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
@@ -145,7 +159,7 @@ export function AthletesListPage() {
                   {athlete.athleteProfile?.gender || 'Não informado'}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                  {athlete.status}
+                  {renderUserStatus(athlete)}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
                   <div className="flex gap-2 items-center justify-end">

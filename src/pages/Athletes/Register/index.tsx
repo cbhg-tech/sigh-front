@@ -4,6 +4,7 @@ import { Badge } from '../../../components/Badge';
 import { useGlobal } from '../../../contexts/global.context';
 import { usePutUser } from '../../../dataAccess/hooks/user/usePutUser';
 import { Status } from '../../../enums/Status';
+import { checkIfAthleteIsActiveOrPending } from '../../../utils/checkIfAthleteIsActiveOrPending';
 import { UploadFile } from '../../../utils/uploadFile';
 import { BasicData } from './BasicData';
 import { DocumentationUpload } from './DocumentationUpload';
@@ -85,10 +86,10 @@ export function AthletesRegisterContent() {
           </p>
 
           <div>
-            {user?.status === Status.ACTIVE && (
+            {checkIfAthleteIsActiveOrPending(user) === 'Active' && (
               <Badge type="primary">Ativo</Badge>
             )}
-            {user?.status === Status.PENDING && (
+            {checkIfAthleteIsActiveOrPending(user) === 'Pending' && (
               <Badge type="warning">Pendente</Badge>
             )}
             {user?.status === Status.REJECTED && (
