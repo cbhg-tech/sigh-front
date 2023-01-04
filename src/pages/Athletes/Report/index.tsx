@@ -8,6 +8,7 @@ import { Button } from '../../../components/Inputs/Button';
 import { useGetAthletesReport } from '../../../dataAccess/hooks/athlete/useGetAthletesReport';
 import { defineAthleteCategory } from '../../../services/defineAthleteCategory';
 import { useGlobal } from '../../../contexts/global.context';
+import { Roles } from '../../../enums/Roles';
 
 export function AthletesReportPage() {
   const navigate = useNavigate();
@@ -22,7 +23,11 @@ export function AthletesReportPage() {
 
   if (data && user?.relatedType === 'team') {
     cleanedData = data.filter(athlete => athlete.relatedId === user?.relatedId);
-  } else if (data && user?.relatedType === 'federation') {
+  } else if (
+    data &&
+    user?.relatedType === 'federation' &&
+    user.role === Roles.ADMINFEDERACAO
+  ) {
     cleanedData = data.filter(
       // @ts-ignore
       athlete => athlete.related.federationId === user?.relatedId,
@@ -101,7 +106,7 @@ export function AthletesReportPage() {
         />
       </header>
 
-      <main className="w-full overflow-x-auto">
+      <main className="w-full overflow-x-auto overflow-y-auto bg-light-surface-1">
         <table className="">
           <thead>
             <tr>
