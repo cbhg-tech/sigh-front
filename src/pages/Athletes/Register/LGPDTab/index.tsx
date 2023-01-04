@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Button } from '../../../../components/Inputs/Button';
 import { useGlobal } from '../../../../contexts/global.context';
 import { Status } from '../../../../enums/Status';
+import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 
 const boxStyle =
   'p-4 rounded border border-light-outline mb-4 text-light-on-surface-variant';
@@ -12,9 +14,35 @@ const termsUrl =
 
 export function LGPDTab() {
   const { user } = useGlobal();
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [imageUseAccepted, setImageUseAccepted] = useState(false);
-  const [dataUse, setDataUse] = useState(false);
+  const { mutateAsync, isLoading } = usePutAthlete();
+
+  const [termsAccepted, setTermsAccepted] = useState(
+    user?.athleteProfile?.termsAccepted || false,
+  );
+  const [imageUseAccepted, setImageUseAccepted] = useState(
+    user?.athleteProfile?.imageUseAccepted || false,
+  );
+  const [dataUseAccepted, setDataUseAccepted] = useState(
+    user?.athleteProfile?.dataUseAccepted || false,
+  );
+
+  const handleSave = async () => {
+    try {
+      await mutateAsync({
+        ...user!.athleteProfile!,
+        userId: user!.id,
+        termsAccepted,
+        imageUseAccepted,
+        dataUseAccepted,
+      });
+
+      toast.success('Dados salvos com sucesso');
+    } catch (err) {
+      console.log(err);
+
+      toast.error('Erro ao salvar dados');
+    }
+  };
 
   return (
     <div>
@@ -89,8 +117,8 @@ export function LGPDTab() {
             id="dataUseAllow"
             name="dataUse"
             className="mr-2"
-            onChange={e => setDataUse(true)}
-            checked={dataUse}
+            onChange={() => setDataUseAccepted(true)}
+            checked={dataUseAccepted}
           />
           Li e autorizo o uso de dados
         </label>
@@ -100,8 +128,8 @@ export function LGPDTab() {
             id="dataUseDeny"
             name="dataUse"
             className="mr-2"
-            onChange={e => setDataUse(false)}
-            checked={!dataUse}
+            onChange={() => setDataUseAccepted(false)}
+            checked={!dataUseAccepted}
           />
           Não autorizo
         </label>
@@ -115,12 +143,13 @@ export function LGPDTab() {
             variant="primary-border"
           />
           <Button
-            type="submit"
+            type="button"
             aditionalClasses="w-auto px-2"
             label={user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'}
             variant="primary"
-          // isLoading={isLoading}
-          // disabled={isLoading}
+            onClick={handleSave}
+            isLoading={isLoading}
+            disabled={isLoading}
           />
         </div>
       </div>

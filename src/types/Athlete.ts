@@ -5,6 +5,9 @@ export interface IAthlete {
   nickname: string;
   country: string;
   gender: string;
+  termsAccepted?: boolean;
+  imageUseAccepted?: boolean;
+  dataUseAccepted?: boolean;
   address: {
     country: string;
     city: string;
