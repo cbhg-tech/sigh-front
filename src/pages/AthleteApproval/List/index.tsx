@@ -34,7 +34,10 @@ export function AthleteApprovalListPage() {
 
   if (user?.relatedType === 'team') {
     tableData = tableData.filter(ap => !ap.teamApproved);
-  } else if (user?.relatedType === 'federation') {
+  } else if (
+    user?.relatedType === 'federation' &&
+    user?.relatedName !== 'CBHG - Administração'
+  ) {
     tableData = tableData.filter(
       ap => ap.teamApproved && !ap.federationApproved,
     );
