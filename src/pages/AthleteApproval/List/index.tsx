@@ -23,7 +23,10 @@ export function AthleteApprovalListPage() {
 
   let tableData = data || [];
 
-  if (user?.relatedType === 'federation') {
+  if (
+    user?.relatedType === 'federation' &&
+    user?.relatedName !== 'CBHG - Administração'
+  ) {
     tableData = tableData.filter(
       ap => ap.team?.federationId === user?.relatedId,
     );
@@ -35,7 +38,7 @@ export function AthleteApprovalListPage() {
     tableData = tableData.filter(
       ap => ap.teamApproved && !ap.federationApproved,
     );
-  } else {
+  } else if (user?.relatedName === 'CBHG - Administração') {
     tableData = tableData.filter(
       ap => ap.federationApproved && !ap.cbhgApproved,
     );
@@ -100,11 +103,11 @@ export function AthleteApprovalListPage() {
                 <td className={`${COLUMN_WIDTH[1]} py-4 px-2`}>
                   {data.status}
                 </td>
-                <td className={`${COLUMN_WIDTH[2]} py-4 px-2`}>
+                <td className={`${COLUMN_WIDTH[2]} py-4 px-2 line-clamp-1`}>
                   {data.team?.name}
                 </td>
                 <td className={`${COLUMN_WIDTH[3]} py-4 px-2`}>
-                  {data.gender || 'Não informado'}
+                  {data.gender || '-'}
                 </td>
                 <td className={`${COLUMN_WIDTH[4]} py-4 px-2`}>
                   <ActionButton id={data.id} />
