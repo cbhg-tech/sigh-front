@@ -82,7 +82,11 @@ export function ApprovalDetailsPage() {
 
       await mutateAsync({ ...approvalData });
 
-      toast.success('Aprovação feita com sucesso');
+      toast.success(
+        isApproved
+          ? 'Aprovação feita com sucesso'
+          : 'Aprovação rejeitada com sucesso',
+      );
 
       navigate('/app/restrito/atletas/aprovacao');
     } catch (error) {
