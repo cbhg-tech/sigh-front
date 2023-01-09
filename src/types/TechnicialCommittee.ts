@@ -8,6 +8,8 @@ export interface ITechnicialCommittee {
   gender: string;
   email: string;
   documentFile: string;
+  charge?: string;
+  address?: string;
   relatedId: string;
   related?: ITeam;
   createdAt: string;

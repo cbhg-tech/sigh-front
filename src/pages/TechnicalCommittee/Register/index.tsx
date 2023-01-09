@@ -17,6 +17,7 @@ import { Roles } from '../../../enums/Roles';
 import { Button } from '../../../components/Inputs/Button';
 import { useGetOneTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useGetOneTechnicalComittee';
 import { useUpdateTechnicalComittee } from '../../../dataAccess/hooks/technicalComittee/useUpdateTechnicalComittee';
+import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 
 interface IForm {
   name: string;
@@ -29,6 +30,15 @@ interface IForm {
 interface IProps {
   isDisplayMode?: boolean;
 }
+
+const Charges = [
+  'Treinador',
+  'Assistente Técnico',
+  'Fisioterapeuta',
+  'Chefe de Equipe',
+  'Auxiliar de Chefe de Equipe',
+  'Médico',
+];
 
 export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
   const navigate = useNavigate();
@@ -59,6 +69,8 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
         birthDate: Yup.date().required('Data de nascimento obrigatória'),
         gender: Yup.string().required('Gênero obrigatório'),
         email: Yup.string().required('Email obrigatório'),
+        charge: Yup.string().required('Cargo obrigatório'),
+        address: Yup.string().required('Endereço obrigatório'),
       });
 
       if (!id) {
@@ -150,10 +162,29 @@ export function TechnicalCommitteeRegisterPage({ isDisplayMode }: IProps) {
             </Select>
           </div>
         </div>
-        <div className="flex-1">
-          <Textfield
-            name="document"
-            label="Número do documento"
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-2">
+          <div>
+            <Textfield
+              name="document"
+              label="Número do documento"
+              disabled={isDisplayMode}
+            />
+          </div>
+          <div>
+            <Select name="charge" label="Cargo" disabled={isDisplayMode}>
+              <option value="">Selecione um cargo</option>
+              {Charges.map(val => (
+                <option key={val} value={val}>
+                  {val}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </div>
+        <div>
+          <MultineTextfield
+            name="address"
+            label="Endereço"
             disabled={isDisplayMode}
           />
         </div>
