@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Badge } from '../../../components/Badge';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
 import { useGlobal } from '../../../contexts/global.context';
 import { useGetAppovalList } from '../../../dataAccess/hooks/athlete/useGetApprovalList';
+import { Status } from '../../../enums/Status';
+import { useAthleteApprovalList } from '../useAthleteApprovalList';
 import { ActionButton } from './ActionButton';
 
 const COLUMN_WIDTH = [
@@ -14,44 +17,14 @@ const COLUMN_WIDTH = [
 
 const COLUMN_NAME = ['Nome', 'Status', 'Time', 'Sexo', ''];
 
+const BADGE_ACTIVE =
+  'text-sm border font-bold text-light-on-primary-container bg-light-primary-container py-1 px-2 rounded-lg border-light-primary-container';
+const BADGE_NORMAL =
+  'text-sm border text-light-on-primary-container bg-transparent py-1 px-2 rounded-lg border-light-outline';
+
 export function AthleteApprovalListPage() {
-  const { user } = useGlobal();
-  const { data, isLoading, isSuccess } = useGetAppovalList(
-    user?.relatedType === 'team' ? user?.relatedId : undefined,
-  );
-  const [filter, setFilter] = useState('');
-
-  let tableData = data || [];
-
-  if (
-    user?.relatedType === 'federation' &&
-    user?.relatedName !== 'CBHG - Administração'
-  ) {
-    tableData = tableData.filter(
-      ap => ap.team?.federationId === user?.relatedId,
-    );
-  }
-
-  if (user?.relatedType === 'team') {
-    tableData = tableData.filter(ap => !ap.teamApproved);
-  } else if (
-    user?.relatedType === 'federation' &&
-    user?.relatedName !== 'CBHG - Administração'
-  ) {
-    tableData = tableData.filter(
-      ap => ap.teamApproved && !ap.federationApproved,
-    );
-  } else if (user?.relatedName === 'CBHG - Administração') {
-    tableData = tableData.filter(
-      ap => ap.federationApproved && !ap.cbhgApproved,
-    );
-  }
-
-  if (filter) {
-    tableData = tableData.filter(athlete =>
-      athlete.name.toLowerCase().includes(filter.toLowerCase()),
-    );
-  }
+  const { tableData, setFilter, status, statusFilter, setStatusFilter } =
+    useAthleteApprovalList();
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
@@ -69,20 +42,54 @@ export function AthleteApprovalListPage() {
           />
         </div>
       </div>
+      <div>
+        <span className="text-sm text-light-on-surface-variant">
+          Filtro por status:
+        </span>
+        <div className="flex gap-2 justify-start pb-8">
+          <button
+            type="button"
+            className={
+              statusFilter === Status.PENDING ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.PENDING)}
+          >
+            Pendente
+          </button>
+          <button
+            type="button"
+            className={
+              statusFilter === Status.REJECTED ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.REJECTED)}
+          >
+            Rejeitado
+          </button>
+          <button
+            type="button"
+            className={
+              statusFilter === Status.ACTIVE ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.ACTIVE)}
+          >
+            Aprovado
+          </button>
+        </div>
+      </div>
 
-      {isLoading && (
+      {status === 'loading' && (
         <p className="text-center mt-8 text-light-on-surface-variant">
           Buscando dados ...
         </p>
       )}
 
-      {!isLoading && tableData.length === 0 && (
+      {status === 'success' && tableData.length === 0 && (
         <p className="text-center mt-8 text-light-on-surface-variant">
           Nenhuma ficha de atleta encontrada
         </p>
       )}
 
-      {!isLoading && tableData.length > 0 && isSuccess && (
+      {status === 'success' && tableData.length > 0 && (
         <table className="w-full">
           <thead>
             <tr>
