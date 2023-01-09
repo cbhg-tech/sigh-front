@@ -1,4 +1,4 @@
-import { MdInfo } from 'react-icons/md';
+import { MdInfo, MdOpenInNew } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
 
 import { DateService } from '../../../services/DateService';
@@ -7,13 +7,170 @@ import { Badge } from '../../../components/Badge';
 import { defineAthleteCategory } from '../../../services/defineAthleteCategory';
 import { useGetOneAthlete } from '../../../dataAccess/hooks/athlete/useGetOneAthlete';
 import { WaitingApprovalMessage } from '../../../components/WaitingApprovalMessage';
+import { useHasPermission } from '../../../hooks/useHasPermission';
+import { Roles } from '../../../enums/Roles';
+import { useGlobal } from '../../../contexts/global.context';
 
 const USER_NOT_FOUND_IMG =
   'https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/96/1A1A1A/external-user-user-tanah-basah-glyph-tanah-basah-4.png';
 
 export function AthleteDetailsPage() {
   const { id } = useParams();
+  const { user } = useGlobal();
   const { data, isLoading, isSuccess } = useGetOneAthlete(id);
+  const isAdmin = useHasPermission([Roles.ADMIN]);
+  const isManager = useHasPermission([Roles.ADMINCLUBE, Roles.ADMINFEDERACAO]);
+
+  const checkIfCanRenderDetails = () => {
+    if (
+      isManager &&
+      user?.relatedType === 'team' &&
+      data?.relatedId !== user?.relatedId
+    )
+      return true;
+
+    if (
+      isManager &&
+      user?.relatedType === 'federation' &&
+      data?.related.federationId !== user?.relatedId
+    )
+      return true;
+
+    if (isAdmin) return true;
+
+    return false;
+  };
+
+  const renderDetails = () => {
+    if (!checkIfCanRenderDetails()) return null;
+
+    if (!data) return <p>Dados do usuário não encontrados</p>;
+
+    const { commitmentTerm, medicalCertificate, noc, personalDocument } =
+      data.athleteProfile?.documents || {};
+
+    return (
+      <>
+        {data.athleteProfile?.address && (
+          <>
+            <h2 className="text-3xl text-light-on-surface my-4">Endereço</h2>
+            <p className="text-light-on-surface-variant">
+              {data.athleteProfile?.address.cep || ''}
+              <br />
+              {data.athleteProfile?.address.street || ''} -{' '}
+              {data.athleteProfile?.address.number || ''},{' '}
+              {data.athleteProfile?.address.city || ''},{' '}
+              {data.athleteProfile?.address.state || ''},{' '}
+              {data.athleteProfile?.address.country || ''}
+            </p>
+          </>
+        )}
+
+        {data.athleteProfile?.hospitalData && (
+          <>
+            <h2 className="text-3xl text-light-on-surface my-4">
+              Dados hospitalar
+            </h2>
+            <p className="text-light-on-surface-variant">
+              <strong>Tipo sanguíneo: </strong>
+              {data.athleteProfile?.hospitalData.bloodType}
+              <br />
+              <strong>Alergias: </strong>
+              {data.athleteProfile?.hospitalData.allergies}
+              <br />
+              <strong>Doenças crônicas: </strong>
+              {data.athleteProfile?.hospitalData.chronicDiseases}
+              <br />
+              <strong>Medicamentos regulares: </strong>
+              {data.athleteProfile?.hospitalData.chronicDiseases}
+              <br />
+            </p>
+          </>
+        )}
+
+        {data.athleteProfile?.emergencyContact && (
+          <>
+            <h2 className="text-3xl text-light-on-surface my-4">
+              Contato de emergência
+            </h2>
+            <p className="text-light-on-surface-variant">
+              <strong>Nome: </strong>
+              {data.athleteProfile?.emergencyContact.name}
+              <br />
+              <strong>Telefone: </strong>
+              {data.athleteProfile?.emergencyContact.phone}
+            </p>
+          </>
+        )}
+
+        <p className="text-light-on-surface-variant">
+          {personalDocument && (
+            <>
+              <h2 className="text-3xl text-light-on-surface my-4">
+                Documentos
+              </h2>
+              <a
+                href={personalDocument}
+                target="_blank"
+                download
+                rel="noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+                Documento pessoal
+              </a>
+              <br />
+            </>
+          )}
+
+          {commitmentTerm && (
+            <>
+              <a
+                href={commitmentTerm}
+                target="_blank"
+                download
+                rel="noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+                Termo de compromisso
+              </a>
+              <br />
+            </>
+          )}
+
+          {medicalCertificate && (
+            <>
+              <a
+                href={medicalCertificate}
+                target="_blank"
+                download
+                rel="noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+                Certificado médico
+              </a>
+              <br />
+            </>
+          )}
+
+          {noc && (
+            <a
+              href={noc}
+              target="_blank"
+              download
+              rel="noreferrer"
+              className="flex items-center gap-2"
+            >
+              <MdOpenInNew size="1.25rem" className="text-light-on-surface" />
+              NOC
+            </a>
+          )}
+        </p>
+      </>
+    );
+  };
 
   return (
     <>
@@ -77,6 +234,7 @@ export function AthleteDetailsPage() {
                   <strong>País de origem: </strong>
                   {data?.athleteProfile?.country}
                 </p>
+                <div>{renderDetails()}</div>
               </div>
             </div>
           </>
