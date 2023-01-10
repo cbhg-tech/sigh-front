@@ -20,10 +20,15 @@ export const useAthleteApprovalList = () => {
   const [statusFilter, setStatusFilter] = useState<Status>(Status.PENDING);
 
   const getApprovalList = async (team?: string) => {
+    if (!user) return;
+
     let q = query(collection(db, 'userApproval'));
 
     if (user?.relatedType === 'team') {
-      q = query(collection(db, 'userApproval'), where('teamId', '==', team));
+      q = query(
+        collection(db, 'userApproval'),
+        where('teamId', '==', user?.relatedId),
+      );
     }
 
     const usersTransfers = await getDocs(q);
@@ -57,6 +62,7 @@ export const useAthleteApprovalList = () => {
     ['getApprovalList'],
     () => getApprovalList(),
     {
+      enabled: !!user,
       refetchOnWindowFocus: false,
     },
   );
