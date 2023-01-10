@@ -31,13 +31,13 @@ export function TechnicalOfficersListPage() {
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex flex-col lg:flex-row justify-between mb-4">
-        <h2 className="text-3xl text-light-on-surface">Comissão Técnica</h2>
+        <h2 className="text-3xl text-light-on-surface">Oficiais Técnicos</h2>
         {isAdmin && (
           <Button
             aditionalClasses="w-full lg:w-auto px-6"
             type="button"
-            label="Criar comissão técnica"
-            onClick={() => navigate('/app/tecnico/cadastro')}
+            label="Criar oficial técnico"
+            onClick={() => navigate('/app/oficial/cadastro')}
           />
         )}
       </div>
@@ -81,7 +81,7 @@ export function TechnicalOfficersListPage() {
 
       {getStatus === 'success' && tableData.length === 0 && (
         <p className="text-center mt-8 text-light-on-surface-variant">
-          Nenhuma comissão técnicas cadastrada
+          Nenhum oficial tecnico cadastrado
         </p>
       )}
 
@@ -120,8 +120,8 @@ export function TechnicalOfficersListPage() {
                     viewPermission={isAdmin}
                     editPermission={isAdmin}
                     deletePermission={isAdmin}
-                    viewBtn={() => navigate(`/app/tecnico/detalhes/${tc.id}`)}
-                    editBtn={() => navigate(`/app/tecnico/editar/${tc.id}`)}
+                    viewBtn={() => navigate(`/app/oficial/detalhes/${tc.id}`)}
+                    editBtn={() => navigate(`/app/oficial/editar/${tc.id}`)}
                     deleteBtn={async () => {
                       if (
                         // eslint-disable-next-line no-alert

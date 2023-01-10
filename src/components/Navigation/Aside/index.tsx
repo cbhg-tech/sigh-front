@@ -3,6 +3,7 @@ import {
   MdChecklist,
   MdCompareArrows,
   MdDashboard,
+  MdGroups,
   MdGroupWork,
   MdInsertDriveFile,
   MdOutlineClose,
@@ -94,7 +95,13 @@ export function Aside({ isOpen, toogleSideMenu }: IProps) {
             icon={FaUserFriends}
           />
         )}
-
+        <ListItem
+          closeModal={() => toogleSideMenu(false)}
+          href="/app/oficial/listagem"
+          label="Oficiais Técnicos"
+          icon={MdGroups}
+          end
+        />
         <ListItem
           closeModal={() => toogleSideMenu(false)}
           href="/app/projetosparceiros/listagem"

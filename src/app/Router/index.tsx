@@ -31,6 +31,8 @@ import { PartnerProjectDetailsPage } from '../../pages/PartnerProject/Details';
 import { FederationDetailsPage } from '../../pages/Federation/Details';
 import { TeamDetailsPage } from '../../pages/Team/Details';
 import { AthleteDetailsPage } from '../../pages/Athletes/Details';
+import { TechnicalOfficersListPage } from '../../pages/TechnicalOfficers/List';
+import { TechnicalOfficerRegisterPage } from '../../pages/TechnicalOfficers/Create';
 
 export function Router() {
   return (
@@ -105,6 +107,38 @@ export function Router() {
             element={
               <Navigation title="Editar do usuário do sistema">
                 <UserRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/oficial/listagem"
+            element={
+              <Navigation title="Oficiais técnicos">
+                <TechnicalOfficersListPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/oficial/cadastro"
+            element={
+              <Navigation title="Cadastro de oficiais técnicos">
+                <TechnicalOfficerRegisterPage />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/oficial/detalhes/:id"
+            element={
+              <Navigation title="Detalhes da oficiais técnicos">
+                <TechnicalOfficerRegisterPage isDisplayMode />
+              </Navigation>
+            }
+          />
+          <Route
+            path="/app/oficial/editar/:id"
+            element={
+              <Navigation title="Detalhes da oficiais técnicos">
+                <TechnicalOfficerRegisterPage isDisplayMode />
               </Navigation>
             }
           />
