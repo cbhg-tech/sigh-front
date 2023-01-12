@@ -252,13 +252,13 @@ export function ApprovalDetailsPage() {
   };
 
   const showApprovalActions =
-    user?.role === Roles.ADMINCLUBE ||
-    (user?.role === Roles.ADMINFEDERACAO && data?.approval.teamApproved) ||
-    (user?.role === Roles.ADMIN && data?.approval.federationApproved);
-
-  const aprovalLogExist = data?.approval.log.find(
-    log => log.author === user?.role,
-  );
+    (user?.role === Roles.ADMINCLUBE && !data?.approval.teamApproved) ||
+    (user?.role === Roles.ADMINFEDERACAO &&
+      data?.approval.teamApproved &&
+      !data.approval.federationApproved) ||
+    (user?.role === Roles.ADMIN &&
+      data?.approval.federationApproved &&
+      !data.approval.cbhgApproved);
 
   const renderWaitingPhrase = (data?: IUserApproval) => {
     if (!data) return 'Aguardando a aprovação';
@@ -312,7 +312,7 @@ export function ApprovalDetailsPage() {
         </ul>
       </div>
 
-      {showApprovalActions && !aprovalLogExist ? (
+      {showApprovalActions ? (
         <div className="mt-8">
           <MultineTextfieldBare
             name="note"
