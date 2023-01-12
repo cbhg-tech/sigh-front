@@ -28,14 +28,14 @@ export function AthleteDetailsPage() {
     if (
       isManager &&
       user?.relatedType === 'team' &&
-      data?.relatedId !== user?.relatedId
+      data?.relatedId === user?.relatedId
     )
       return true;
 
     if (
       isManager &&
       user?.relatedType === 'federation' &&
-      data?.related.federationId !== user?.relatedId
+      data?.related.federationId === user?.relatedId
     )
       return true;
 
@@ -177,7 +177,7 @@ export function AthleteDetailsPage() {
 
   return (
     <>
-      {approvalAlertData?.canShowAlert && (
+      {approvalAlertData?.canShowAlert && checkIfCanRenderDetails() && (
         <Alert
           variant={approvalAlertData?.alertType || 'warning'}
           title="Aviso"
