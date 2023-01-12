@@ -6,10 +6,12 @@ import { Status } from '../../../enums/Status';
 import { Badge } from '../../../components/Badge';
 import { defineAthleteCategory } from '../../../services/defineAthleteCategory';
 import { useGetOneAthlete } from '../../../dataAccess/hooks/athlete/useGetOneAthlete';
-import { WaitingApprovalMessage } from '../../../components/WaitingApprovalMessage';
+import { Alert } from '../../../components/Alert';
 import { useHasPermission } from '../../../hooks/useHasPermission';
 import { Roles } from '../../../enums/Roles';
 import { useGlobal } from '../../../contexts/global.context';
+import { useApprovalAlert } from '../../../hooks/useApprovalAlert';
+import { checkIfAthleteIsActiveOrPending } from '../../../utils/checkIfAthleteIsActiveOrPending';
 
 const USER_NOT_FOUND_IMG =
   'https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/96/1A1A1A/external-user-user-tanah-basah-glyph-tanah-basah-4.png';
@@ -20,6 +22,7 @@ export function AthleteDetailsPage() {
   const { data, isLoading, isSuccess } = useGetOneAthlete(id);
   const isAdmin = useHasPermission([Roles.ADMIN]);
   const isManager = useHasPermission([Roles.ADMINCLUBE, Roles.ADMINFEDERACAO]);
+  const { approvalAlertData, isLoadingApproval } = useApprovalAlert(data);
 
   const checkIfCanRenderDetails = () => {
     if (
@@ -174,7 +177,15 @@ export function AthleteDetailsPage() {
 
   return (
     <>
-      {data?.status !== Status.ACTIVE && <WaitingApprovalMessage id={id} />}
+      {approvalAlertData?.canShowAlert && (
+        <Alert
+          variant={approvalAlertData?.alertType || 'warning'}
+          title="Aviso"
+          message={
+            isLoadingApproval ? 'Carregando...' : approvalAlertData?.message
+          }
+        />
+      )}
       <div className="bg-light-surface p-6 rounded-2xl h-full">
         {!isLoading && isSuccess && data ? (
           <>
@@ -191,10 +202,10 @@ export function AthleteDetailsPage() {
                   <h2 className="text-4xl text-light-on-surface-variant">
                     {data?.name}
                   </h2>
-                  {data?.status === Status.ACTIVE && (
+                  {checkIfAthleteIsActiveOrPending(data) === 'Active' && (
                     <Badge type="primary">Ativo</Badge>
                   )}
-                  {data?.status === Status.PENDING && (
+                  {checkIfAthleteIsActiveOrPending(data) === 'Pending' && (
                     <Badge type="warning">Pendente</Badge>
                   )}
                   {data?.status === Status.REJECTED && (

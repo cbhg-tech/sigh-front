@@ -71,6 +71,9 @@ export function ApprovalDetailsPage() {
           approvalData.status = Status.ACTIVE;
       } else {
         approvalData.status = Status.REJECTED;
+        approvalData.teamApproved = false;
+        approvalData.teamApproved = false;
+        approvalData.cbhgApproved = false;
       }
 
       approvalData.log.push({

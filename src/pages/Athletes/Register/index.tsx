@@ -1,7 +1,7 @@
 import { MdOutlineCloudUpload } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { Badge } from '../../../components/Badge';
-import { WaitingApprovalMessage } from '../../../components/WaitingApprovalMessage';
+import { Alert } from '../../../components/Alert';
 import { useGlobal } from '../../../contexts/global.context';
 import { usePutUser } from '../../../dataAccess/hooks/user/usePutUser';
 import { Status } from '../../../enums/Status';
@@ -15,6 +15,7 @@ import {
   AthletesRegisterProvider,
   useAthletesRegister,
 } from './register.context';
+import { useApprovalAlert } from '../../../hooks/useApprovalAlert';
 
 const BTN_STYLE =
   'p-4 rounded-2xl font-medium w-auto whitespace-nowrap snap-start snap-always';
@@ -29,6 +30,7 @@ export function AthletesRegisterContent() {
   const { activeTab, setActiveTab } = useAthletesRegister();
   const { user } = useGlobal();
   const { mutateAsync, isLoading } = usePutUser();
+  const { approvalAlertData, isLoadingApproval } = useApprovalAlert(user);
 
   async function handleProfilePhotoUpload(file: File) {
     const photoUrl = await UploadFile(`/usersAvatar/${file.name}`, file);
@@ -48,8 +50,14 @@ export function AthletesRegisterContent() {
 
   return (
     <>
-      {user?.status !== Status.ACTIVE && (
-        <WaitingApprovalMessage id={user?.id} />
+      {approvalAlertData?.canShowAlert && (
+        <Alert
+          variant={approvalAlertData?.alertType || 'warning'}
+          title="Aviso"
+          message={
+            isLoadingApproval ? 'Carregando...' : approvalAlertData?.message
+          }
+        />
       )}
       <div className="bg-light-surface p-6 rounded-2xl">
         <div className="flex flex-col md:flex-row gap-2 items-center mb-4">

@@ -4,6 +4,8 @@ import { IUser } from '../types/User';
 export function checkIfAthleteIsActiveOrPending(user?: IUser) {
   if (!user) return 'Pending';
 
+  if (user.status === Status.REJECTED) return 'Rejected';
+
   if (user.status === Status.PENDING) return 'Pending';
 
   if (
