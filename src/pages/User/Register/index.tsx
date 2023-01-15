@@ -99,6 +99,7 @@ export function UserRegisterPage({ isDisplayOnly = false }: IProps) {
         relatedId: team?.id || federation?.id || 'CBHG - Administração',
         relatedType: team ? 'team' : 'federation',
         relatedName: team?.name || federation?.name || 'CBHG - Administração',
+        transfering: false,
       };
 
       if (userData.relatedId === 'CBHG - Administração')

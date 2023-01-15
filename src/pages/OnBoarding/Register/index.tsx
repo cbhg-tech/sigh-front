@@ -58,6 +58,7 @@ export function RegisterPage() {
         relatedName: team!.name,
         relatedId: team!.id,
         relatedType: 'team',
+        transfering: false,
       });
 
       toast.success('Cadastro realizado com sucesso!');

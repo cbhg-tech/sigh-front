@@ -13,6 +13,7 @@ export interface IUser {
   related?: ITeam | IFederation;
   role: string;
   status: string;
+  transfering: boolean;
   photoUrl?: string;
   document?: string;
   athleteProfile?: IAthlete;

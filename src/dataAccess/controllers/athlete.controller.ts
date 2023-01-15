@@ -84,6 +84,7 @@ export class AthleteController {
         registerNumber,
         birthDate,
       },
+      transfering: false,
       document,
       createdAt: new Date(),
       updatedAt: new Date(),

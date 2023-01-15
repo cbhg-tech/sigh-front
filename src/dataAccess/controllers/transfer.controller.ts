@@ -60,6 +60,10 @@ export class TransferController {
     await updateDoc(doc(db, 'public', 'totalizer'), {
       transfers: increment(1),
     });
+
+    await updateDoc(doc(db, 'users', data.userId), {
+      transfering: true,
+    });
   }
 
   public async getAll() {

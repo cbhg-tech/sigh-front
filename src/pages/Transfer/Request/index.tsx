@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
 import dayjs from 'dayjs';
+import { useMutation } from '@tanstack/react-query';
 import { Button } from '../../../components/Inputs/Button';
 import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 import { Select } from '../../../components/Inputs/Select';
@@ -13,13 +14,13 @@ import { Textfield } from '../../../components/Inputs/Textfield';
 import { useGlobal } from '../../../contexts/global.context';
 import { useGetCurrentConfigs } from '../../../dataAccess/hooks/configs/useGetConfigs';
 import { useGetPublicTeams } from '../../../dataAccess/hooks/public/useGetPublicTeams';
-import { useCreateTransferRequest } from '../../../dataAccess/hooks/transfer/useCreateTransferRequest';
 import { useRedirectPendingAthlete } from '../../../hooks/useRedirectPendingAthlete';
 import { DateService } from '../../../services/DateService';
 import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 import { Status } from '../../../enums/Status';
 import { FileInput } from '../../../components/Inputs/FileInput';
+import { TransferController } from '../../../dataAccess/controllers/transfer.controller';
 
 interface IForm {
   transferData: string;
@@ -32,6 +33,8 @@ interface IFile {
   cbhgPaymentVoucher: File | null;
 }
 
+const transferController = new TransferController();
+
 export function TransferRequestPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
@@ -39,66 +42,76 @@ export function TransferRequestPage() {
   const { data, isLoading: isLoadingConfigs } = useGetCurrentConfigs();
 
   const { user } = useGlobal();
-  const { mutateAsync } = useCreateTransferRequest();
-  const { data: publicTeams, isLoading } = useGetPublicTeams();
+  const { data: publicTeams } = useGetPublicTeams();
 
   const [files, setFiles] = useState<IFile>({
     cbhgPaymentVoucher: null,
     federationPaymentVoucher: null,
   });
 
-  const handeSubmit = async (data: IForm) => {
-    if (!user) return;
+  const { mutateAsync: handleSubmit, isLoading: isLoadingSubmit } = useMutation(
+    async (data: IForm) => {
+      if (!user) return;
 
-    if (!files.cbhgPaymentVoucher)
-      return toast.error('Comprovante de pagamento da CBHG é obrigatório');
+      if (!files.cbhgPaymentVoucher)
+        return toast.error('Comprovante de pagamento da CBHG é obrigatório');
 
-    try {
-      await validateForm(data, {
-        transferData: Yup.string().required('Campo obrigatório'),
-        obs: Yup.string(),
-        destinationClub: Yup.string().required('Clube de destino obrigatório'),
-      });
+      if (user.transfering)
+        return toast.error(
+          'Você já possui uma solicitação de transferência pendente',
+        );
 
-      const currentTeam = publicTeams?.list.find(t => t.id === user.relatedId);
-      const team = publicTeams?.list.find(t => t.id === data.destinationClub);
+      try {
+        await validateForm(data, {
+          transferData: Yup.string().required('Campo obrigatório'),
+          obs: Yup.string(),
+          destinationClub: Yup.string().required(
+            'Clube de destino obrigatório',
+          ),
+        });
 
-      if (team?.id === user.relatedId) {
-        throw new Error('Você não pode transferir para o mesmo clube');
+        const currentTeam = publicTeams?.list.find(
+          t => t.id === user.relatedId,
+        );
+        const team = publicTeams?.list.find(t => t.id === data.destinationClub);
+
+        if (team?.id === user.relatedId) {
+          throw new Error('Você não pode transferir para o mesmo clube');
+        }
+
+        await transferController.create({
+          transferData: data.transferData,
+          userId: user.id,
+          currentTeamStatus: Status.PENDING,
+          currentTeamId: user.relatedId,
+          destinationTeamStatus: Status.PENDING,
+          destinationTeamId: team!.id,
+          currentFederationStatus: Status.PENDING,
+          currentFederationId: currentTeam!.federationId!,
+          destinationFederationStatus: Status.PENDING,
+          destinationFederationId: team!.federationId!,
+          obs: data.obs,
+          documents: {
+            cbhgPaymentVoucher: files.cbhgPaymentVoucher!,
+            federationPaymentVoucher: files.federationPaymentVoucher,
+          },
+        });
+
+        toast.success('Solicitação enviada com sucesso!');
+
+        navigate('/app/dashboard');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = handleFormErrors(err);
+
+          return formRef.current?.setErrors(errors);
+        }
+
+        // @ts-ignore
+        toast.error(err.message || 'Ops! Houve um erro ao criar a federação!');
       }
-
-      await mutateAsync({
-        transferData: data.transferData,
-        userId: user.id,
-        currentTeamStatus: Status.PENDING,
-        currentTeamId: user.relatedId,
-        destinationTeamStatus: Status.PENDING,
-        destinationTeamId: team!.id,
-        currentFederationStatus: Status.PENDING,
-        currentFederationId: currentTeam!.federationId!,
-        destinationFederationStatus: Status.PENDING,
-        destinationFederationId: team!.federationId!,
-        obs: data.obs,
-        documents: {
-          cbhgPaymentVoucher: files.cbhgPaymentVoucher!,
-          federationPaymentVoucher: files.federationPaymentVoucher,
-        },
-      });
-
-      toast.success('Solicitação enviada com sucesso!');
-
-      navigate('/app/dashboard');
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = handleFormErrors(err);
-
-        return formRef.current?.setErrors(errors);
-      }
-
-      // @ts-ignore
-      toast.error(err.message || 'Ops! Houve um erro ao criar a federação!');
-    }
-  };
+    },
+  );
 
   if (!isLoadingConfigs && data) {
     const { nextTransferPeriod, transferPeriodBegin, transferPeriodEnd } = data;
@@ -137,7 +150,7 @@ export function TransferRequestPage() {
               O período de transferência termina no dia{' '}
               <strong>{transferPeriodEnds}</strong>
             </p>
-            <Form ref={formRef} onSubmit={data => handeSubmit(data)}>
+            <Form ref={formRef} onSubmit={data => handleSubmit(data)}>
               <Textfield
                 type="date"
                 label="Data real da solicitação de transferência"
@@ -196,8 +209,8 @@ export function TransferRequestPage() {
                     aditionalClasses="w-auto px-2"
                     label="Fazer requisição"
                     variant="primary"
-                    isLoading={isLoading}
-                    disabled={isLoading}
+                    isLoading={isLoadingSubmit}
+                    disabled={isLoadingSubmit}
                   />
                 </div>
               </div>
