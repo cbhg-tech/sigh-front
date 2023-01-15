@@ -47,7 +47,6 @@ export function DocumentationUpload() {
 
       // @ts-ignore
       await mutateAsync({
-        ...user?.athleteProfile,
         documentFiles: {
           ...documents,
         },
