@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextfieldBare } from '../../../components/Inputs/TextfieldBare';
-import { useGetAllTransfers } from '../../../dataAccess/hooks/transfer/useGetAllTransfers';
 import { ITransfer } from '../../../types/Transfer';
 import { Status } from '../../../enums/Status';
 import { Badge } from '../../../components/Badge';
-import { ActionsButtons } from './ActionsButton';
+import { useTransfer } from '../useTransfer';
+import { ListActionButtons } from '../../../components/ListActionButtons';
 
 const COLUMN_WIDTH = [
   'w-1/3 lg:w-1/5',
@@ -25,17 +25,16 @@ const COLUMN_NAME = [
   '',
 ];
 
+const BADGE_ACTIVE =
+  'text-sm border font-bold text-light-on-primary-container bg-light-primary-container py-1 px-2 rounded-lg border-light-primary-container';
+const BADGE_NORMAL =
+  'text-sm border text-light-on-primary-container bg-transparent py-1 px-2 rounded-lg border-light-outline';
+
 export function ListTransfersPage() {
-  const { data, isLoading, isSuccess } = useGetAllTransfers();
-  const [filter, setFilter] = useState('');
+  const navigate = useNavigate();
 
-  let tableData = data || [];
-
-  if (filter) {
-    tableData = tableData.filter(transfer =>
-      transfer.user?.name.toLowerCase().includes(filter.toLowerCase()),
-    );
-  }
+  const { transfers, queryStatus, setFilter, setStatusFilter, statusFilter } =
+    useTransfer({ fetchAll: true });
 
   function badgerGenerator(transfer: ITransfer) {
     if (transfer?.status === Status.REJECTED) return 'Transferência rejeitada';
@@ -52,6 +51,8 @@ export function ListTransfersPage() {
 
     return 'Transferência concluída';
   }
+
+  console.log(transfers);
 
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
@@ -71,19 +72,54 @@ export function ListTransfersPage() {
         </div>
       </div>
 
-      {isLoading && (
+      <div>
+        <span className="text-sm text-light-on-surface-variant">
+          Filtro por status:
+        </span>
+        <div className="flex gap-2 justify-start pb-8">
+          <button
+            type="button"
+            className={
+              statusFilter === Status.PENDING ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.PENDING)}
+          >
+            Pendente
+          </button>
+          <button
+            type="button"
+            className={
+              statusFilter === Status.REJECTED ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.REJECTED)}
+          >
+            Rejeitado
+          </button>
+          <button
+            type="button"
+            className={
+              statusFilter === Status.ACTIVE ? BADGE_ACTIVE : BADGE_NORMAL
+            }
+            onClick={() => setStatusFilter(Status.ACTIVE)}
+          >
+            Aprovado
+          </button>
+        </div>
+      </div>
+
+      {queryStatus === 'loading' && (
         <p className="text-center mt-8 text-light-on-surface-variant">
           Buscando dados ...
         </p>
       )}
 
-      {!isLoading && tableData.length === 0 && (
+      {queryStatus !== 'loading' && transfers.length === 0 && (
         <p className="text-center mt-8 text-light-on-surface-variant">
           Nenhuma transferencia encontrada
         </p>
       )}
 
-      {!isLoading && tableData.length > 0 && isSuccess && (
+      {queryStatus === 'success' && transfers.length > 0 && (
         <table className="w-full">
           <thead>
             <tr>
@@ -98,7 +134,7 @@ export function ListTransfersPage() {
             </tr>
           </thead>
           <tbody>
-            {tableData.map(row => (
+            {transfers.map(row => (
               <tr
                 className="border-b last:border-none border-slate-200"
                 key={row.id}
@@ -128,7 +164,16 @@ export function ListTransfersPage() {
                   </Badge>
                 </td>
                 <td>
-                  <ActionsButtons id={row.id!} />
+                  <ListActionButtons
+                    viewPermission
+                    deletePermission={false}
+                    editPermission={false}
+                    viewBtn={() =>
+                      navigate(
+                        `/app/restrito/transferencia/aprovacao/${row.id}`,
+                      )
+                    }
+                  />
                 </td>
               </tr>
             ))}

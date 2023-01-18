@@ -8,11 +8,10 @@ import { Divider } from '../../../components/Divider';
 import { Button } from '../../../components/Inputs/Button';
 import { MultineTextfieldBare } from '../../../components/Inputs/MultilineTextfieldBare';
 import { useGlobal } from '../../../contexts/global.context';
-import { useGetOneTransfer } from '../../../dataAccess/hooks/transfer/useGetOneTransfer';
 import { useUpdateTransferDetails } from '../../../dataAccess/hooks/transfer/useUpdateTransferDetail';
-import { Roles } from '../../../enums/Roles';
 import { TransferRole } from '../../../enums/TransferRole';
 import { Status } from '../../../enums/Status';
+import { useTransfer } from '../useTransfer';
 
 interface IProps {
   isDisplayOnly?: boolean;
@@ -21,96 +20,40 @@ interface IProps {
 export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   const { id } = useParams();
   const { user } = useGlobal();
-  const { data: transferData } = useGetOneTransfer(id);
+  const { canApproveWorkflow, oneTransfer, queryOneStatus } = useTransfer({
+    fetchAll: false,
+    transferId: id,
+  });
+  // const { data: transferData } = useGetOneTransfer(id);
   const { mutateAsync } = useUpdateTransferDetails();
 
   const [obs, setObs] = useState('');
-
-  function canApproveWorkflow() {
-    if (isDisplayOnly) return false;
-
-    if (
-      user?.role === Roles.ADMINFEDERACAO &&
-      transferData?.status !== Status.ACTIVE &&
-      transferData?.currentFederationId ===
-        transferData?.destinationFederationId &&
-      transferData?.destinationFederationStatus === Status.ACTIVE &&
-      transferData?.currentFederationStatus === Status.ACTIVE
-    ) {
-      return false;
-    }
-
-    if (transferData?.status !== Status.ACTIVE) {
-      if (
-        user?.role === Roles.ADMINCLUBE &&
-        transferData?.currentTeamId === user?.relatedId &&
-        !transferData?.log.find(log => log.role === TransferRole.CLUBEORIGEM)
-      )
-        return true;
-
-      if (
-        user?.role === Roles.ADMINCLUBE &&
-        transferData?.destinationTeamId === user?.relatedId &&
-        transferData?.currentTeamStatus === Status.ACTIVE &&
-        !transferData?.log.find(log => log.role === TransferRole.CLUBEDESTINO)
-      )
-        return true;
-
-      if (
-        user?.role === Roles.ADMINFEDERACAO &&
-        transferData?.currentFederationId === user?.relatedId &&
-        transferData?.destinationTeamStatus === Status.ACTIVE &&
-        !transferData?.log.find(
-          log => log.role === TransferRole.FEDERACAOORIGEM,
-        )
-      )
-        return true;
-
-      if (
-        user?.role === Roles.ADMINFEDERACAO &&
-        transferData?.destinationFederationId === user?.relatedId &&
-        transferData?.currentFederationStatus === Status.ACTIVE &&
-        !transferData?.log.find(
-          log => log.role === TransferRole.FEDERACAODESTINO,
-        )
-      )
-        return true;
-
-      if (
-        user?.role === Roles.ADMIN &&
-        transferData?.destinationFederationStatus === Status.ACTIVE
-      )
-        return true;
-    }
-
-    return false;
-  }
 
   async function handleSubmit(isApproved: boolean) {
     if (isDisplayOnly) return;
 
     try {
-      if (!transferData) throw new Error('Transferencia não foi achada');
+      if (!oneTransfer) throw new Error('Transferencia não foi achada');
 
       if (!obs) throw new Error('Observação é obrigatória');
 
       let role = TransferRole.CLUBEDESTINO;
 
-      if (!canApproveWorkflow())
+      if (!canApproveWorkflow(oneTransfer, isDisplayOnly))
         throw new Error('Você não pode aprovar essa transferência');
 
-      const newTransferData = { ...transferData };
+      const newTransferData = { ...oneTransfer };
 
       const isAprovedByTeams =
-        transferData.currentTeamStatus === Status.ACTIVE &&
-        transferData.destinationTeamStatus === Status.ACTIVE;
+        oneTransfer.currentTeamStatus === Status.ACTIVE &&
+        oneTransfer.destinationTeamStatus === Status.ACTIVE;
       const isNotAprovedByFederations =
-        transferData.currentFederationStatus !== Status.ACTIVE &&
-        transferData.destinationFederationStatus !== Status.ACTIVE;
+        oneTransfer.currentFederationStatus !== Status.ACTIVE &&
+        oneTransfer.destinationFederationStatus !== Status.ACTIVE;
 
       if (
-        transferData.destinationFederationId ===
-          transferData.currentFederationId &&
+        // prettier-ignore
+        oneTransfer.destinationFederationId === oneTransfer.currentFederationId &&
         isAprovedByTeams &&
         isNotAprovedByFederations
       ) {
@@ -194,19 +137,16 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
   }
 
   function waitingMessage() {
-    if (transferData?.status === Status.REJECTED)
-      return 'Transferência rejeitada';
-
-    if (transferData?.currentTeamStatus !== Status.ACTIVE)
-      return 'Pendente clube de origem';
-    if (transferData?.destinationTeamStatus !== Status.ACTIVE)
-      return 'Pendente clube de destino';
-    if (transferData?.currentFederationStatus !== Status.ACTIVE)
-      return 'Pendente federação de origem';
-    if (transferData?.destinationFederationStatus !== Status.ACTIVE)
-      return 'Pendente federação de destino';
-    if (transferData?.cbhgStatus !== Status.ACTIVE)
-      return 'Pendente confederação';
+    if (oneTransfer?.currentTeamStatus !== Status.ACTIVE)
+      return 'Pendente aprovação do clube de origem';
+    if (oneTransfer?.destinationTeamStatus !== Status.ACTIVE)
+      return 'Pendente aprovação do clube de destino';
+    if (oneTransfer?.currentFederationStatus !== Status.ACTIVE)
+      return 'Pendente aprovação da federação de origem';
+    if (oneTransfer?.destinationFederationStatus !== Status.ACTIVE)
+      return 'Pendente aprovação da federação de destino';
+    if (oneTransfer?.cbhgStatus !== Status.ACTIVE)
+      return 'Pendente aprovação da confederação';
 
     return 'Transferência concluída';
   }
@@ -216,28 +156,33 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
       <h2 className="text-3xl text-light-on-surface mb-4">
         Solicitação de Transferência
       </h2>
-      {transferData && (
+      {queryOneStatus === 'loading' && (
+        <div>
+          <p>Carregando...</p>
+        </div>
+      )}
+      {queryOneStatus === 'success' && oneTransfer && (
         <>
           <p className="text-light-on-surface-variant">
             <strong>Jogador: </strong>
-            {transferData.user?.name}
+            {oneTransfer.user?.name}
             <br />
             <strong>Data de transferencia: </strong>
-            {dayjs(transferData.transferData).format('DD/MM/YYYY')}
+            {dayjs(oneTransfer.transferData).format('DD/MM/YYYY')}
             <br />
             <strong>Clube de origem: </strong>
-            {transferData.currentTeam?.name}
+            {oneTransfer.currentTeam?.name}
             <br />
             <strong>Clube destino: </strong>
-            {transferData.destinationTeam?.name}
+            {oneTransfer.destinationTeam?.name}
             <br />
           </p>
           <p className="text-light-on-surface-variant">
             <strong>Observação: </strong>
-            {transferData.obs || 'Nenhuma observação'}
+            {oneTransfer.obs || 'Nenhuma observação'}
           </p>
           <a
-            href={transferData.documents.cbhgPaymentVoucher}
+            href={oneTransfer.documents.cbhgPaymentVoucher}
             target="_blank"
             download
             rel="noreferrer"
@@ -247,10 +192,10 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
             Comprovante de pagamento da CBHG
           </a>
           <br />
-          {transferData.documents.federationPaymentVoucher && (
+          {oneTransfer.documents.federationPaymentVoucher && (
             <>
               <a
-                href={transferData.documents.federationPaymentVoucher}
+                href={oneTransfer.documents.federationPaymentVoucher}
                 target="_blank"
                 download
                 rel="noreferrer"
@@ -266,16 +211,16 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
       )}
       <div>
         <h2 className="text-3xl text-light-on-surface my-4">Observações</h2>
-        {transferData && transferData.log.length === 0 && (
+        {oneTransfer && oneTransfer.log.length === 0 && (
           <div>
             <p className="text-light-on-surface-variant">
               Nenhuma observação adicionada
             </p>
           </div>
         )}
-        {transferData &&
-          transferData.log.length > 0 &&
-          transferData.log.map(log => (
+        {oneTransfer &&
+          oneTransfer.log.length > 0 &&
+          oneTransfer.log.map(log => (
             <div>
               <h3 className="text-light-on-surface my-2">
                 <strong>{log.role}</strong>
@@ -293,7 +238,7 @@ export function TransferApprovalWorkflow({ isDisplayOnly }: IProps) {
             </div>
           ))}
       </div>
-      {canApproveWorkflow() ? (
+      {canApproveWorkflow(oneTransfer, isDisplayOnly) ? (
         <div>
           <h2 className="text-3xl text-light-on-surface my-4">
             Você aprovar essa transferência?

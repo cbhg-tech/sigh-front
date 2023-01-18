@@ -19,7 +19,6 @@ import { AthletesRegisterPage } from '../../pages/Athletes/Register';
 import { AthleteApprovalListPage } from '../../pages/AthleteApproval/List';
 import { ApprovalDetailsPage } from '../../pages/AthleteApproval/Details';
 import { TransferRequestPage } from '../../pages/Transfer/Request';
-import { TransferListApprovalPage } from '../../pages/Transfer/ListApproval';
 import { TransferApprovalWorkflow } from '../../pages/Transfer/ApprovalWorkflow';
 import { AthletesReportPage } from '../../pages/Athletes/Report';
 import { TechnicalCommitteeListPage } from '../../pages/TechnicalCommittee/List';
@@ -299,14 +298,6 @@ export function Router() {
             element={
               <Navigation title="Transferência">
                 <TransferRequestPage />
-              </Navigation>
-            }
-          />
-          <Route
-            path="/app/restrito/transferencia/listagem/pendentes"
-            element={
-              <Navigation title="Aprovação de transferência">
-                <TransferListApprovalPage />
               </Navigation>
             }
           />
