@@ -218,7 +218,9 @@ export class AthleteController {
 
     delete data.userId;
 
-    data.address!.country = 'BR';
+    if (data.address) {
+      data.address.country = 'BR';
+    }
 
     await updateDoc(doc(db, 'users', userId), {
       athleteProfile: {
@@ -227,10 +229,12 @@ export class AthleteController {
       updatedAt: new Date(),
     });
 
-    await updateDoc(doc(db, 'userApproval', userId), {
-      gender: data.gender,
-      updatedAt: new Date(),
-    });
+    if (data.gender) {
+      await updateDoc(doc(db, 'userApproval', userId), {
+        gender: data.gender,
+        updatedAt: new Date(),
+      });
+    }
   }
 
   public async getApprovalList(team?: string) {

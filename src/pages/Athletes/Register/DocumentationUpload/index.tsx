@@ -33,10 +33,10 @@ export function DocumentationUpload() {
     const isSubEighteen = dayjs().diff(birthDate, 'year') < 18;
 
     if (!documents.personalDocument)
-      toast.error('Documento pessoal obrigatório');
+      return toast.error('Documento pessoal obrigatório');
 
     if (isSubEighteen && !documents.commitmentTerm)
-      toast.error('Termo de compromisso obrigatório');
+      return toast.error('Termo de compromisso obrigatório');
 
     try {
       await validateForm(data, {
