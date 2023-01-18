@@ -1,5 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 import { useState } from 'react';
 import { db } from '../../app/FirebaseConfig';
 import { useGlobal } from '../../contexts/global.context';
@@ -38,6 +45,28 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
     const transfer = { ...res.data(), id: res.id } as ITransfer;
 
     return joinTransfer(transfer);
+  };
+
+  const getUserActiveTransfer = async () => {
+    const q = query(
+      collection(db, 'transfers'),
+      where('userId', '==', user?.id),
+      where('status', '!=', Status.ACTIVE),
+    );
+
+    const res = await getDocs(q);
+
+    const arr: ITransfer[] = [];
+
+    res.forEach(doc => {
+      arr.push({ ...doc.data(), id: doc.id } as ITransfer);
+    });
+
+    const transfersRead = arr.map(t => joinTransfer(t));
+
+    const transfers = await Promise.all(transfersRead);
+
+    return transfers[0];
   };
 
   const canApproveWorkflow = (td?: ITransfer, isDisplayOnly?: boolean) => {
@@ -109,6 +138,14 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
     },
   );
 
+  const { data: userTransfer, status: queryUserTransferStatus } = useQuery(
+    ['getUserActiveTransfer'],
+    getUserActiveTransfer,
+    {
+      enabled: !fetchAll && !transferId && !!user,
+    },
+  );
+
   let transfers = data || [];
 
   if (filter) {
@@ -129,5 +166,7 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
     canApproveWorkflow,
     oneTransfer,
     queryOneStatus,
+    userTransfer,
+    queryUserTransferStatus,
   };
 };

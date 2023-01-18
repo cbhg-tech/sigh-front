@@ -1,6 +1,6 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
@@ -21,6 +21,7 @@ import { validateForm } from '../../../utils/validateForm';
 import { Status } from '../../../enums/Status';
 import { FileInput } from '../../../components/Inputs/FileInput';
 import { TransferController } from '../../../dataAccess/controllers/transfer.controller';
+import { useTransfer } from '../useTransfer';
 
 interface IForm {
   transferData: string;
@@ -40,6 +41,10 @@ export function TransferRequestPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { data, isLoading: isLoadingConfigs } = useGetCurrentConfigs();
+  const { userTransfer, queryUserTransferStatus } = useTransfer({
+    fetchAll: false,
+    transferId: '',
+  });
 
   const { user } = useGlobal();
   const { data: publicTeams } = useGetPublicTeams();
@@ -113,6 +118,17 @@ export function TransferRequestPage() {
     },
   );
 
+  useEffect(() => {
+    formRef.current?.setData({
+      transferData: dayjs(userTransfer?.transferData).format('YYYY-MM-DD'),
+      destinationClub: userTransfer?.destinationTeamId,
+      obs: userTransfer?.obs,
+    });
+  }, [userTransfer]);
+
+  if (!isLoadingConfigs && queryUserTransferStatus === 'loading')
+    return <p>Carregando...</p>;
+
   if (!isLoadingConfigs && data) {
     const { nextTransferPeriod, transferPeriodBegin, transferPeriodEnd } = data;
 
@@ -167,12 +183,13 @@ export function TransferRequestPage() {
               </Select>
               <MultineTextfield name="obs" label="Observações" />
 
-              <div className="flex flex-col md:flex-row gap-4 mt-4">
+              <div className="flex flex-col xl:flex-row gap-4 mt-4">
                 <div className="w-full">
                   <FileInput
                     name="federationPaymentVoucher"
                     label="Comprovante de pagamento do federação"
                     hint="Opcional"
+                    url={userTransfer?.documents.federationPaymentVoucher}
                     onChange={e =>
                       setFiles({
                         ...files,
@@ -186,6 +203,7 @@ export function TransferRequestPage() {
                     name="cbhgPaymentVoucher"
                     label="Comprovante de pagamento da CBHG"
                     hint="Obrigatório"
+                    url={userTransfer?.documents.cbhgPaymentVoucher}
                     onChange={e =>
                       setFiles({
                         ...files,

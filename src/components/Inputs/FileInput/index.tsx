@@ -31,20 +31,22 @@ export function FileInput({ name, label, hint, url, ...rest }: IProps) {
   return (
     <div className="flex-1">
       {!showInput && (
-        <div className="flex gap-4">
-          <p className="block leading-10 max-w-prose line-clamp-1">{url}</p>
-          {url && (
+        <div className="flex justify-between gap-4">
+          <p className="block leading-10 max-w-[400px] line-clamp-1">{url}</p>
+          <div>
+            {url && (
+              <IconButton
+                icon={MdFileDownload}
+                onClick={e => handleDownload(url)}
+                className="text-light-surface-tint"
+              />
+            )}
             <IconButton
-              icon={MdFileDownload}
-              onClick={e => handleDownload(url)}
-              className="text-light-surface-tint"
+              icon={IoCloseCircleOutline}
+              onClick={() => setShowInput(true)}
+              className="text-light-error"
             />
-          )}
-          <IconButton
-            icon={IoCloseCircleOutline}
-            onClick={() => setShowInput(true)}
-            className="text-light-error"
-          />
+          </div>
         </div>
       )}
 
