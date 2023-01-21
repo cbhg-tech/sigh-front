@@ -30,8 +30,8 @@ interface IForm {
 }
 
 interface IFile {
-  federationPaymentVoucher: File | null;
-  cbhgPaymentVoucher: File | null;
+  federationPaymentVoucher?: File;
+  cbhgPaymentVoucher?: File;
 }
 
 const transferController = new TransferController();
@@ -41,7 +41,7 @@ export function TransferRequestPage() {
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { data, isLoading: isLoadingConfigs } = useGetCurrentConfigs();
-  const { userTransfer, queryUserTransferStatus } = useTransfer({
+  const { userTransfer, queryUserTransferStatus, onSubmit } = useTransfer({
     fetchAll: false,
     transferId: '',
   });
@@ -49,16 +49,16 @@ export function TransferRequestPage() {
   const { user } = useGlobal();
   const { data: publicTeams } = useGetPublicTeams();
 
-  const [files, setFiles] = useState<IFile>({
-    cbhgPaymentVoucher: null,
-    federationPaymentVoucher: null,
-  });
+  const [files, setFiles] = useState<IFile>({});
 
   const { mutateAsync: handleSubmit, isLoading: isLoadingSubmit } = useMutation(
     async (data: IForm) => {
       if (!user) return;
 
-      if (!files.cbhgPaymentVoucher)
+      if (
+        !files.cbhgPaymentVoucher &&
+        !userTransfer?.documents.cbhgPaymentVoucher
+      )
         return toast.error('Comprovante de pagamento da CBHG é obrigatório');
 
       if (user.transfering)
@@ -84,7 +84,8 @@ export function TransferRequestPage() {
           throw new Error('Você não pode transferir para o mesmo clube');
         }
 
-        await transferController.create({
+        await onSubmit({
+          id: userTransfer?.id,
           transferData: data.transferData,
           userId: user.id,
           currentTeamStatus: Status.PENDING,
@@ -96,13 +97,21 @@ export function TransferRequestPage() {
           destinationFederationStatus: Status.PENDING,
           destinationFederationId: team!.federationId!,
           obs: data.obs,
-          documents: {
-            cbhgPaymentVoucher: files.cbhgPaymentVoucher!,
-            federationPaymentVoucher: files.federationPaymentVoucher,
+          documentsFile: {
+            cbhgPaymentVoucher:
+              files.cbhgPaymentVoucher ||
+              userTransfer?.documents.cbhgPaymentVoucher,
+            federationPaymentVoucher:
+              files.federationPaymentVoucher ||
+              userTransfer?.documents.federationPaymentVoucher,
           },
         });
 
-        toast.success('Solicitação enviada com sucesso!');
+        if (!userTransfer) {
+          toast.success('Solicitação enviada com sucesso!');
+        } else {
+          toast.success('Solicitação atualizada com sucesso!');
+        }
 
         navigate('/app/dashboard');
       } catch (err) {
