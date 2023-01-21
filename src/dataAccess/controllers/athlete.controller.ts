@@ -43,6 +43,7 @@ export interface ICreateAthlete
 }
 
 export interface IUpdateAthlete extends Omit<IAthlete, 'registerNumber'> {
+  name?: string;
   userId?: string;
   documentFiles?: IAthletesDocuments;
 }
@@ -223,6 +224,7 @@ export class AthleteController {
     }
 
     await updateDoc(doc(db, 'users', userId), {
+      name: data.name,
       athleteProfile: {
         ...data,
       },

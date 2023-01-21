@@ -67,8 +67,6 @@ export const useAthleteApprovalList = () => {
     },
   );
 
-  console.log(data);
-
   let tableData = data || [];
 
   if (statusFilter !== Status.ACTIVE) {
