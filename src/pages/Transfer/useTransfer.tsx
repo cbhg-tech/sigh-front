@@ -1,3 +1,4 @@
+// prettier-disable
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   addDoc,
@@ -165,51 +166,30 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
           cbhgPaymentVoucher: '',
         };
 
-        if (
-          data.documentsFile.federationPaymentVoucher &&
-          typeof data.documentsFile.federationPaymentVoucher !== 'string'
-        ) {
-          filesUrl.federationPaymentVoucher = await UploadFile(
-            `/athletes/${data.userId}/transfers/${data.id}/federationPaymentVoucher`,
-            data.documentsFile.federationPaymentVoucher,
-          );
-        }
-
-        if (
-          data.documentsFile.cbhgPaymentVoucher &&
-          typeof data.documentsFile.cbhgPaymentVoucher !== 'string'
-        ) {
-          filesUrl.cbhgPaymentVoucher = await UploadFile(
-            `/athletes/${data.userId}/transfers/${data.id}/cbhgPaymentVoucher`,
-            data.documentsFile.cbhgPaymentVoucher,
-          );
-        }
-
-        if (
-          data.id &&
-          data.documentsFile.federationPaymentVoucher &&
-          typeof data.documentsFile.federationPaymentVoucher === 'string'
-        ) {
+        if (data.documentsFile.federationPaymentVoucher) {
           filesUrl.federationPaymentVoucher =
-            data.documentsFile.federationPaymentVoucher;
+            typeof data.documentsFile.federationPaymentVoucher !== 'string'
+              ? await UploadFile(
+                `/athletes/${data.userId}/transfers/${data.id}/federationPaymentVoucher`,
+                data.documentsFile.federationPaymentVoucher,
+              )
+              : data.documentsFile.federationPaymentVoucher;
         }
 
-        if (
-          data.id &&
-          data.documentsFile.cbhgPaymentVoucher &&
-          typeof data.documentsFile.cbhgPaymentVoucher === 'string'
-        ) {
-          filesUrl.cbhgPaymentVoucher = data.documentsFile.cbhgPaymentVoucher;
+        if (data.documentsFile.cbhgPaymentVoucher) {
+          filesUrl.cbhgPaymentVoucher =
+            typeof data.documentsFile.cbhgPaymentVoucher !== 'string'
+              ? await UploadFile(
+                `/athletes/${data.userId}/transfers/${data.id}/cbhgPaymentVoucher`,
+                data.documentsFile.cbhgPaymentVoucher,
+              )
+              : data.documentsFile.cbhgPaymentVoucher;
         }
-
-        console.log(filesUrl);
 
         if (!data.id) {
           await addDoc(collection(db, 'transfers'), {
             ...data,
-            documents: {
-              ...filesUrl,
-            },
+            documents: filesUrl,
             status: Status.PENDING,
             log: [],
             updatedAt: new Date(),
@@ -225,18 +205,14 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
           });
         } else {
           await updateDoc(doc(db, 'transfers', data.id), {
-            ...data,
-            documents: {
-              ...filesUrl,
-            },
+            obs: data.obs,
+            documents: filesUrl,
             updatedAt: new Date(),
           });
         }
 
-        await queryClient.invalidateQueries([
-          'getTransfers',
-          'getUserActiveTransfer',
-        ]);
+        await queryClient.invalidateQueries(['getTransfers']);
+        await queryClient.invalidateQueries(['getUserActiveTransfer']);
       } catch (error) {
         console.log(error);
       }

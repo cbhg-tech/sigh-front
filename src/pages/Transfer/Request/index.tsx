@@ -1,12 +1,11 @@
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
 import dayjs from 'dayjs';
-import { useMutation } from '@tanstack/react-query';
 import { Button } from '../../../components/Inputs/Button';
 import { MultineTextfield } from '../../../components/Inputs/MultineTextfield';
 import { Select } from '../../../components/Inputs/Select';
@@ -20,7 +19,6 @@ import { handleFormErrors } from '../../../utils/handleFormErrors';
 import { validateForm } from '../../../utils/validateForm';
 import { Status } from '../../../enums/Status';
 import { FileInput } from '../../../components/Inputs/FileInput';
-import { TransferController } from '../../../dataAccess/controllers/transfer.controller';
 import { useTransfer } from '../useTransfer';
 
 interface IForm {
@@ -34,24 +32,22 @@ interface IFile {
   cbhgPaymentVoucher?: File;
 }
 
-const transferController = new TransferController();
-
 export function TransferRequestPage() {
   useRedirectPendingAthlete();
   const navigate = useNavigate();
   const formRef = useRef<FormHandles>(null);
   const { data, isLoading: isLoadingConfigs } = useGetCurrentConfigs();
-  const { userTransfer, queryUserTransferStatus, onSubmit } = useTransfer({
-    fetchAll: false,
-    transferId: '',
-  });
-
-  const { user } = useGlobal();
   const { data: publicTeams } = useGetPublicTeams();
+  const { user } = useGlobal();
+  const { userTransfer, queryUserTransferStatus, onSubmit, submitQueryStatus } =
+    useTransfer({
+      fetchAll: false,
+      transferId: '',
+    });
 
   const [files, setFiles] = useState<IFile>({});
 
-  const { mutateAsync: handleSubmit, isLoading: isLoadingSubmit } = useMutation(
+  const handleSubmit = useCallback(
     async (data: IForm) => {
       if (!user) return;
 
@@ -125,6 +121,7 @@ export function TransferRequestPage() {
         toast.error(err.message || 'Ops! Houve um erro ao criar a federação!');
       }
     },
+    [files, navigate, onSubmit, publicTeams, user, userTransfer],
   );
 
   useEffect(() => {
@@ -147,6 +144,12 @@ export function TransferRequestPage() {
     );
 
     const transferPeriodEnds = DateService().format(transferPeriodEnd.seconds);
+
+    const dataInputValue = userTransfer
+      ? dayjs(userTransfer.transferData).format('YYYY-MM-DD')
+      : dayjs().format('YYYY-MM-DD');
+
+    console.log(userTransfer);
 
     return (
       <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -180,14 +183,16 @@ export function TransferRequestPage() {
                 type="date"
                 label="Data real da solicitação de transferência"
                 name="transferData"
-                value={dayjs().format('YYYY-MM-DD')}
+                value={dataInputValue}
                 disabled
               />
               <Select name="destinationClub" label="Clube de destino">
                 <option value="">Selecione um clube</option>
                 {publicTeams &&
                   publicTeams.list.map(team => (
-                    <option value={team.id}>{team.name}</option>
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
                   ))}
               </Select>
               <MultineTextfield name="obs" label="Observações" />
@@ -234,10 +239,10 @@ export function TransferRequestPage() {
                   <Button
                     type="submit"
                     aditionalClasses="w-auto px-2"
-                    label="Fazer requisição"
+                    label={userTransfer ? 'Editar' : 'Fazer requisição'}
                     variant="primary"
-                    isLoading={isLoadingSubmit}
-                    disabled={isLoadingSubmit}
+                    isLoading={submitQueryStatus === 'loading'}
+                    disabled={submitQueryStatus === 'loading'}
                   />
                 </div>
               </div>
