@@ -52,8 +52,6 @@ export function ListTransfersPage() {
     return 'Transferência concluída';
   }
 
-  console.log(transfers);
-
   return (
     <div className="bg-light-surface p-6 rounded-2xl">
       <div className="flex justify-start">

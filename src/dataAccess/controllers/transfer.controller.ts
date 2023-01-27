@@ -136,6 +136,7 @@ export class TransferController {
         relatedName: destinationTeam?.name,
         relatedId: data.destinationTeamId,
         relatedType: 'team',
+        transfering: false,
       });
     }
   }

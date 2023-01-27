@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   addDoc,
   collection,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -12,6 +13,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { db } from '../../app/FirebaseConfig';
 import { useGlobal } from '../../contexts/global.context';
 import { Roles } from '../../enums/Roles';
@@ -22,6 +24,7 @@ import { UploadFile } from '../../utils/uploadFile';
 
 interface IProps {
   fetchAll?: boolean;
+  fetchUserTransfer?: boolean;
   transferId?: string;
 }
 
@@ -37,7 +40,11 @@ export interface ISubmitTransfer
   };
 }
 
-export const useTransfer = ({ fetchAll, transferId }: IProps) => {
+export const useTransfer = ({
+  fetchAll,
+  fetchUserTransfer,
+  transferId,
+}: IProps) => {
   const queryClient = useQueryClient();
   const { user } = useGlobal();
   const [filter, setFilter] = useState('');
@@ -130,6 +137,8 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
     },
   );
 
+  const shouldFetchUserTransfer = !fetchAll && !transferId && user?.transfering;
+
   const { data: userTransfer, status: queryUserTransferStatus } = useQuery(
     ['getUserActiveTransfer'],
     async () => {
@@ -151,10 +160,10 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
 
       const transfers = await Promise.all(transfersRead);
 
-      return transfers[0];
+      return transfers.length > 0 ? transfers[0] : null;
     },
     {
-      enabled: !fetchAll && !transferId && !!user,
+      enabled: !!shouldFetchUserTransfer,
     },
   );
 
@@ -187,6 +196,12 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
         }
 
         if (!data.id) {
+          // eslint-disable-next-line no-param-reassign
+          delete data.id;
+          // @ts-ignore
+          // eslint-disable-next-line no-param-reassign
+          delete data.documentsFile;
+
           await addDoc(collection(db, 'transfers'), {
             ...data,
             documents: filesUrl,
@@ -213,8 +228,9 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
 
         await queryClient.invalidateQueries(['getTransfers']);
         await queryClient.invalidateQueries(['getUserActiveTransfer']);
+        await queryClient.invalidateQueries(['getCurrentUser']);
       } catch (error) {
-        console.log(error);
+        toast.error('Erro ao enviar transferência');
       }
     },
   );

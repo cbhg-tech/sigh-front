@@ -43,6 +43,7 @@ export function TransferRequestPage() {
     useTransfer({
       fetchAll: false,
       transferId: '',
+      fetchUserTransfer: user?.transfering,
     });
 
   const [files, setFiles] = useState<IFile>({});
@@ -56,11 +57,6 @@ export function TransferRequestPage() {
         !userTransfer?.documents.cbhgPaymentVoucher
       )
         return toast.error('Comprovante de pagamento da CBHG é obrigatório');
-
-      if (user.transfering)
-        return toast.error(
-          'Você já possui uma solicitação de transferência pendente',
-        );
 
       try {
         await validateForm(data, {
@@ -125,6 +121,8 @@ export function TransferRequestPage() {
   );
 
   useEffect(() => {
+    if (!userTransfer) return;
+
     formRef.current?.setData({
       transferData: dayjs(userTransfer?.transferData).format('YYYY-MM-DD'),
       destinationClub: userTransfer?.destinationTeamId,
@@ -132,24 +130,28 @@ export function TransferRequestPage() {
     });
   }, [userTransfer]);
 
-  if (!isLoadingConfigs && queryUserTransferStatus === 'loading')
+  if (isLoadingConfigs && queryUserTransferStatus !== 'success')
     return <p>Carregando...</p>;
 
-  if (!isLoadingConfigs && data) {
+  if (
+    (!isLoadingConfigs && data && !user?.transfering) ||
+    (!isLoadingConfigs && data && user?.transfering && userTransfer)
+  ) {
     const { nextTransferPeriod, transferPeriodBegin, transferPeriodEnd } = data;
 
     const isTransferPeriod = DateService().isBetween(
+      // @ts-ignore
       transferPeriodBegin.seconds,
+      // @ts-ignore
       transferPeriodEnd.seconds,
     );
 
+    // @ts-ignore
     const transferPeriodEnds = DateService().format(transferPeriodEnd.seconds);
 
     const dataInputValue = userTransfer
       ? dayjs(userTransfer.transferData).format('YYYY-MM-DD')
       : dayjs().format('YYYY-MM-DD');
-
-    console.log(userTransfer);
 
     return (
       <div className="bg-light-surface p-6 rounded-2xl h-full">
@@ -159,7 +161,8 @@ export function TransferRequestPage() {
               Solicitação de Transferência
             </h2>
             <p>
-              O próximo período de transferência começa no dia{' '}
+              O próximo período de transferência começa no dia
+              {/* @ts-ignore */}
               {DateService().format(nextTransferPeriod.seconds)}{' '}
             </p>
           </>
