@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '../../../../components/Inputs/Button';
 import { useGlobal } from '../../../../contexts/global.context';
-import { Status } from '../../../../enums/Status';
-import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
+import { useAthlete } from '../../useAthlete';
 
 const boxStyle =
   'p-4 rounded border border-light-outline mb-4 text-light-on-surface-variant';
@@ -14,7 +13,7 @@ const termsUrl =
 
 export function LGPDTab() {
   const { user } = useGlobal();
-  const { mutateAsync, isLoading } = usePutAthlete();
+  const { editLGPD, editLGPDStatus } = useAthlete();
 
   const [termsAccepted, setTermsAccepted] = useState(
     user?.athleteProfile?.termsAccepted || false,
@@ -28,9 +27,8 @@ export function LGPDTab() {
 
   const handleSave = async () => {
     try {
-      await mutateAsync({
+      await editLGPD({
         ...user!.athleteProfile!,
-        userId: user!.id,
         termsAccepted,
         imageUseAccepted,
         dataUseAccepted,
@@ -148,8 +146,8 @@ export function LGPDTab() {
             label="Salvar"
             variant="primary"
             onClick={handleSave}
-            isLoading={isLoading}
-            disabled={isLoading}
+            isLoading={editLGPDStatus === 'loading'}
+            disabled={editLGPDStatus === 'loading'}
           />
         </div>
       </div>

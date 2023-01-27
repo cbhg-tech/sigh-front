@@ -9,11 +9,11 @@ import { Button } from '../../../../components/Inputs/Button';
 import { FileInput } from '../../../../components/Inputs/FileInput';
 import { Textfield } from '../../../../components/Inputs/Textfield';
 import { useGlobal } from '../../../../contexts/global.context';
-import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { Status } from '../../../../enums/Status';
 import { validateForm } from '../../../../utils/validateForm';
 import { useAthletesRegister } from '../register.context';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
+import { useAthlete } from '../../useAthlete';
 
 interface IFormData {
   rgNumber: string;
@@ -25,14 +25,17 @@ export function DocumentationUpload() {
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();
   const { documents, setDocuments, setActiveTab } = useAthletesRegister();
-  const { mutateAsync } = usePutAthlete();
+  const { editDocuments, editDocumentsStatus } = useAthlete();
 
   const handleFileUpload = async (data: IFormData) => {
     const { rgEmissionDate, rgEmissionOrg, rgNumber } = data;
     const birthDate = user?.athleteProfile?.birthDate;
     const isSubEighteen = dayjs().diff(birthDate, 'year') < 18;
 
-    if (!documents.personalDocument)
+    if (
+      !documents.personalDocument &&
+      user?.athleteProfile?.documents.personalDocument
+    )
       return toast.error('Documento pessoal obrigatório');
 
     if (isSubEighteen && !documents.commitmentTerm)
@@ -46,7 +49,7 @@ export function DocumentationUpload() {
       });
 
       // @ts-ignore
-      await mutateAsync({
+      await editDocuments({
         documentFiles: {
           ...documents,
         },
@@ -54,10 +57,6 @@ export function DocumentationUpload() {
           rgEmissionDate,
           rgEmissionOrg,
           rgNumber,
-          commitmentTerm: '',
-          personalDocument: '',
-          medicalCertificate: '',
-          noc: '',
         },
       });
 
@@ -180,6 +179,8 @@ export function DocumentationUpload() {
                   user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'
                 }
                 variant="primary"
+                isLoading={editDocumentsStatus === 'loading'}
+                disabled={editDocumentsStatus === 'loading'}
               />
             </div>
           </div>

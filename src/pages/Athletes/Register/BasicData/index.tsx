@@ -11,13 +11,13 @@ import { Select } from '../../../../components/Inputs/Select';
 import { Textfield } from '../../../../components/Inputs/Textfield';
 import { useGlobal } from '../../../../contexts/global.context';
 import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.controller';
-import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { States } from '../../../../dataAccess/static/states';
 import { Status } from '../../../../enums/Status';
 import { DateService } from '../../../../services/DateService';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
 import { validateForm } from '../../../../utils/validateForm';
 import { useAthletesRegister } from '../register.context';
+import { useAthlete } from '../../useAthlete';
 
 export function BasicData() {
   const { innerWidth: width } = window;
@@ -28,7 +28,8 @@ export function BasicData() {
   const { user } = useGlobal();
 
   const { setActiveTab } = useAthletesRegister();
-  const { mutateAsync, isLoading } = usePutAthlete();
+  // const { mutateAsync, isLoading } = usePutAthlete();
+  const { editBasicData, editBasicDataStatus } = useAthlete();
 
   const handleSubmit = async (data: IUpdateAthlete) => {
     formRef.current?.setErrors({});
@@ -49,7 +50,7 @@ export function BasicData() {
         }),
       });
 
-      await mutateAsync({
+      await editBasicData({
         ...user?.athleteProfile,
         ...data,
         birthDate: dayjs(data.birthDate).format('YYYY-MM-DD'),
@@ -197,8 +198,8 @@ export function BasicData() {
                 user?.status === Status.ACTIVE ? 'Salvar' : 'Próxima passo'
               }
               variant="primary"
-              isLoading={isLoading}
-              disabled={isLoading}
+              isLoading={editBasicDataStatus === 'loading'}
+              disabled={editBasicDataStatus === 'loading'}
             />
           </div>
         </div>

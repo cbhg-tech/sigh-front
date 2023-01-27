@@ -8,18 +8,18 @@ import { Button } from '../../../../components/Inputs/Button';
 import { Textfield } from '../../../../components/Inputs/Textfield';
 import { useGlobal } from '../../../../contexts/global.context';
 import { IUpdateAthlete } from '../../../../dataAccess/controllers/athlete.controller';
-import { usePutAthlete } from '../../../../dataAccess/hooks/athlete/usePutAthlete';
 import { validateForm } from '../../../../utils/validateForm';
 import { handleFormErrors } from '../../../../utils/handleFormErrors';
 import { Status } from '../../../../enums/Status';
 import { useAthletesRegister } from '../register.context';
+import { useAthlete } from '../../useAthlete';
 
 export function HospitalData() {
   const formRef = useRef<FormHandles>(null);
   const { user } = useGlobal();
   const { setActiveTab } = useAthletesRegister();
 
-  const { mutateAsync, isLoading } = usePutAthlete();
+  const { editDocumentsStatus, editHospitalData } = useAthlete();
 
   const handleSubmit = async (data: IUpdateAthlete) => {
     formRef.current?.setErrors({});
@@ -42,7 +42,7 @@ export function HospitalData() {
         }),
       });
 
-      await mutateAsync({ ...user?.athleteProfile, ...data });
+      await editHospitalData({ ...user?.athleteProfile, ...data });
 
       toast.success('Dados hospitalares atualizado!');
 
@@ -118,8 +118,8 @@ export function HospitalData() {
                 user?.status === Status.ACTIVE ? 'Salvar' : 'Próximo passo'
               }
               variant="primary"
-              isLoading={isLoading}
-              disabled={isLoading}
+              isLoading={editDocumentsStatus === 'loading'}
+              disabled={editDocumentsStatus === 'loading'}
             />
           </div>
         </div>
