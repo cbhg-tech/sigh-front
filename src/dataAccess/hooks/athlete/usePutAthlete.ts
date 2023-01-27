@@ -17,6 +17,9 @@ export function usePutAthlete() {
     // eslint-disable-next-line no-param-reassign, @typescript-eslint/no-non-null-assertion
     data.userId = auth.currentUser!.uid;
 
+    // eslint-disable-next-line no-param-reassign
+    if (!data.name) data.name = user?.name;
+
     const res = await athleteController.put(data);
 
     if (user?.status === Status.REJECTED) {

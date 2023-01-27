@@ -170,9 +170,9 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
           filesUrl.federationPaymentVoucher =
             typeof data.documentsFile.federationPaymentVoucher !== 'string'
               ? await UploadFile(
-                `/athletes/${data.userId}/transfers/${data.id}/federationPaymentVoucher`,
-                data.documentsFile.federationPaymentVoucher,
-              )
+                  `/athletes/${data.userId}/transfers/${data.id}/federationPaymentVoucher`,
+                  data.documentsFile.federationPaymentVoucher,
+                )
               : data.documentsFile.federationPaymentVoucher;
         }
 
@@ -180,9 +180,9 @@ export const useTransfer = ({ fetchAll, transferId }: IProps) => {
           filesUrl.cbhgPaymentVoucher =
             typeof data.documentsFile.cbhgPaymentVoucher !== 'string'
               ? await UploadFile(
-                `/athletes/${data.userId}/transfers/${data.id}/cbhgPaymentVoucher`,
-                data.documentsFile.cbhgPaymentVoucher,
-              )
+                  `/athletes/${data.userId}/transfers/${data.id}/cbhgPaymentVoucher`,
+                  data.documentsFile.cbhgPaymentVoucher,
+                )
               : data.documentsFile.cbhgPaymentVoucher;
         }
 
