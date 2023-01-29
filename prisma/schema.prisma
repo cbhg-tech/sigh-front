@@ -1,0 +1,314 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+
+enum USER_TYPE {
+  ADMIN
+  ATHLETE
+}
+
+enum ROLE {
+  ADMIN
+  ADMINFEDERATION
+  ADMINTEAM
+}
+
+enum USER_STATUS {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum EVENT_STATUS {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LOG_TYPE {
+  TRANSFER
+  APPROVAL
+}
+
+// TABLES
+
+model User {
+  id          Int          @id @default(autoincrement())
+  email       String       @unique
+  password    String
+  name        String
+  type        USER_TYPE
+  status      USER_STATUS  @default(ACTIVE)
+  updatedAt   DateTime     @default(now()) @updatedAt
+  createdAt   DateTime     @default(now())
+  admin       Admin?
+  athlete     Athlete?
+  approvals   Approval[]
+  transfers   Transfer[]
+  userSession UserSession?
+
+  @@map("users")
+}
+
+model UserSession {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      @unique
+  token      String   @unique
+  isValid    Boolean  @default(true)
+  expires_at DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("user_sessions")
+}
+
+model Admin {
+  id           Int         @id @default(autoincrement())
+  userId       Int         @unique
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role         ROLE
+  federationId Int?
+  teamId       Int?
+  federation   Federation? @relation(fields: [federationId], references: [id])
+  team         Team?       @relation(fields: [teamId], references: [id])
+  updatedAt    DateTime    @default(now()) @updatedAt
+  createdAt    DateTime    @default(now())
+  logs         Log[]
+
+  @@map("admins")
+}
+
+model Athlete {
+  id             Int           @id @default(autoincrement())
+  userId         Int           @unique
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  document       String        @unique
+  registerNumber Int
+  teamId         Int
+  birthDate      String
+  phone          Int?
+  nickname       String?
+  gender         String?
+  emergencyName  String?
+  emergencyPhone Int?
+  team           Team          @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  updatedAt      DateTime      @default(now()) @updatedAt
+  createdAt      DateTime      @default(now())
+  address        Address?
+  documents      Documents?
+  hospitalData   HospitalData?
+
+  @@map("athletes")
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  country    String?
+  city       String?
+  state      String?
+  cep        String?
+  street     String?
+  number     String?
+  complement String?
+  athleteId  Int      @unique
+  athlete    Athlete  @relation(fields: [athleteId], references: [id])
+  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@map("addresses")
+}
+
+model Documents {
+  id                 Int      @id @default(autoincrement())
+  rgNumber           String?
+  rgEmissionDate     String?
+  rgEmissionOrg      String?
+  personalDocument   String?
+  noc                String?
+  medicalCertificate String?
+  commitmentTerm     String?
+  athleteId          Int      @unique
+  athlete            Athlete  @relation(fields: [athleteId], references: [id])
+  updatedAt          DateTime @default(now()) @updatedAt
+  createdAt          DateTime @default(now())
+
+  @@map("documents")
+}
+
+model HospitalData {
+  id              Int      @id @default(autoincrement())
+  bloodType       String?
+  allergies       String?
+  chronicDiseases String?
+  medications     String?
+  athleteId       Int      @unique
+  athlete         Athlete  @relation(fields: [athleteId], references: [id])
+  updatedAt       DateTime @default(now()) @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@map("hospital_data")
+}
+
+model Federation {
+  id                 Int              @id @default(autoincrement())
+  name               String
+  initials           String
+  uf                 String           @db.VarChar(2)
+  email              String
+  presidentName      String
+  beginningOfTerm    String
+  endOfTerm          String
+  electionMinutes    String
+  presidentDocument  String
+  federationDocument String
+  logo               String
+  admins             Admin[]
+  partnerProjects    PartnerProject[]
+  teams              Team[]
+  updatedAt          DateTime         @default(now()) @updatedAt
+  createdAt          DateTime         @default(now())
+
+  @@map("federations")
+}
+
+model Team {
+  id                      Int              @id @default(autoincrement())
+  name                    String
+  initials                String
+  uf                      String           @db.VarChar(2)
+  url                     String
+  coachName               String
+  email                   String
+  presidentName           String
+  beginningOfTerm         String
+  endOfTerm               String
+  electionMinutes         String
+  presidentDocument       String
+  teamDocument            String
+  logo                    String
+  federationId            Int
+  federation              Federation       @relation(fields: [federationId], references: [id])
+  admins                  Admin[]
+  athletes                Athlete[]
+  technicials             Technicial[]
+  partnerProjects         PartnerProject[]
+  currentTeamTransfer     Transfer[]       @relation("current_team")
+  destinationTeamTransfer Transfer[]       @relation("destination_team")
+  updatedAt               DateTime         @default(now()) @updatedAt
+  createdAt               DateTime         @default(now())
+
+  @@map("teams")
+}
+
+model PartnerProject {
+  id                  Int        @id @default(autoincrement())
+  name                String
+  description         String
+  initialDate         String
+  finalDate           String
+  practitioners       Int
+  malePractitioners   Int
+  femalePractitioners Int
+  ageGroup            String
+  url                 String
+  logo                String
+  contactName         String
+  contactPhone        String
+  street              String
+  state               String
+  city                String
+  place               String
+  federationId        Int
+  federation          Federation @relation(fields: [federationId], references: [id])
+  teamId              Int
+  team                Team       @relation(fields: [teamId], references: [id])
+  updatedAt           DateTime   @default(now()) @updatedAt
+  createdAt           DateTime   @default(now())
+
+  @@map("partner_projects")
+}
+
+model Technicial {
+  id           Int      @id @default(autoincrement())
+  name         String
+  phone        Int
+  birthDate    String
+  gender       String
+  email        String
+  document     String
+  documentFile String
+  teamId       Int
+  team         Team     @relation(fields: [teamId], references: [id])
+  updatedAt    DateTime @default(now()) @updatedAt
+  createdAt    DateTime @default(now())
+
+  @@map("technicial_committee")
+}
+
+model Approval {
+  id                 Int          @id @default(autoincrement())
+  userId             Int
+  user               User         @relation(fields: [userId], references: [id])
+  registerDate       String
+  teamId             Int
+  status             EVENT_STATUS @default(PENDING)
+  teamApproved       EVENT_STATUS @default(PENDING)
+  federationApproved EVENT_STATUS @default(PENDING)
+  cbhgApproved       EVENT_STATUS @default(PENDING)
+  logs               Log[]
+  updatedAt          DateTime     @default(now()) @updatedAt
+  createdAt          DateTime     @default(now())
+
+  @@map("user_approval")
+}
+
+model Transfer {
+  id                          Int          @id @default(autoincrement())
+  userId                      Int
+  user                        User         @relation(fields: [userId], references: [id])
+  status                      String
+  observation                 String?
+  cbhgPaymentVoucher          String
+  federationPaymentVoucher    String?
+  currentTeamId               Int
+  currentTeam                 Team         @relation(fields: [currentTeamId], references: [id], name: "current_team")
+  destinationTeamId           Int
+  destinationTeam             Team         @relation(fields: [destinationTeamId], references: [id], name: "destination_team")
+  currentTeamStatus           EVENT_STATUS @default(PENDING)
+  destinationTeamStatus       EVENT_STATUS @default(PENDING)
+  currentFederationStatus     EVENT_STATUS @default(PENDING)
+  destinationFederationStatus EVENT_STATUS @default(PENDING)
+  cbhgStatus                  EVENT_STATUS @default(PENDING)
+  logs                        Log[]
+  updatedAt                   DateTime     @default(now()) @updatedAt
+  createdAt                   DateTime     @default(now())
+
+  @@map("transfer")
+}
+
+model Log {
+  id          Int          @id @default(autoincrement())
+  status      EVENT_STATUS
+  type        LOG_TYPE
+  observation String?
+  createdBy   Int
+  user        Admin        @relation(fields: [createdBy], references: [id])
+  transferId  Int?
+  transfer    Transfer?    @relation(fields: [transferId], references: [id])
+  approvalId  Int?
+  approval    Approval?    @relation(fields: [approvalId], references: [id])
+  createdAt   DateTime     @default(now())
+
+  @@map("logs")
+}
