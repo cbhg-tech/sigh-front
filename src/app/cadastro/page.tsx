@@ -5,32 +5,21 @@ import { Button } from "@/components/Inputs/Button";
 import { Select } from "@/components/Inputs/Select";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { OnBoardingContainer } from "@/components/layouts/OnBoarding.layout";
-import { usePost } from "@/hooks/usePost";
-import { useForm } from "react-hook-form";
+import { NextPage } from "@/types/NextPage";
 
-type RegisterForm = {
-  name: string;
-  email: string;
-  document: string;
-  birthDate: string;
-  team: string;
-  password: string;
+const maskDocument = (value: string) => {
+  if (!value) return "";
+
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+    .replace(/(-\d{2})\d+?$/, "$1");
 };
 
-export default function RegisterPage() {
-  const { handleSubmit, register } = useForm<RegisterForm>();
-  const { mutate, status, error } = usePost("/api/athlete/create");
-
-  const onSubmit = async (data: RegisterForm) => {
-    try {
-      await mutate({
-        ...data,
-        teamId: "Palmeiras",
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+export default function RegisterPage({ searchParams }: NextPage) {
+  const error = searchParams?.error as string;
 
   return (
     <OnBoardingContainer>
@@ -39,43 +28,33 @@ export default function RegisterPage() {
           Cadastro de atletas do hóquei brasileiro
         </p>
         {status === "error" && <Alert message={error!} />}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Textfield
-            type="text"
-            id="name"
-            label="Nome completo"
-            {...register("name")}
-          />
-          <Textfield
-            type="email"
-            id="email"
-            label="Email"
-            {...register("email")}
-          />
+        <form action="/api/athlete/create" method="post">
+          <Textfield type="text" id="name" name="name" label="Nome completo" />
+          <Textfield type="email" id="email" name="email" label="Email" />
           <Textfield
             type="text"
             id="document"
+            name="document"
             label="CPF"
-            {...register("document")}
+            onChange={(e) => (e.target.value = maskDocument(e.target.value))}
           />
           <Textfield
             type="date"
             id="birthDate"
+            name="birthDate"
             label="Data de nascimento"
-            {...register("birthDate")}
           />
-          <Select id="team" label="Clube atual" {...register("team")}>
+          <Select id="team" name="team" label="Clube atual">
             <option value="">Selecione um clube</option>
           </Select>
           <Textfield
             type="password"
             id="password"
+            name="password"
             label="Senha"
-            {...register("password")}
+            min={6}
           />
-          <Button type="submit" isLoading={status === "loading"}>
-            Criar conta
-          </Button>
+          <Button type="submit">Criar conta</Button>
         </form>
         <p className="text-xs text-light-on-surface text-center">
           * Caso ainda não tenha um clube e deseja conhecer e praticar este

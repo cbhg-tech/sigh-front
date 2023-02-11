@@ -9,8 +9,11 @@ export default async function handler(
 ) {
   const { email, password } = req.body;
 
+  console.log("email: ", email);
+  console.log("password: ", password);
+
   if (!email || !password) {
-    return res.status(400).send({ error: "Dados incorretos" });
+    return res.redirect("/?error=Dados incorretos");
   }
 
   const user = await prisma.user.findUnique({
@@ -20,18 +23,19 @@ export default async function handler(
   });
 
   if (!user) {
-    return res.status(400).send({ error: "Usuário não encontrado" });
+    return res.redirect("/?error=Usuário não encontrado");
   }
 
   const passwordMatch = hashService().compare(password, user.password);
 
   if (!passwordMatch) {
-    return res.status(400).send({ error: "Senha" });
+    // return res.status(400).json({ error: "Senha não confere" });
+    return res.redirect("/?error=Senha não confere");
   }
 
   const secret = process.env.JWT_SECRET || "secret";
 
-  const token = jwt.sign({ email }, secret, {
+  const token = jwt.sign({ email, id: user.id }, secret, {
     expiresIn: "1d",
   });
 
@@ -45,5 +49,12 @@ export default async function handler(
     },
   });
 
-  return res.status(200).send({ token, user });
+  res.setHeader(
+    "Set-Cookie",
+    `token=${token}; path=/; expires=${new Date(
+      Date.now() + oneDayInMilliseconds
+    ).toUTCString()}`
+  );
+
+  return res.redirect("/app/dashboard");
 }

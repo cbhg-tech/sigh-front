@@ -1,29 +1,12 @@
-"use client";
-
+import Link from "next/link";
 import { Alert } from "@/components/Alert";
 import { Button } from "@/components/Inputs/Button";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { OnBoardingContainer } from "@/components/layouts/OnBoarding.layout";
-import { usePost } from "@/hooks/usePost";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { NextPage } from "@/types/NextPage";
 
-interface LoginForm {
-  email: string;
-  password: string;
-}
-
-export default function LoginPage() {
-  const { handleSubmit, register } = useForm<LoginForm>();
-  const { mutate, status, error } = usePost("/api/authentication");
-
-  const onSubmit = async (data: LoginForm) => {
-    try {
-      await mutate(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+export default function LoginPage({ searchParams }: NextPage) {
+  const error = searchParams?.error as string;
 
   return (
     <OnBoardingContainer>
@@ -31,23 +14,18 @@ export default function LoginPage() {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Faça o login no SIGH ou registre-se
         </p>
-        {status === "error" && <Alert message={error!} />}
-        <form onSubmit={handleSubmit(onSubmit)}>
+
+        {error && <Alert message={error} />}
+
+        <form action="/api/authentication" method="POST">
+          <Textfield label="Email" name="email" type="email" id="email" />
           <Textfield
-            type="email"
-            id="email"
-            label="Email"
-            {...register("email")}
-          />
-          <Textfield
+            label="Senha"
+            name="password"
             type="password"
             id="password"
-            label="Senha"
-            {...register("password")}
           />
-          <Button type="submit" isLoading={status === "loading"}>
-            Entrar
-          </Button>
+          <Button type="submit">Entrar</Button>
         </form>
 
         <Link
