@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert } from "@/components/Alert";
 import { Button } from "@/components/Inputs/Button";
 import { Select } from "@/components/Inputs/Select";
@@ -27,7 +25,7 @@ export default function RegisterPage({ searchParams }: NextPage) {
         <p className="text-center mb-4 font-medium text-light-on-surface">
           Cadastro de atletas do hóquei brasileiro
         </p>
-        {status === "error" && <Alert message={error!} />}
+        {error && <Alert message={error!} />}
         <form action="/api/athlete/create" method="post">
           <Textfield type="text" id="name" name="name" label="Nome completo" />
           <Textfield type="email" id="email" name="email" label="Email" />
