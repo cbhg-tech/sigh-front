@@ -1,3 +1,5 @@
+"use client";
+
 import { Alert } from "@/components/Alert";
 import { Button } from "@/components/Inputs/Button";
 import { Select } from "@/components/Inputs/Select";
