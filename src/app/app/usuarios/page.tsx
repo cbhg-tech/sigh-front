@@ -47,8 +47,6 @@ async function getSystemUser() {
 }
 
 const UsersPage = async () => {
-  // set a 5 seconds delay to simulate a slow loading
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   const systemUsers = await getSystemUser();
 
   function translateStatus(status: USER_STATUS) {
