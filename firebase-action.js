@@ -1,41 +1,46 @@
-import { initializeApp } from 'firebase/app';
-import { collection, getDocs, getFirestore, query, where, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import { getFirestore, getDocs, query, getDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBQKXJNidi4yGdM4GzzTPmMVAN9O1LOris',
-  authDomain: 'sigh-f656a.firebaseapp.com',
-  projectId: 'sigh-f656a',
-  storageBucket: 'sigh-f656a.appspot.com',
-  messagingSenderId: '484419594492',
-  appId: '1:484419594492:web:c692c20ccbdfed4bf2cf79',
-  measurementId: 'G-7PTD9BJ1E7',
+  apiKey: "AIzaSyBQKXJNidi4yGdM4GzzTPmMVAN9O1LOris",
+  authDomain: "sigh-f656a.firebaseapp.com",
+  projectId: "sigh-f656a",
+  storageBucket: "sigh-f656a.appspot.com",
+  messagingSenderId: "484419594492",
+  appId: "1:484419594492:web:c692c20ccbdfed4bf2cf79",
+  measurementId: "G-7PTD9BJ1E7",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function action() {
-  const res = await getDocs(query(collection(db, 'transfers'), where('userId', '==', 'v3hfMmFjTgdSDrQytclyj5I4nDA2')));
+  const approvedAthletes = await getDocs(
+    query(collection(db, "userApproval"), where("status", "==", "Ativo"))
+  );
 
-  const transfers = [];
+  const userIds = [];
 
-  res.forEach(doc => {
-    transfers.push({
+  approvedAthletes.forEach((doc) => {
+    userIds.push(doc.id);
+  });
+
+  const usersRes = await Promise.all(
+    userIds.map((id) => getDoc(doc(db, "users", id)))
+  );
+
+  const users = [];
+
+  usersRes.forEach((doc) => {
+    users.push({
       ...doc.data(),
-      id: doc.id
+      id: doc.id,
     });
-  })
+  });
 
-  // order transfers growing bu createdAt
-  const sorted = transfers.sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+  const userUnapproved = users.filter((user) => user.status !== "Ativo");
 
-  // get the most recent transfer
-  const mostRecent = sorted[sorted.length - 1];
-
-  // delete all other transfers
-  for (let i = 0; i < sorted.length - 1; i++) {
-    await deleteDoc(doc(db, 'transfers', sorted[i].id));
-  }
+  console.log(userUnapproved);
 }
 
 action();
