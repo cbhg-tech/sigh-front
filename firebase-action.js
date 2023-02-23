@@ -1,5 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, getDocs, query, getDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  getDocs,
+  query,
+  getDoc,
+  doc,
+  collection,
+  where,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBQKXJNidi4yGdM4GzzTPmMVAN9O1LOris",
@@ -15,18 +26,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function action() {
-  const approvedAthletes = await getDocs(
-    query(collection(db, "userApproval"), where("status", "==", "Ativo"))
+  const trasnfersRes = await getDocs(
+    query(collection(db, "transfers"), where("status", "==", "Ativo"))
   );
 
-  const userIds = [];
+  if (trasnfersRes.empty) {
+    console.log("No matching documents.");
+    return;
+  }
 
-  approvedAthletes.forEach((doc) => {
-    userIds.push(doc.id);
+  const transfers = [];
+
+  trasnfersRes.forEach((doc) => {
+    transfers.push({ ...doc.data() });
   });
 
   const usersRes = await Promise.all(
-    userIds.map((id) => getDoc(doc(db, "users", id)))
+    transfers.map((user) => getDoc(doc(db, "users", user.userId)))
   );
 
   const users = [];
@@ -38,9 +54,44 @@ async function action() {
     });
   });
 
-  const userUnapproved = users.filter((user) => user.status !== "Ativo");
+  await Promise.all(
+    users.map(async (user) => {
+      const userTransfer = transfers.find(
+        (transfer) => transfer.userId === user.id
+      );
 
-  console.log(userUnapproved);
+      if (userTransfer.destinationTeamId !== user.relatedId) {
+        const destinationTeam = (
+          await getDoc(doc(db, "teams", userTransfer.destinationTeamId))
+        ).data();
+
+        console.log(`=== ${user.id} ===`);
+
+        console.log("User is in initial team");
+
+          await updateDoc(doc(db, "teams", userTransfer.currentTeamId), {
+            usersList: arrayRemove(user.id),
+          });
+
+          console.log("User removed from initial team");
+
+          await updateDoc(doc(db, "teams", userTransfer.destinationTeamId), {
+            usersList: arrayUnion(user.id),
+          });
+
+          console.log("User added to destination team");
+
+          await updateDoc(doc(db, "users", user.id), {
+            relatedId: userTransfer.destinationTeamId,
+            relatedName: destinationTeam.name,
+          });
+
+          console.log("User relatedId updated");
+
+        console.log(`====================`);
+      }
+    })
+  );
 }
 
 action();
