@@ -59,36 +59,6 @@ export function TeamDetailsPage() {
               </p>
             </div>
           </div>
-          <div className="mb-8 flex gap-4">
-            <div>
-              <MdFormatListBulleted
-                size="1.75rem"
-                className="text-light-on-surface-variant"
-              />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-3xl text-light-on-surface-variant">
-                Atletas
-              </h2>
-              <ul>
-                {data?.users?.map(user => (
-                  <li
-                    className="py-4 flex gap-2 items-center text-light-on-surface-variant border-b border-light-outline last:border-none"
-                    key={user.id}
-                  >
-                    <img
-                      className="w-12 h-12 z-0 rounded-full object-cover bg-light-secondary-container"
-                      src={user.photoUrl}
-                      alt={user.name}
-                    />
-                    <span>{user.name}</span>
-                    {/* TODO: adicionar link redirecionando para detalhes do time */}
-                    <MdLink size="1.25rem" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </>
       ) : (
         <div>
