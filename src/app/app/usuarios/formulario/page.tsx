@@ -6,11 +6,31 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { fetcher } from "@/services/fetcher";
 import { NextPage } from "@/types/NextPage";
-import { Federation, ROLE, Team } from "@prisma/client";
-import { useState } from "react";
+import { Admin, Federation, ROLE, Team, User } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
+type AdminUser = User & {
+  admin: Admin;
+};
+
+type FormValues = {
+  name: string;
+  email: string;
+  role: ROLE;
+  related: number | null;
+  password: string;
+};
+
 const FormularioPage = ({ searchParams }: NextPage) => {
+  const id = searchParams?.id as string;
+
+  const { data: selectedUser, isLoading } = useSWR<AdminUser>(
+    id ? `http://localhost:3000/api/user/${id}` : null,
+    fetcher
+  );
+
   const { data: teams } = useSWR<Team[]>(
     "http://localhost:3000/api/team/public",
     fetcher
@@ -20,9 +40,22 @@ const FormularioPage = ({ searchParams }: NextPage) => {
     fetcher
   );
 
-  const [selectedRole, setSelectedRole] = useState<ROLE>(ROLE.ADMIN);
+  const { register, reset } = useForm<FormValues>();
 
-  const id = searchParams?.id as string;
+  const [selectedRole, setSelectedRole] = useState<ROLE>(ROLE.ADMINFEDERATION);
+
+  useEffect(() => {
+    if (selectedUser && !isLoading) {
+      reset({
+        name: selectedUser.name,
+        email: selectedUser.email,
+        related:
+          selectedUser.admin.federationId || selectedUser.admin.teamId || null,
+      });
+
+      setSelectedRole(selectedUser.admin.role);
+    }
+  }, [isLoading, reset, selectedUser]);
 
   return (
     <div>
@@ -35,12 +68,13 @@ const FormularioPage = ({ searchParams }: NextPage) => {
         para alterar dados da plataforma de acordo com o seu nível de acesso.
       </p>
       <form>
-        <Textfield label="Nome" id="name" />
+        <Textfield label="Nome" id="name" {...register("name")} />
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
             <Select
               label="AccessRole"
               id="role"
+              value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value as ROLE)}
             >
               <option value={ROLE.ADMIN}>Admin</option>
@@ -58,7 +92,7 @@ const FormularioPage = ({ searchParams }: NextPage) => {
             )}
 
             {selectedRole === ROLE.ADMINFEDERATION && (
-              <Select label="Federação" id="federation">
+              <Select label="Federação" id="related" {...register("related")}>
                 <option value="">Selecione uma federação</option>
                 {federations &&
                   federations.length > 0 &&
@@ -71,7 +105,7 @@ const FormularioPage = ({ searchParams }: NextPage) => {
             )}
 
             {selectedRole === ROLE.ADMINTEAM && (
-              <Select label="Clube" id="team">
+              <Select label="Clube" id="related" {...register("related")}>
                 <option value="">Selecione um clube</option>
                 {teams &&
                   teams.length > 0 &&
@@ -86,11 +120,21 @@ const FormularioPage = ({ searchParams }: NextPage) => {
         </div>
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
-            <Textfield type="email" id="email" label="Email" />
+            <Textfield
+              type="email"
+              id="email"
+              label="Email"
+              {...register("email")}
+            />
           </div>
           {!id && (
             <div className="flex-1">
-              <Textfield type="password" id="password" label="Senha" />
+              <Textfield
+                type="password"
+                id="password"
+                label="Senha"
+                {...register("password")}
+              />
             </div>
           )}
         </div>

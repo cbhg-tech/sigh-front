@@ -8,6 +8,13 @@ import { AsideMenu } from "@/components/AsideMenu";
 import { MdOutlineMenu } from "react-icons/md";
 import Link from "next/link";
 
+export const metadata = {
+  title: "SIGH | Dashboard",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
 async function getUser() {
   const userCookies = cookies();
   const token = userCookies.get("token")?.value;

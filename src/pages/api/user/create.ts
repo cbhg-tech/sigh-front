@@ -9,61 +9,63 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { name, email, password, role } = req.body;
+  if (req.method === "POST") {
+    const { name, email, password, role } = req.body;
 
-  if (!name || !email || !password || !role || !req.body) {
-    return res.status(400).send({ error: "Dados incorretos" });
-  }
+    if (!name || !email || !password || !role || !req.body) {
+      return res.status(400).send({ error: "Dados incorretos" });
+    }
 
-  const emailExists = await prisma.user.findFirst({
-    where: {
-      email,
-    },
-  });
+    const emailExists = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
 
-  if (emailExists) {
-    return res.status(400).send({ error: "Email já cadastrado" });
-  }
+    if (emailExists) {
+      return res.status(400).send({ error: "Email já cadastrado" });
+    }
 
-  if (!Object.values(ROLE).includes(role)) {
-    return res.status(400).send({ error: "Role inválida" });
-  }
+    if (!Object.values(ROLE).includes(role)) {
+      return res.status(400).send({ error: "Role inválida" });
+    }
 
-  const hashed = hashService().generate(password);
+    const hashed = hashService().generate(password);
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashed,
-      type: USER_TYPE.ADMIN,
-      status: USER_STATUS.ACTIVE,
-      admin: {
-        create: {
-          role: ROLE[role as keyof typeof ROLE],
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashed,
+        type: USER_TYPE.ADMIN,
+        status: USER_STATUS.ACTIVE,
+        admin: {
+          create: {
+            role: ROLE[role as keyof typeof ROLE],
+          },
         },
       },
-    },
-  });
+    });
 
-  const secret = process.env.JWT_SECRET || "secret";
+    const secret = process.env.JWT_SECRET || "secret";
 
-  const token = jwt.sign({ email }, secret, {
-    expiresIn: "1d",
-  });
+    const token = jwt.sign({ email }, secret, {
+      expiresIn: "1d",
+    });
 
-  const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
 
-  await prisma.userSession.create({
-    data: {
-      token,
-      userId: user.id,
-      expires_at: new Date(Date.now() + oneDayInMilliseconds),
-    },
-  });
+    await prisma.userSession.create({
+      data: {
+        token,
+        userId: user.id,
+        expires_at: new Date(Date.now() + oneDayInMilliseconds),
+      },
+    });
 
-  // @ts-ignore
-  delete user.password;
+    // @ts-ignore
+    delete user.password;
 
-  return res.status(200).json({ token, user });
+    return res.status(200).json({ token, user });
+  }
 }
