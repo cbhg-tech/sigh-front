@@ -1,12 +1,9 @@
 import { Badge } from "@/components/Badge";
-import { IconButton } from "@/components/Inputs/IconButton";
 import { Textfield } from "@/components/Inputs/Textfield";
-import { ListAction } from "@/components/ListAcion";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { USER_STATUS } from "@prisma/client";
-import Link from "next/link";
-import { MdEdit, MdOutlineDeleteOutline } from "react-icons/md";
+import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [
   {
@@ -112,23 +109,7 @@ const UsersPage = async () => {
                 ADMIN
               </td>
               <td className={`w-auto py-4 px-2`}>
-                <div className="flex gap-2 justify-end">
-                  <Link href={`/app/usuarios/formulario?id=${user.id}`}>
-                    <IconButton
-                      icon={MdEdit}
-                      className="text-light-primary"
-                      size="1.5rem"
-                    />
-                  </Link>
-
-                  <Link href={`/api/user/delete/${user.id}`}>
-                    <IconButton
-                      icon={MdOutlineDeleteOutline}
-                      className="text-light-error"
-                      size="1.5rem"
-                    />
-                  </Link>
-                </div>
+                <ListItemAction id={user.id} />
               </td>
             </tr>
           ))}

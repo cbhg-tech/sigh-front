@@ -1,4 +1,6 @@
-import { ButtonHTMLAttributes, ComponentType, ReactNode } from "react";
+"use client";
+
+import { ButtonHTMLAttributes, ReactNode } from "react";
 import { CgSpinner } from "react-icons/cg";
 
 interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {

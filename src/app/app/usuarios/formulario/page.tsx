@@ -4,10 +4,12 @@ import { Button } from "@/components/Inputs/Button";
 import { Select } from "@/components/Inputs/Select";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
+import { usePost } from "@/hooks/usePost";
 import { fetcher } from "@/services/fetcher";
 import { NextPage } from "@/types/NextPage";
 import { Admin, Federation, ROLE, Team, User } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { startTransition, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 
@@ -26,6 +28,8 @@ type FormValues = {
 const FormularioPage = ({ searchParams }: NextPage) => {
   const id = searchParams?.id as string;
 
+  const router = useRouter();
+
   const { data: selectedUser, isLoading } = useSWR<AdminUser>(
     id ? `http://localhost:3000/api/user/${id}` : null,
     fetcher
@@ -40,9 +44,11 @@ const FormularioPage = ({ searchParams }: NextPage) => {
     fetcher
   );
 
-  const { register, reset } = useForm<FormValues>();
+  const { register, reset, handleSubmit } = useForm<FormValues>();
 
   const [selectedRole, setSelectedRole] = useState<ROLE>(ROLE.ADMINFEDERATION);
+
+  const { mutate, status } = usePost("http://localhost:3000/api/user");
 
   useEffect(() => {
     if (selectedUser && !isLoading) {
@@ -57,6 +63,27 @@ const FormularioPage = ({ searchParams }: NextPage) => {
     }
   }, [isLoading, reset, selectedUser]);
 
+  async function onSubmit(data: FormValues) {
+    try {
+      console.log(data);
+
+      await mutate({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+        related: data.related,
+      });
+
+      // startTransition(() => {
+      //   router.push("/app/usuarios");
+      //   router.refresh();
+      // });
+    } catch (error) {
+      alert("Erro ao salvar usuário");
+    }
+  }
+
   return (
     <div>
       <h2 className="text-3xl text-light-on-surface mb-2">
@@ -67,7 +94,7 @@ const FormularioPage = ({ searchParams }: NextPage) => {
         certeza do acesso que esteja sendo criado. O usuário terá permissões
         para alterar dados da plataforma de acordo com o seu nível de acesso.
       </p>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Textfield label="Nome" id="name" {...register("name")} />
         <div className="flex flex-col lg:flex-row gap-2">
           <div className="flex-1">
@@ -146,7 +173,11 @@ const FormularioPage = ({ searchParams }: NextPage) => {
           >
             Cancelar
           </NavigationButton>
-          <Button aditionalClasses="w-auto px-2" type="submit">
+          <Button
+            isLoading={status === "loading"}
+            aditionalClasses="w-auto px-2"
+            type="submit"
+          >
             Salvar
           </Button>
         </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { forwardRef, InputHTMLAttributes } from "react";
 import { IconBaseProps } from "react-icons";
 import { MdErrorOutline } from "react-icons/md";

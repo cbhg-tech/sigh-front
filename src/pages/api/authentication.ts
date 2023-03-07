@@ -9,9 +9,6 @@ export default async function handler(
 ) {
   const { email, password } = req.body;
 
-  console.log("email: ", email);
-  console.log("password: ", password);
-
   if (!email || !password) {
     return res.redirect("/?error=Dados incorretos");
   }
@@ -29,7 +26,6 @@ export default async function handler(
   const passwordMatch = hashService().compare(password, user.password);
 
   if (!passwordMatch) {
-    // return res.status(400).json({ error: "Senha não confere" });
     return res.redirect("/?error=Senha não confere");
   }
 
