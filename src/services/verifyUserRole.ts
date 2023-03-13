@@ -1,10 +1,8 @@
-import { ROLE, User, USER_TYPE, Admin, Athlete } from "@prisma/client";
+import { UserComplete } from "@/types/UserComplete";
+import { ROLE, USER_TYPE } from "@prisma/client";
 
 interface VerifyUserRoleProps {
-  user: User & {
-    admin?: Admin | null;
-    athlete?: Athlete | null;
-  };
+  user: UserComplete;
   isAthlete?: boolean;
   roles?: ROLE[];
 }

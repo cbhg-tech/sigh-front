@@ -25,8 +25,6 @@ type FormValues = {
   password: string;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
 const FormularioPage = ({ searchParams }: NextPage) => {
   const id = searchParams?.id as string;
 
@@ -37,7 +35,7 @@ const FormularioPage = ({ searchParams }: NextPage) => {
     fetcher
   );
 
-  const { data: teams } = useSWR<Team[]>(`${apiUrl}/api/team/public`, fetcher);
+  const { data: teams } = useSWR<Team[]>(`/api/team/public`, fetcher);
   const { data: federations } = useSWR<Federation[]>(
     `/api/federation/public`,
     fetcher

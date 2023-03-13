@@ -25,6 +25,21 @@ async function getCurrentUser() {
     },
   });
 
+  // @ts-ignore
+  delete user.password;
+  // @ts-ignore
+  delete user?.createdAt;
+  // @ts-ignore
+  delete user?.updatedAt;
+  // @ts-ignore
+  delete user?.admin?.createdAt;
+  // @ts-ignore
+  delete user?.admin?.updatedAt;
+  // @ts-ignore
+  delete user?.athlete?.createdAt;
+  // @ts-ignore
+  delete user?.athlete?.updatedAt;
+
   return user;
 }
 

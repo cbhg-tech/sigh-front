@@ -4,8 +4,16 @@ import { MdDashboard, MdShield } from "react-icons/md";
 import { FaUsersCog } from "react-icons/fa";
 import { Divider } from "../Divider";
 import { NavigationItem } from "./NavigationItem";
+import { UserComplete } from "@/types/UserComplete";
+import { verifyUserRole } from "@/services/verifyUserRole";
+import { ROLE } from "@prisma/client";
 
-const AsideMenu = () => {
+const AsideMenu = ({ user }: { user: UserComplete }) => {
+  const isAdmin = verifyUserRole({
+    user,
+    roles: [ROLE.ADMIN],
+  });
+
   return (
     <div>
       <NavigationItem
@@ -22,11 +30,13 @@ const AsideMenu = () => {
         label="Federações"
         icon={MdShield}
       />
-      <NavigationItem
-        href="/app/usuarios"
-        label="Usuários do sistema"
-        icon={FaUsersCog}
-      />
+      {isAdmin && (
+        <NavigationItem
+          href="/app/usuarios"
+          label="Usuários do sistema"
+          icon={FaUsersCog}
+        />
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/services/getCurrentUser";
 import { prisma } from "@/services/prisma";
 import { verifyUserRole } from "@/services/verifyUserRole";
 import { ROLE } from "@prisma/client";
+import { ListItemAction } from "./ListItemAction";
 // import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [
@@ -40,7 +41,7 @@ const FederationsPage = async () => {
   const currentUser = await getCurrentUser();
   const federations = await getFederations();
 
-  const canCreate = verifyUserRole({
+  const canCreateAndEdit = verifyUserRole({
     user: currentUser!,
     roles: [ROLE.ADMIN],
   });
@@ -49,11 +50,11 @@ const FederationsPage = async () => {
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">
-          Listagem de federação {`(${0})`}
+          Listagem de federação {`(${federations.length || 0})`}
         </h2>
-        {canCreate && (
+        {canCreateAndEdit && (
           <NavigationButton
-            href="/app/usuarios/formulario"
+            href="/app/federacoes/formulario"
             additionalClasses="w-full lg:w-auto px-6"
           >
             Criar Federação
@@ -103,7 +104,7 @@ const FederationsPage = async () => {
                     {fed.presidentName}
                   </td>
                   <td className={`w-auto py-4 px-2`}>
-                    {/* <ListItemAction id={user.id} userId={currentUser!.id} /> */}
+                    <ListItemAction id={fed.id} enableEdit={canCreateAndEdit} />
                   </td>
                 </tr>
               ))}

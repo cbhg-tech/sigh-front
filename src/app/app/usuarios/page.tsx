@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/services/getCurrentUser";
 import { prisma } from "@/services/prisma";
 import { verifyUserRole } from "@/services/verifyUserRole";
 import { ROLE, USER_STATUS } from "@prisma/client";
+import Link from "next/link";
 import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [
@@ -62,25 +63,40 @@ const UsersPage = async () => {
     }
   }
 
-  const canCreate = verifyUserRole({
+  const isAdmin = verifyUserRole({
     user: currentUser!,
     roles: [ROLE.ADMIN],
   });
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <h2 className="text-3xl text-light-on-surface">Acesso negado</h2>
+        <p className="text-light-on-surface">
+          Você não tem permissão para acessar essa página
+        </p>
+        <Link
+          className="text-light-on-tertiary-container font-bold underline"
+          href="/app/dashboard"
+        >
+          Voltar para a página inicial
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">
-          Listagem de usuários {`(${0})`}
+          Listagem de usuários {`(${systemUsers.length || 0})`}
         </h2>
-        {canCreate && (
-          <NavigationButton
-            href="/app/usuarios/formulario"
-            additionalClasses="w-full lg:w-auto px-6"
-          >
-            Criar usuário
-          </NavigationButton>
-        )}
+        <NavigationButton
+          href="/app/usuarios/formulario"
+          additionalClasses="w-full lg:w-auto px-6"
+        >
+          Criar usuário
+        </NavigationButton>
       </div>
 
       {systemUsers.length === 0 ? (

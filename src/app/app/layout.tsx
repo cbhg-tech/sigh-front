@@ -57,7 +57,7 @@ const AppLayout = async ({ children }: { children: ReactNode }) => {
 
       <aside className="absolute duration-200 ease-in-out lg:translate-x-0 lg:p-4 top-0 left-0 z-10 w-full min-h-screen h-full lg:relative lg:w-full lg:col-span-1 bg-light-surface-1 hidden lg:block">
         <div className="bg-light-surface-1 overflow-y-auto flex flex-col min-h-screen h-full p-4 lg:rounded-3xl md:pb-20">
-          <AsideMenu />
+          {user && <AsideMenu user={user} />}
         </div>
       </aside>
 

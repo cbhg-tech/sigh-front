@@ -1,6 +1,5 @@
 import { ROLE, USER_STATUS, USER_TYPE } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import * as jwt from "jsonwebtoken";
 
 import { prisma } from "@/services/prisma";
 import { hashService } from "@/services/hash";
