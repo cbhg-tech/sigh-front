@@ -1,28 +1,27 @@
-import { Badge } from "@/components/Badge";
 import { EmptyMessage } from "@/components/EmptyMessage";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { getCurrentUser } from "@/services/getCurrentUser";
 import { prisma } from "@/services/prisma";
 import { verifyUserRole } from "@/services/verifyUserRole";
-import { ROLE, USER_STATUS } from "@prisma/client";
-import { ListItemAction } from "./ListItemAction";
+import { ROLE } from "@prisma/client";
+// import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [
   {
     name: "Nome",
-    width: "w-1/2 lg:w-1/5",
+    width: "w-1/2 lg:w-1/4",
   },
   {
-    name: "Status",
+    name: "Sigla",
     width: "hidden lg:table-cell lg:w-1/5",
   },
   {
-    name: "RoleAccess",
+    name: "Estado",
     width: "hidden lg:table-cell lg:w-1/5",
   },
   {
-    name: "Associação",
+    name: "Presidente",
     width: "hidden lg:table-cell w-1/2 lg:w-1/5",
   },
   {
@@ -31,36 +30,15 @@ const HeaderName = [
   },
 ];
 
-async function getSystemUser() {
-  const user = await prisma.user.findMany({
-    include: {
-      admin: true,
-    },
-  });
+async function getFederations() {
+  const federations = await prisma.federation.findMany({});
 
-  return user.map((user) => {
-    // @ts-ignore
-    delete user.password;
-
-    return user;
-  });
+  return federations;
 }
 
-const UsersPage = async () => {
+const FederationsPage = async () => {
   const currentUser = await getCurrentUser();
-  const systemUsers = await getSystemUser();
-
-  function translateStatus(status: USER_STATUS) {
-    switch (status) {
-      case USER_STATUS.ACTIVE:
-        return "Ativo";
-      case USER_STATUS.INACTIVE:
-        return "Inativo";
-      default:
-      case USER_STATUS.PENDING:
-        return "Pendente";
-    }
-  }
+  const federations = await getFederations();
 
   const canCreate = verifyUserRole({
     user: currentUser!,
@@ -71,20 +49,20 @@ const UsersPage = async () => {
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
         <h2 className="text-3xl text-light-on-surface">
-          Listagem de usuários {`(${0})`}
+          Listagem de federação {`(${0})`}
         </h2>
         {canCreate && (
           <NavigationButton
             href="/app/usuarios/formulario"
             additionalClasses="w-full lg:w-auto px-6"
           >
-            Criar usuário
+            Criar Federação
           </NavigationButton>
         )}
       </div>
 
-      {systemUsers.length === 0 ? (
-        <EmptyMessage message="Nenhum usuário cadastrado" />
+      {federations.length === 0 ? (
+        <EmptyMessage message="Nenhuma federação cadastrada" />
       ) : (
         <>
           <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
@@ -107,26 +85,25 @@ const UsersPage = async () => {
               </tr>
             </thead>
             <tbody>
-              {systemUsers.map((user) => (
+              {federations.map((fed) => (
                 <tr
                   className="border-b last:border-none border-slate-200"
-                  key={user.id}
+                  key={fed.id}
                 >
-                  <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{user.name}</td>
+                  <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{fed.name}</td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {translateStatus(user.status)}
+                    {fed.initials}
                   </td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    <Badge type="tertiary">{user.admin?.role}</Badge>
+                    {fed.uf}
                   </td>
                   <td
                     className={`hidden lg:table-cell w-1/2 lg:w-1/5 py-4 px-2`}
                   >
-                    {/* {user.admin.} */}
-                    ADMIN
+                    {fed.presidentName}
                   </td>
                   <td className={`w-auto py-4 px-2`}>
-                    <ListItemAction id={user.id} userId={currentUser!.id} />
+                    {/* <ListItemAction id={user.id} userId={currentUser!.id} /> */}
                   </td>
                 </tr>
               ))}
@@ -138,4 +115,4 @@ const UsersPage = async () => {
   );
 };
 
-export default UsersPage;
+export default FederationsPage;

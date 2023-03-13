@@ -4,7 +4,7 @@ import { validateUserSession } from "@/services/validateUserSession";
 import { AsideMenu } from "@/components/AsideMenu";
 import { MdOutlineMenu } from "react-icons/md";
 import Link from "next/link";
-import { getCurrentUser } from "@/fetchs/getCurrentUser";
+import { getCurrentUser } from "@/services/getCurrentUser";
 
 export const metadata = {
   title: "SIGH | Dashboard",
