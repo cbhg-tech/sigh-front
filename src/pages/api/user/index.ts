@@ -47,25 +47,9 @@ export default async function handler(
       },
     });
 
-    const secret = process.env.JWT_SECRET || "secret";
-
-    const token = jwt.sign({ email }, secret, {
-      expiresIn: "1d",
-    });
-
-    const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-
-    await prisma.userSession.create({
-      data: {
-        token,
-        userId: user.id,
-        expires_at: new Date(Date.now() + oneDayInMilliseconds),
-      },
-    });
-
     // @ts-ignore
     delete user.password;
 
-    return res.status(200).json({ token, user });
+    return res.status(200).json({ user });
   }
 }

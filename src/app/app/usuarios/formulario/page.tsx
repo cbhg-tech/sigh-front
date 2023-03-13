@@ -4,7 +4,7 @@ import { Button } from "@/components/Inputs/Button";
 import { Select } from "@/components/Inputs/Select";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
-import { usePost } from "@/hooks/usePost";
+import { useMutation } from "@/hooks/useMutation";
 import { fetcher } from "@/services/fetcher";
 import { NextPage } from "@/types/NextPage";
 import { Admin, Federation, ROLE, Team, User } from "@prisma/client";
@@ -25,22 +25,21 @@ type FormValues = {
   password: string;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 const FormularioPage = ({ searchParams }: NextPage) => {
   const id = searchParams?.id as string;
 
   const router = useRouter();
 
   const { data: selectedUser, isLoading } = useSWR<AdminUser>(
-    id ? `http://localhost:3000/api/user/${id}` : null,
+    id ? `/api/user/${id}` : null,
     fetcher
   );
 
-  const { data: teams } = useSWR<Team[]>(
-    "http://localhost:3000/api/team/public",
-    fetcher
-  );
+  const { data: teams } = useSWR<Team[]>(`${apiUrl}/api/team/public`, fetcher);
   const { data: federations } = useSWR<Federation[]>(
-    "http://localhost:3000/api/federation/public",
+    `/api/federation/public`,
     fetcher
   );
 
@@ -48,7 +47,14 @@ const FormularioPage = ({ searchParams }: NextPage) => {
 
   const [selectedRole, setSelectedRole] = useState<ROLE>(ROLE.ADMINFEDERATION);
 
-  const { mutate, status } = usePost("http://localhost:3000/api/user");
+  const { mutate: create, status: createStatus } = useMutation(
+    `/api/user`,
+    "POST"
+  );
+  const { mutate: update, status: updateStatus } = useMutation(
+    `/api/user/${id}`,
+    "PUT"
+  );
 
   useEffect(() => {
     if (selectedUser && !isLoading) {
@@ -65,24 +71,33 @@ const FormularioPage = ({ searchParams }: NextPage) => {
 
   async function onSubmit(data: FormValues) {
     try {
-      console.log(data);
+      if (id) {
+        await update({
+          name: data.name,
+          email: data.email,
+          role: selectedRole,
+          related: data.related,
+        });
+      } else {
+        await create({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: selectedRole,
+          related: data.related,
+        });
+      }
 
-      await mutate({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        related: data.related,
+      startTransition(() => {
+        router.push("/app/usuarios");
+        router.refresh();
       });
-
-      // startTransition(() => {
-      //   router.push("/app/usuarios");
-      //   router.refresh();
-      // });
     } catch (error) {
       alert("Erro ao salvar usuário");
     }
   }
+
+  const isSubmitting = createStatus === "loading" || updateStatus === "loading";
 
   return (
     <div>
@@ -174,7 +189,8 @@ const FormularioPage = ({ searchParams }: NextPage) => {
             Cancelar
           </NavigationButton>
           <Button
-            isLoading={status === "loading"}
+            isLoading={isSubmitting}
+            disabled={isSubmitting}
             aditionalClasses="w-auto px-2"
             type="submit"
           >

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, Method } from "axios";
 
 type FetchStatus = "idle" | "loading" | "success" | "error";
 
@@ -10,7 +10,9 @@ interface FetchResult<T> {
   mutate: (body: unknown) => Promise<void>;
 }
 
-export const usePost = <T>(url: string): FetchResult<T> => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+export const useMutation = <T>(url: string, method: Method): FetchResult<T> => {
   const [status, setStatus] = useState<FetchStatus>("idle");
   const [data, setData] = useState<T | unknown>(null);
   const [error, setError] = useState<string | null>(null);
@@ -19,16 +21,24 @@ export const usePost = <T>(url: string): FetchResult<T> => {
     setStatus("loading");
 
     try {
-      const response = await axios.post(url, body);
+      const response = await axios.request<T>({
+        url: `${apiUrl}${url}`,
+        method,
+        data: body,
+      });
 
       setData(response.data);
       setStatus("success");
     } catch (err) {
       setStatus("error");
+
       if (err instanceof AxiosError) {
-        return setError(err.response?.data.error);
+        setError(err.response?.data.error);
+        throw err;
       }
+
       setError("Houve um erro ao tentar se conectar ao servidor");
+      throw err;
     }
   };
 

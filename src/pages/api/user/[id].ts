@@ -24,4 +24,30 @@ export default async function handler(
 
     return res.status(200).json(user);
   }
+
+  if (req.method === "PUT") {
+    const { id } = req.query;
+    const { name, email, role } = req.body;
+
+    if (!name || !email || !role) {
+      return res.status(400).send({ error: "Dados incorretos" });
+    }
+
+    const user = await prisma.user.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name,
+        email,
+        admin: {
+          update: {
+            role,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json(user);
+  }
 }
