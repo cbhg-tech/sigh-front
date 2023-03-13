@@ -1,6 +1,7 @@
 import { Badge } from "@/components/Badge";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
+import { getCurrentUser } from "@/fetchs/getCurrentUser";
 import { prisma } from "@/services/prisma";
 import { USER_STATUS } from "@prisma/client";
 import { ListItemAction } from "./ListItemAction";
@@ -44,6 +45,7 @@ async function getSystemUser() {
 }
 
 const UsersPage = async () => {
+  const currentUser = await getCurrentUser();
   const systemUsers = await getSystemUser();
 
   function translateStatus(status: USER_STATUS) {
@@ -109,7 +111,7 @@ const UsersPage = async () => {
                 ADMIN
               </td>
               <td className={`w-auto py-4 px-2`}>
-                <ListItemAction id={user.id} />
+                <ListItemAction id={user.id} userId={currentUser!.id} />
               </td>
             </tr>
           ))}

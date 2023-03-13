@@ -9,6 +9,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const token = req.cookies["token"];
+
+  if (!token) {
+    return res.status(401).send({ error: "Não autorizado" });
+  }
+
   if (req.method === "POST") {
     const { name, email, password, role } = req.body;
 

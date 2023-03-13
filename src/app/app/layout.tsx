@@ -1,12 +1,10 @@
 import { ReactNode } from "react";
 import Image from "next/image";
-import { cookies } from "next/headers";
-import * as jwt from "jsonwebtoken";
-import { prisma } from "@/services/prisma";
 import { validateUserSession } from "@/services/validateUserSession";
 import { AsideMenu } from "@/components/AsideMenu";
 import { MdOutlineMenu } from "react-icons/md";
 import Link from "next/link";
+import { getCurrentUser } from "@/fetchs/getCurrentUser";
 
 export const metadata = {
   title: "SIGH | Dashboard",
@@ -15,36 +13,10 @@ export const metadata = {
   },
 };
 
-async function getUser() {
-  const userCookies = cookies();
-  const token = userCookies.get("token")?.value;
-
-  if (!token) {
-    return null;
-  }
-
-  const decoded = jwt.decode(token, { complete: true });
-
-  // @ts-ignore
-  const userId = decoded?.payload.id;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    include: {
-      admin: true,
-      athlete: true,
-    },
-  });
-
-  return user;
-}
-
 const AppLayout = async ({ children }: { children: ReactNode }) => {
   await validateUserSession();
 
-  const user = await getUser();
+  const user = await getCurrentUser();
 
   return (
     <div className="grid grid-cols-5 grid-rows-[64px_1fr] overflow-y-hidden w-full h-screen bg-light-surface-1">

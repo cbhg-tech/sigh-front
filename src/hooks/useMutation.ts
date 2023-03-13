@@ -7,7 +7,7 @@ interface FetchResult<T> {
   status: FetchStatus;
   data: T | unknown;
   error: string | null;
-  mutate: (body: unknown) => Promise<void>;
+  mutate: (body?: unknown) => Promise<void>;
 }
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -17,7 +17,7 @@ export const useMutation = <T>(url: string, method: Method): FetchResult<T> => {
   const [data, setData] = useState<T | unknown>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const mutate = async (body: unknown) => {
+  const mutate = async (body?: unknown) => {
     setStatus("loading");
 
     try {
@@ -27,7 +27,9 @@ export const useMutation = <T>(url: string, method: Method): FetchResult<T> => {
         data: body,
       });
 
-      setData(response.data);
+      if (response.data) {
+        setData(response.data);
+      }
       setStatus("success");
     } catch (err) {
       setStatus("error");
