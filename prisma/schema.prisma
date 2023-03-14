@@ -186,7 +186,7 @@ model Team {
   id                      Int              @id @default(autoincrement())
   name                    String
   initials                String
-  uf                      String           @db.VarChar(2)
+  description             String
   url                     String
   coachName               String
   email                   String

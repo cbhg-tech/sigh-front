@@ -3,15 +3,18 @@ import { prisma } from "@/services/prisma";
 
 type BodyParams = {
   name: string;
-  email: string;
   initials: string;
-  uf: string;
+  email: string;
+  url: string;
   presidentName: string;
   beginningOfTerm: string;
   endOfTerm: string;
+  coachName: string;
+  description: string;
+  federationId: string;
   logo: string;
   presidentDocument: string;
-  federationDocument: string;
+  teamDocument: string;
   electionMinutes: string;
 };
 
@@ -28,30 +31,30 @@ export default async function handler(
   if (req.method === "GET") {
     const { id } = req.query;
 
-    const federation = await prisma.federation.findUnique({
+    const team = await prisma.team.findUnique({
       where: {
         id: Number(id),
       },
     });
 
-    if (!federation) {
-      return res.status(404).send({ error: "Federação não encontrado" });
+    if (!team) {
+      return res.status(404).send({ error: "Clube não encontrado" });
     }
 
-    return res.status(200).json(federation);
+    return res.status(200).json(team);
   }
 
   if (req.method === "PUT") {
     const { id } = req.query;
 
-    const federation = await prisma.federation.findUnique({
+    const federation = await prisma.team.findUnique({
       where: {
         id: Number(id),
       },
     });
 
     if (!federation) {
-      return res.status(404).send({ error: "Federação não encontrado" });
+      return res.status(404).send({ error: "Clube não encontrado" });
     }
 
     const {
@@ -60,15 +63,18 @@ export default async function handler(
       electionMinutes,
       email,
       endOfTerm,
-      federationDocument,
       initials,
       logo,
       presidentDocument,
       presidentName,
-      uf,
+      coachName,
+      description,
+      federationId,
+      teamDocument,
+      url,
     } = req.body as BodyParams;
 
-    const federationUpdated = await prisma.federation.update({
+    const teamUpdated = await prisma.team.update({
       where: {
         id: Number(id),
       },
@@ -78,15 +84,18 @@ export default async function handler(
         electionMinutes,
         email,
         endOfTerm,
-        federationDocument,
         initials,
         logo,
         presidentDocument,
         presidentName,
-        uf,
+        coachName,
+        description,
+        federationId: Number(federationId),
+        teamDocument,
+        url,
       },
     });
 
-    return res.status(200).json(federationUpdated);
+    return res.status(200).json(teamUpdated);
   }
 }
