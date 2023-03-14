@@ -39,22 +39,13 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
 
   const router = useRouter();
 
-  const { data: selectedFederation, isLoading } = useSWR<Federation>(
-    id ? `/api/federation/${id}` : null,
-    fetcher
-  );
+  const { data: selectedFederation, isLoading } = useSWR<Federation>(id ? `/api/federation/${id}` : null, fetcher);
 
   const { register, reset, handleSubmit } = useForm<FormValues>();
 
-  const { mutate: create, status: createStatus } = useMutation(
-    "/api/federation",
-    "POST"
-  );
+  const { mutate: create, status: createStatus } = useMutation("/api/federation", "POST");
 
-  const { mutate: update, status: updateStatus } = useMutation(
-    `/api/federation/${id}`,
-    "PUT"
-  );
+  const { mutate: update, status: updateStatus } = useMutation(`/api/federation/${id}`, "PUT");
 
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [files, setFiles] = useState<IFiles>({
@@ -79,17 +70,11 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
   }, [isLoading, reset, selectedFederation]);
 
   const onSubmit = async (data: FormValues) => {
-    const { electionMinutes, federationDocument, logo, presidentDocument } =
-      files;
+    const { electionMinutes, federationDocument, logo, presidentDocument } = files;
 
     try {
       if (!id) {
-        if (
-          !electionMinutes ||
-          !federationDocument ||
-          !logo ||
-          !presidentDocument
-        ) {
+        if (!electionMinutes || !federationDocument || !logo || !presidentDocument) {
           throw new Error("Todos os arquivos são obrigatórios");
         }
 
@@ -97,17 +82,9 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
 
         const urls = await Promise.all([
           uploadFile("/sigh/federation", electionMinutes, "electionMinutes"),
-          uploadFile(
-            "/sigh/federation",
-            federationDocument,
-            "federationDocument"
-          ),
+          uploadFile("/sigh/federation", federationDocument, "federationDocument"),
           uploadFile("/sigh/federation", logo, "logo"),
-          uploadFile(
-            "/sigh/federation",
-            presidentDocument,
-            "presidentDocument"
-          ),
+          uploadFile("/sigh/federation", presidentDocument, "presidentDocument"),
         ]);
 
         const filesUrl = urls.reduce((acc, curr) => {
@@ -120,24 +97,10 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
         });
       } else {
         const newUrls = await Promise.all([
-          electionMinutes
-            ? uploadFile("/sigh/federation", electionMinutes, "electionMinutes")
-            : null,
-          federationDocument
-            ? uploadFile(
-              "/sigh/federation",
-              federationDocument,
-              "federationDocument"
-            )
-            : null,
+          electionMinutes ? uploadFile("/sigh/federation", electionMinutes, "electionMinutes") : null,
+          federationDocument ? uploadFile("/sigh/federation", federationDocument, "federationDocument") : null,
           logo ? uploadFile("/sigh/federation", logo, "logo") : null,
-          presidentDocument
-            ? uploadFile(
-              "/sigh/federation",
-              presidentDocument,
-              "presidentDocument"
-            )
-            : null,
+          presidentDocument ? uploadFile("/sigh/federation", presidentDocument, "presidentDocument") : null,
         ]);
 
         const filteredUrls = newUrls.filter((url) => url);
@@ -160,8 +123,7 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
     }
   };
 
-  const isSubmitting =
-    createStatus === "loading" || updateStatus === "loading" || isLoadingUpload;
+  const isSubmitting = createStatus === "loading" || updateStatus === "loading" || isLoadingUpload;
 
   if (id && isLoading) return <LoadingForm />;
 
@@ -169,8 +131,7 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
     <div>
       <h2 className="text-3xl text-light-on-surface mb-2">Federação</h2>
       <p className="mb-8 text-light-on-surface-variant">
-        <strong>Atenção!</strong> Após este cadastro, faça o registro de pelo
-        menos um usuário administrador para esta federação.
+        <strong>Atenção!</strong> Após este cadastro, faça o registro de pelo menos um usuário administrador para esta federação.
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-2">
@@ -200,9 +161,7 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Logo da federação"
               id="logo"
-              onChange={(e) =>
-                setFiles({ ...files, logo: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, logo: e.target.files?.[0] })}
               accept="image/png, image/jpeg, image/jpg"
               url={selectedFederation?.logo}
             />
@@ -211,72 +170,33 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Anexo status da entidade"
               id="federationFile"
-              onChange={(e) =>
-                setFiles({ ...files, federationDocument: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, federationDocument: e.target.files?.[0] })}
               url={selectedFederation?.federationDocument}
             />
           </div>
         </div>
-        <Textfield
-          label="Nome do presidente"
-          id="presidentName"
-          {...register("presidentName")}
-        />
+        <Textfield label="Nome do presidente" id="presidentName" {...register("presidentName")} />
         <div className="grid grid-cols-2 gap-2">
           <div className="col-span-1">
-            <Textfield
-              type="date"
-              label="Data de inicio do mandato"
-              id="beginningOfTerm"
-              {...register("beginningOfTerm")}
-            />
+            <Textfield type="date" label="Data de inicio do mandato" id="beginningOfTerm" {...register("beginningOfTerm")} />
           </div>
           <div className="col-span-1">
-            <Textfield
-              type="date"
-              label="Data do fim do mandato"
-              id="endOfTerm"
-              {...register("endOfTerm")}
-            />
+            <Textfield type="date" label="Data do fim do mandato" id="endOfTerm" {...register("endOfTerm")} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 mb-4">
           <div className="col-span-1">
-            <FileInput
-              label="Anexo RG do Presidente"
-              id="presidentFile"
-              onChange={(e) =>
-                setFiles({ ...files, presidentDocument: e.target.files?.[0] })
-              }
-              url={selectedFederation?.presidentDocument}
-            />
+            <FileInput label="Anexo RG do Presidente" id="presidentFile" onChange={(e) => setFiles({ ...files, presidentDocument: e.target.files?.[0] })} url={selectedFederation?.presidentDocument} />
           </div>
           <div className="col-span-1">
-            <FileInput
-              label="Anexo Ata da Eleição"
-              id="electionFile"
-              onChange={(e) =>
-                setFiles({ ...files, electionMinutes: e.target.files?.[0] })
-              }
-              url={selectedFederation?.electionMinutes}
-            />
+            <FileInput label="Anexo Ata da Eleição" id="electionFile" onChange={(e) => setFiles({ ...files, electionMinutes: e.target.files?.[0] })} url={selectedFederation?.electionMinutes} />
           </div>
         </div>
         <div className="flex gap-2 justify-end">
-          <NavigationButton
-            href="/app/federacoes"
-            variant="primary-border"
-            additionalClasses="w-auto px-2"
-          >
+          <NavigationButton href="/app/federacoes" variant="primary-border" additionalClasses="w-auto px-2">
             Cancelar
           </NavigationButton>
-          <Button
-            aditionalClasses="w-auto px-2"
-            type="submit"
-            isLoading={isSubmitting}
-            disabled={isSubmitting}
-          >
+          <Button aditionalClasses="w-auto px-2" type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
             Salvar
           </Button>
         </div>

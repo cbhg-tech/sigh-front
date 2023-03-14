@@ -52,15 +52,9 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
 
   const { register, reset, handleSubmit } = useForm<FormValues>();
 
-  const { mutate: create, status: createStatus } = useMutation(
-    "/api/team",
-    "POST"
-  );
+  const { mutate: create, status: createStatus } = useMutation("/api/team", "POST");
 
-  const { mutate: update, status: updateStatus } = useMutation(
-    `/api/team/${id}`,
-    "PUT"
-  );
+  const { mutate: update, status: updateStatus } = useMutation(`/api/team/${id}`, "PUT");
 
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [files, setFiles] = useState<IFiles>({
@@ -115,12 +109,8 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
         });
       } else {
         const newUrls = await Promise.all([
-          electionMinutes
-            ? uploadFile("/sigh/teams", electionMinutes, "electionMinutes")
-            : null,
-          teamDocument
-            ? uploadFile("/sigh/teams", teamDocument, "teamDocument")
-            : null,
+          electionMinutes ? uploadFile("/sigh/teams", electionMinutes, "electionMinutes") : null,
+          teamDocument ? uploadFile("/sigh/teams", teamDocument, "teamDocument") : null,
           logo ? uploadFile("/sigh/teams", logo, "logo") : null,
           presidentDocument
             ? uploadFile("/sigh/teams", presidentDocument, "presidentDocument")
@@ -147,8 +137,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
     }
   };
 
-  const isSubmitting =
-    createStatus === "loading" || updateStatus === "loading" || isLoadingUpload;
+  const isSubmitting = createStatus === "loading" || updateStatus === "loading" || isLoadingUpload;
 
   if ((id && isLoadingTeam) || isLoading) return <div>Carregando...</div>;
 
@@ -156,8 +145,8 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
     <div>
       <h2 className="text-3xl text-light-on-surface mb-2">Clube</h2>
       <p className="mb-8 text-light-on-surface-variant">
-        <strong>Atenção!</strong> Após este cadastro, faça o registro de pelo
-        menos um usuário administrador para esta federação.
+        <strong>Atenção!</strong> Após este cadastro, faça o registro de pelo menos um usuário
+        administrador para esta federação.
       </p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-3 gap-2">
@@ -176,11 +165,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             <Textfield label="Site/Fanpage" id="url" {...register("url")} />
           </div>
         </div>
-        <Textfield
-          label="Nome do presidente"
-          id="presidentName"
-          {...register("presidentName")}
-        />
+        <Textfield label="Nome do presidente" id="presidentName" {...register("presidentName")} />
         <div className="grid grid-cols-2 gap-2">
           <div className="col-span-1">
             <Textfield
@@ -199,22 +184,9 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             />
           </div>
         </div>
-        <Textfield
-          label="Nome do técnico"
-          id="coachName"
-          {...register("coachName")}
-        />
-        <Textarea
-          label="Descrição"
-          id="description"
-          rows={5}
-          {...register("description")}
-        />
-        <Select
-          label="Federação"
-          id="federationId"
-          {...register("federationId")}
-        >
+        <Textfield label="Nome do técnico" id="coachName" {...register("coachName")} />
+        <Textarea label="Descrição" id="description" rows={5} {...register("description")} />
+        <Select label="Federação" id="federationId" {...register("federationId")}>
           <option value="">Selecione uma federação</option>
           {publicFederation?.map((federation) => (
             <option key={federation.id} value={federation.id}>
@@ -227,9 +199,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Logo da federação"
               id="logo"
-              onChange={(e) =>
-                setFiles({ ...files, logo: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, logo: e.target.files?.[0] })}
               accept="image/png, image/jpeg, image/jpg"
               url={selectedFederation?.logo}
             />
@@ -238,9 +208,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Anexo status da entidade"
               id="federationFile"
-              onChange={(e) =>
-                setFiles({ ...files, teamDocument: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, teamDocument: e.target.files?.[0] })}
               url={selectedFederation?.teamDocument}
             />
           </div>
@@ -250,9 +218,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Anexo RG do Presidente"
               id="presidentFile"
-              onChange={(e) =>
-                setFiles({ ...files, presidentDocument: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, presidentDocument: e.target.files?.[0] })}
               url={selectedFederation?.presidentDocument}
             />
           </div>
@@ -260,9 +226,7 @@ const TeamsFormPage = ({ searchParams }: NextPage) => {
             <FileInput
               label="Anexo Ata da Eleição"
               id="electionFile"
-              onChange={(e) =>
-                setFiles({ ...files, electionMinutes: e.target.files?.[0] })
-              }
+              onChange={(e) => setFiles({ ...files, electionMinutes: e.target.files?.[0] })}
               url={selectedFederation?.electionMinutes}
             />
           </div>
