@@ -40,7 +40,10 @@ const TeamDetailPage = async ({ params: { id } }: NextPage) => {
       </div>
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <MdInfo size="1.75rem" className="text-light-on-surface-variant mt-1" />
+          <MdInfo
+            size="1.75rem"
+            className="text-light-on-surface-variant mt-1"
+          />
           <h3 className="text-3xl text-light-on-surface-variant">Detalhes</h3>
         </div>
         <div className="pl-11">

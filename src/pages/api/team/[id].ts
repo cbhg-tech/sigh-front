@@ -18,7 +18,10 @@ type BodyParams = {
   electionMinutes: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const token = req.cookies["token"];
 
   if (!token) {
