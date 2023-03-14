@@ -35,7 +35,12 @@ const HeaderName = [
 async function getSystemUser() {
   const user = await prisma.user.findMany({
     include: {
-      admin: true,
+      admin: {
+        include: {
+          federation: true,
+          team: true,
+        },
+      },
     },
   });
 
@@ -138,8 +143,9 @@ const UsersPage = async () => {
                   <td
                     className={`hidden lg:table-cell w-1/2 lg:w-1/5 py-4 px-2`}
                   >
-                    {/* {user.admin.} */}
-                    ADMIN
+                    {user.admin?.federation?.name ||
+                      user.admin?.team?.name ||
+                      "ADMIN"}
                   </td>
                   <td className={`w-auto py-4 px-2`}>
                     <ListItemAction id={user.id} userId={currentUser!.id} />

@@ -15,7 +15,7 @@ export default async function handler(
   }
 
   if (req.method === "POST") {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, related } = req.body;
 
     if (!name || !email || !password || !role || !req.body) {
       return res.status(400).send({ error: "Dados incorretos" });
@@ -47,6 +47,9 @@ export default async function handler(
         admin: {
           create: {
             role: ROLE[role as keyof typeof ROLE],
+            federationId:
+              role === ROLE.ADMINFEDERATION ? Number(related) : null,
+            teamId: role === ROLE.ADMINTEAM ? Number(related) : null,
           },
         },
       },
