@@ -93,8 +93,8 @@ const UsersPage = async () => {
   return (
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
-        <h2 className="text-3xl text-light-on-surface">
-          Listagem de usuários {`(${systemUsers.length || 0})`}
+        <h2 className="text-xl md:text-3xl text-light-on-surface">
+          Usuários do sistema {`(${systemUsers.length || 0})`}
         </h2>
         <NavigationButton
           href="/app/usuarios/formulario"

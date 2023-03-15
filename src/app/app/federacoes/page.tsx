@@ -49,8 +49,8 @@ const FederationsPage = async () => {
   return (
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
-        <h2 className="text-3xl text-light-on-surface">
-          Listagem de federação {`(${federations.length || 0})`}
+        <h2 className="text-xl md:text-3xl text-light-on-surface">
+          Federações {`(${federations.length || 0})`}
         </h2>
         {canCreateAndEdit && (
           <NavigationButton

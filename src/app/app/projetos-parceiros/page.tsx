@@ -71,8 +71,8 @@ const PartnerProjectPage = async () => {
   return (
     <div>
       <div className="flex flex-col lg:flex-row justify-between mb-4">
-        <h2 className="text-3xl text-light-on-surface">
-          Projetos parceiros {`(${partnerProjects.length || 0})`}
+        <h2 className="text-xl md:text-3xl text-light-on-surface">
+          Parceiros {`(${partnerProjects.length || 0})`}
         </h2>
         <NavigationButton
           href="/app/projetos-parceiros/formulario"
