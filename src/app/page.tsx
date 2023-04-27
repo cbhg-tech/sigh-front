@@ -5,8 +5,14 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { OnBoardingContainer } from "@/components/layouts/OnBoarding.layout";
 import { NextPage } from "@/types/NextPage";
 
+const errorMsgs = {
+  data: "Dados inválidos",
+  user: "Usuário não encontrado",
+  password: "Senha incorreta",
+};
+
 export default function LoginPage({ searchParams }: NextPage) {
-  const error = searchParams?.error as string;
+  const error = searchParams?.error as keyof typeof errorMsgs;
 
   return (
     <OnBoardingContainer>
@@ -15,9 +21,9 @@ export default function LoginPage({ searchParams }: NextPage) {
           Faça o login no SIGH ou registre-se
         </p>
 
-        {error && <Alert message={error} />}
+        {error && <Alert message={errorMsgs[error]} />}
 
-        <form action="/api/authentication" method="POST">
+        <form action="/api/auth" method="POST">
           <Textfield label="Email" name="email" type="email" id="email" />
           <Textfield
             label="Senha"

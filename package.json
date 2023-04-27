@@ -12,7 +12,6 @@
     "postgres:start": "sudo docker start sigh-postgres"
   },
   "dependencies": {
-    "@next/font": "^13.3.1",
     "@prisma/client": "^4.10.1",
     "@types/node": "^18.11.18",
     "@types/react": "18.0.27",
