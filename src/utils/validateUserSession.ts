@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { prisma } from "./prisma";
+import { prisma } from "../services/prisma";
 
 async function validateUserSession() {
   const userCookies = cookies();
