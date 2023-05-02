@@ -6,8 +6,8 @@ import { FaUsersCog } from "react-icons/fa";
 import { Divider } from "../Divider";
 import { NavigationItem } from "./NavigationItem";
 import { UserComplete } from "@/types/UserComplete";
-import { verifyUserRole } from "@/services/verifyUserRole";
 import { ROLE } from "@prisma/client";
+import { verifyUserRole } from "@/utils/verifyUserRole";
 
 const AsideMenu = ({ user }: { user: UserComplete }) => {
   const isAdmin = verifyUserRole({

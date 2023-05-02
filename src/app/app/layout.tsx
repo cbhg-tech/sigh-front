@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import Image from "next/image";
-import { validateUserSession } from "@/services/validateUserSession";
 import { AsideMenu } from "@/components/AsideMenu";
 import { MdOutlineMenu } from "react-icons/md";
 import Link from "next/link";
-import { getCurrentUser } from "@/services/getCurrentUser";
+import { getCurrentUser } from "@/utils/getCurrentUser";
+import { validateUserSession } from "@/utils/validateUserSession";
 
 export const metadata = {
   title: "SIGH | Dashboard",

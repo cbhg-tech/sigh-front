@@ -1,6 +1,6 @@
-import { authenticationMiddleware } from "@/services/authenticationMiddleware";
 import { prisma } from "@/services/prisma";
 import { RouteParams } from "@/types/RouteParams";
+import { authenticationMiddleware } from "@/utils/authenticationMiddleware";
 import { ROLE } from "@prisma/client";
 import { NextRequest } from "next/server";
 
