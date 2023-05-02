@@ -123,21 +123,11 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
           electionMinutes
             ? uploadFile("/sigh/federation", electionMinutes, "electionMinutes")
             : null,
-          federationDocument
-            ? uploadFile(
-              "/sigh/federation",
-              federationDocument,
-              "federationDocument"
-            )
-            : null,
           logo ? uploadFile("/sigh/federation", logo, "logo") : null,
-          presidentDocument
-            ? uploadFile(
-              "/sigh/federation",
-              presidentDocument,
-              "presidentDocument"
-            )
-            : null,
+          // prettier-ignore
+          federationDocument ? uploadFile("/sigh/federation", federationDocument, "federationDocument") : null,
+          // prettier-ignore
+          presidentDocument ? uploadFile("/sigh/federation", presidentDocument, "presidentDocument") : null,
         ]);
 
         const filteredUrls = newUrls.filter((url) => url);
