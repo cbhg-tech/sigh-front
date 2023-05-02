@@ -8,13 +8,13 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { useMutation } from "@/hooks/useMutation";
 import { fetcher } from "@/services/fetcher";
-import { uploadFile } from "@/services/uploadFile";
 import { NextPage } from "@/types/NextPage";
 import { Federation, Team } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+import { uploadFile } from "@/utils/uploadFile";
 
 type FormValues = {
   name: string;

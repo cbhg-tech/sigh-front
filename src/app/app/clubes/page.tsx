@@ -1,9 +1,9 @@
 import { EmptyMessage } from "@/components/EmptyMessage";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
-import { getCurrentUser } from "@/services/getCurrentUser";
 import { prisma } from "@/services/prisma";
-import { verifyUserRole } from "@/services/verifyUserRole";
+import { getCurrentUser } from "@/utils/getCurrentUser";
+import { verifyUserRole } from "@/utils/verifyUserRole";
 import { ROLE } from "@prisma/client";
 import { ListItemAction } from "./ListItemAction";
 

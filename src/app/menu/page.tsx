@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { validateUserSession } from "@/services/validateUserSession";
-import { getCurrentUser } from "@/services/getCurrentUser";
 import { AsideMenu } from "@/components/AsideMenu";
+import { validateUserSession } from "@/utils/validateUserSession";
+import { getCurrentUser } from "@/utils/getCurrentUser";
 
 const MenuPage = async () => {
   await validateUserSession();

@@ -7,9 +7,9 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { useMutation } from "@/hooks/useMutation";
 import { fetcher } from "@/services/fetcher";
-import { States } from "@/services/states";
-import { uploadFile } from "@/services/uploadFile";
 import { NextPage } from "@/types/NextPage";
+import { States } from "@/utils/states";
+import { uploadFile } from "@/utils/uploadFile";
 import { Federation } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
@@ -125,18 +125,18 @@ const FederationFormPage = ({ searchParams }: NextPage) => {
             : null,
           federationDocument
             ? uploadFile(
-                "/sigh/federation",
-                federationDocument,
-                "federationDocument"
-              )
+              "/sigh/federation",
+              federationDocument,
+              "federationDocument"
+            )
             : null,
           logo ? uploadFile("/sigh/federation", logo, "logo") : null,
           presidentDocument
             ? uploadFile(
-                "/sigh/federation",
-                presidentDocument,
-                "presidentDocument"
-              )
+              "/sigh/federation",
+              presidentDocument,
+              "presidentDocument"
+            )
             : null,
         ]);
 

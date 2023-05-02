@@ -1,8 +1,8 @@
 import { EmptyMessage } from "@/components/EmptyMessage";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
-import { getCurrentUser } from "@/services/getCurrentUser";
 import { prisma } from "@/services/prisma";
+import { getCurrentUser } from "@/utils/getCurrentUser";
 import { PartnerProject, ROLE, USER_TYPE } from "@prisma/client";
 import { ListItemAction } from "./ListItemAction";
 
