@@ -1,8 +1,15 @@
 import { prisma } from "@/services/prisma";
 import { RouteParams } from "@/types/RouteParams";
 import { authenticationMiddleware } from "@/utils/authenticationMiddleware";
+import { getFormData } from "@/utils/getFormData";
 import { ROLE } from "@prisma/client";
 import { NextRequest } from "next/server";
+
+type FormData = {
+  name: string;
+  email: string;
+  role: ROLE;
+};
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
   await authenticationMiddleware();
@@ -29,10 +36,8 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   await authenticationMiddleware();
 
   const id = params.id;
-  const formData = await req.formData();
-  const name = formData.get("name") as string | undefined;
-  const email = formData.get("email") as string | undefined;
-  const role = formData.get("role") as ROLE | undefined;
+
+  const { email, name, role } = await getFormData<FormData>(req);
 
   if (!name || !email || !role) {
     return new Response("Dados incorretos", { status: 400 });

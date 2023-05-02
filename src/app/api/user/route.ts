@@ -1,18 +1,24 @@
-import { authenticationMiddleware } from "@/services/authenticationMiddleware";
 import { hashService } from "@/services/hash";
 import { prisma } from "@/services/prisma";
+import { authenticationMiddleware } from "@/utils/authenticationMiddleware";
+import { getFormData } from "@/utils/getFormData";
 import { ROLE, USER_STATUS, USER_TYPE } from "@prisma/client";
 import { NextRequest } from "next/server";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  role: ROLE;
+  related: string;
+};
 
 export async function POST(req: NextRequest) {
   await authenticationMiddleware();
 
-  const formData = await req.formData();
-  const name = formData.get("name") as string | undefined;
-  const email = formData.get("email") as string | undefined;
-  const password = formData.get("password") as string | undefined;
-  const role = formData.get("role") as ROLE | undefined;
-  const related = formData.get("related") as string | undefined;
+  const { email, name, password, related, role } = await getFormData<FormData>(
+    req
+  );
 
   if (!name || !email || !password || !role || !req.body) {
     return new Response("Dados incorretos", { status: 400 });

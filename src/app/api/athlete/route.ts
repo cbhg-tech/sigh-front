@@ -5,27 +5,20 @@ import { prisma } from "@/services/prisma";
 import { getFormData } from "@/utils/getFormData";
 import { USER_STATUS, USER_TYPE } from "@prisma/client";
 
-interface AthleteFormData {
+type FormData = {
   name: string;
   email: string;
   password: string;
   document: string;
   birthDate: string;
   teamId: string;
-  [key: string]: string;
-}
+};
 
 export async function POST(req: NextRequest) {
-  const data = await getFormData<AthleteFormData>(req);
+  const { birthDate, document, email, name, password, teamId } =
+    await getFormData<FormData>(req);
 
-  if (
-    !data.name ||
-    !data.email ||
-    !data.password ||
-    !data.document ||
-    !data.birthDate ||
-    !data.teamId
-  ) {
+  if (!name || !email || !password || !document || !birthDate || !teamId) {
     return new Response("Campos obrigatórios não preenchidos", {
       status: 400,
     });
@@ -33,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const emailExists = await prisma.user.findFirst({
     where: {
-      email: data.email,
+      email,
     },
   });
 
@@ -45,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   const documentExists = await prisma.athlete.findFirst({
     where: {
-      document: data.document,
+      document,
     },
   });
 
@@ -55,20 +48,20 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const hashed = hashService().generate(data.password);
+  const hashed = hashService().generate(password);
 
   const user = await prisma.user.create({
     data: {
-      name: data.name,
-      email: data.email,
+      name: name,
+      email: email,
       password: hashed,
       type: USER_TYPE.ATHLETE,
       status: USER_STATUS.PENDING,
       athlete: {
         create: {
-          document: data.document,
-          birthDate: data.birthDate,
-          teamId: Number(data.teamId),
+          document: document,
+          birthDate: birthDate,
+          teamId: Number(teamId),
           registerNumber: 1231,
         },
       },
@@ -77,7 +70,7 @@ export async function POST(req: NextRequest) {
 
   const secret = process.env.JWT_SECRET || "secret";
 
-  const token = jwt.sign({ email: data.email }, secret, {
+  const token = jwt.sign({ email }, secret, {
     expiresIn: "1d",
   });
 

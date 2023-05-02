@@ -1,13 +1,17 @@
 import { hashService } from "@/services/hash";
 import { prisma } from "@/services/prisma";
+import { getFormData } from "@/utils/getFormData";
 import * as jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
+type FormData = {
+  email: string;
+  password: string;
+};
+
 export async function POST(req: NextRequest) {
-  const data = await req.formData();
-  const email = data.get("email") as string | undefined;
-  const password = data.get("password") as string | undefined;
+  const { email, password } = await getFormData<FormData>(req);
 
   if (!email || !password) {
     return redirect("/?error=data");
