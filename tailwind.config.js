@@ -41,6 +41,7 @@ module.exports = {
           "primary-container": "#79FBB8",
           primary: "#006C45",
           "surface-1": "#EEF6EF",
+          "surface-5": "#d8e8df",
         },
       },
     },

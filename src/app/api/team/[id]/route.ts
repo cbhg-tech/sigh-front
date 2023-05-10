@@ -69,7 +69,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     federationId,
     teamDocument,
     url,
-  } = await getFormData<FormData>(req);
+  } = (await req.json()) as FormData;
 
   const teamUpdated = await prisma.team.update({
     where: {

@@ -37,6 +37,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 }
 
 export async function PUT(req: NextRequest, { params }: RouteParams) {
+  await authenticationMiddleware();
+
   const id = params.id;
 
   const federation = await prisma.federation.findUnique({
@@ -61,7 +63,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     presidentDocument,
     presidentName,
     uf,
-  } = await getFormData<FormData>(req);
+  } = (await req.json()) as FormData;
 
   const federationUpdated = await prisma.federation.update({
     where: {

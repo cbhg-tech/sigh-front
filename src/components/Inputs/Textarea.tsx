@@ -31,6 +31,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             <textarea
               ref={ref}
               className="w-full bg-transparent outline-none placeholder:text-transparent resize-none"
+              rows={5}
               placeholder={label}
               id={id}
               {...rest}

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { verifyToken } from "./verifyToken";
 
 export async function authenticationMiddleware() {
-  const token = cookies().get("token") as string | undefined;
+  const token = cookies().get("token")?.value as string | undefined;
 
   if (!token) {
     return redirect("/?error=unauthorized");

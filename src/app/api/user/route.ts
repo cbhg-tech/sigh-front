@@ -16,9 +16,8 @@ type FormData = {
 export async function POST(req: NextRequest) {
   await authenticationMiddleware();
 
-  const { email, name, password, related, role } = await getFormData<FormData>(
-    req
-  );
+  const { email, name, password, related, role } =
+    (await req.json()) as FormData;
 
   if (!name || !email || !password || !role || !req.body) {
     return new Response("Dados incorretos", { status: 400 });

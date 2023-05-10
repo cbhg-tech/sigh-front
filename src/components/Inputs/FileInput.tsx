@@ -32,8 +32,8 @@ const FileInput = forwardRef<HTMLInputElement, IProps>(
       <div className="flex-1">
         {!showInput && (
           <div className="flex justify-between gap-4">
-            <p className="block leading-10 max-w-[400px] line-clamp-1">{url}</p>
-            <div>
+            <p className="max-w-[400px] line-clamp-2 leading-snug">{url}</p>
+            <div className="flex place-items-center justify-center">
               {url && (
                 <IconButton
                   icon={MdFileDownload}

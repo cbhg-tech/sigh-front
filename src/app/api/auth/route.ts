@@ -3,7 +3,7 @@ import { prisma } from "@/services/prisma";
 import { getFormData } from "@/utils/getFormData";
 import * as jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 type FormData = {
   email: string;
@@ -49,11 +49,13 @@ export async function POST(req: NextRequest) {
 
   const redirectUrl = new URL("/app/dashboard", req.url);
 
-  return NextResponse.redirect(redirectUrl, {
+  return new Response(null, {
+    status: 302,
     headers: {
+      Location: redirectUrl.toString(),
       "Set-Cookie": `token=${token}; path=/; expires=${new Date(
         Date.now() + oneDayInMilliseconds
-      ).toUTCString()}`,
+      ).toUTCString()}; HttpOnly;`,
     },
   });
 }
