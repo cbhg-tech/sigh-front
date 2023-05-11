@@ -1,37 +1,10 @@
-import { Badge } from "@/components/Badge";
 import { DataList } from "@/components/DataList";
-import { EmptyMessage } from "@/components/EmptyMessage";
-import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
 import { verifyUserRole } from "@/utils/verifyUserRole";
-import { ROLE, USER_STATUS } from "@prisma/client";
+import { ROLE } from "@prisma/client";
 import Link from "next/link";
-import { ListItemAction } from "./ListItemAction";
-
-const HeaderName = [
-  {
-    name: "Nome",
-    width: "w-1/2 lg:w-1/5",
-  },
-  {
-    name: "Status",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "RoleAccess",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "Associação",
-    width: "hidden lg:table-cell w-1/2 lg:w-1/5",
-  },
-  {
-    name: "",
-    width: "w-auto",
-  },
-];
 
 async function getSystemUser() {
   const user = await prisma.user.findMany({
@@ -56,18 +29,6 @@ async function getSystemUser() {
 const UsersPage = async () => {
   const currentUser = await getCurrentUser();
   const systemUsers = await getSystemUser();
-
-  function translateStatus(status: USER_STATUS) {
-    switch (status) {
-      case USER_STATUS.ACTIVE:
-        return "Ativo";
-      case USER_STATUS.INACTIVE:
-        return "Inativo";
-      default:
-      case USER_STATUS.PENDING:
-        return "Pendente";
-    }
-  }
 
   const isAdmin = verifyUserRole({
     user: currentUser!,
@@ -105,54 +66,52 @@ const UsersPage = async () => {
         </NavigationButton>
       </div>
 
-      {systemUsers.length === 0 ? (
-        <EmptyMessage message="Nenhum usuário cadastrado" />
-      ) : (
-        <DataList
-          user={currentUser!}
-          data={systemUsers}
-          searchTextKey="name"
-          lineKey="id"
-          tableSettings={[
-            {
-              name: "Nome",
-              width: "w-1/2 lg:w-1/5",
-              key: "name",
-            },
-            {
-              name: "Status",
-              width: "hidden lg:table-cell lg:w-1/5",
-              key: "status",
-            },
-            {
-              name: "RoleAccess",
-              width: "hidden lg:table-cell lg:w-1/5",
-              key: "admin.role",
-              formatter: "BADGE",
-            },
-            {
-              name: "Associação",
-              width: "hidden lg:table-cell w-1/2 lg:w-1/5",
-              key: "admin",
-              formatter: "ASSOCIATION",
-            },
-          ]}
-          actions={[
-            {
-              type: "EDIT",
-              redirect: "/app/usuarios/formulario?id=",
-              blockBy: "ROLE",
-              roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
-            },
-            {
-              type: "DELETE",
-              deleteUrl: "/api/user/",
-              blockBy: "ROLE",
-              roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
-            },
-          ]}
-        />
-      )}
+      <DataList
+        user={currentUser!}
+        data={systemUsers}
+        searchTextKey="name"
+        lineKey="id"
+        customEmptyDataMessage="Nenhum usuário cadastrado"
+        tableSettings={[
+          {
+            name: "Nome",
+            width: "w-1/2 lg:w-1/5",
+            key: "name",
+          },
+          {
+            name: "Status",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "status",
+            formatter: "STATUS",
+          },
+          {
+            name: "RoleAccess",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "admin.role",
+            formatter: "BADGE",
+          },
+          {
+            name: "Associação",
+            width: "hidden lg:table-cell w-1/2 lg:w-1/5",
+            key: "admin",
+            formatter: "ASSOCIATION",
+          },
+        ]}
+        actions={[
+          {
+            type: "EDIT",
+            redirect: "/app/usuarios/formulario?id=",
+            blockBy: "ROLE",
+            roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
+          },
+          {
+            type: "DELETE",
+            deleteUrl: "/api/user/",
+            blockBy: "ROLE",
+            roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
+          },
+        ]}
+      />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { UserComplete } from "@/types/UserComplete";
-import { Admin, ROLE } from "@prisma/client";
+import { Admin, ROLE, USER_STATUS } from "@prisma/client";
 import axios from "axios";
 import Link from "next/link";
 import { AiOutlineEye } from "react-icons/ai";
@@ -23,7 +23,7 @@ interface DataListProps {
     name: string;
     width: string;
     key: string;
-    formatter?: "ASSOCIATION" | "BADGE";
+    formatter?: "ASSOCIATION" | "BADGE" | "STATUS";
   }>;
   actions?: Array<{
     type: "DELETE" | "EDIT" | "VIEW";
@@ -62,12 +62,26 @@ export function DataList({
     return "CBHG";
   }
 
+  function formatStatus(status: USER_STATUS) {
+    switch (status) {
+      case USER_STATUS.ACTIVE:
+        return "Ativo";
+      case USER_STATUS.INACTIVE:
+        return "Inativo";
+      default:
+      case USER_STATUS.PENDING:
+        return "Pendente";
+    }
+  }
+
   function formatter(formatter: string, value: any) {
     switch (formatter) {
       case "ASSOCIATION":
         return formatAssociation(value);
       case "BADGE":
         return <Badge type="tertiary">{value}</Badge>;
+      case "STATUS":
+        return formatStatus(value);
       default:
         return value;
     }
@@ -107,7 +121,7 @@ export function DataList({
   const filteredData = data.filter((d) => {
     if (search === "" || !searchTextKey) return d;
 
-    const value = d[searchTextKey] as string;
+    const value = getValue<string>(searchTextKey, d);
 
     if (value.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
       return d;
