@@ -1,4 +1,4 @@
-import { MdDashboard, MdGroupWork, MdShield } from "react-icons/md";
+import { MdDashboard, MdGroups, MdGroupWork, MdShield } from "react-icons/md";
 import { SiGoogleassistant } from "react-icons/si";
 import { FaUsersCog } from "react-icons/fa";
 import { Divider } from "../../Divider";
@@ -52,6 +52,11 @@ export const Aside = ({
           href="/app/projetos-parceiros"
           label="Projetos Parceiros"
           icon={MdGroupWork}
+        />
+        <NavigationItem
+          href="/app/oficiais-tecnicos"
+          label="Oficiais Técnicos"
+          icon={MdGroups}
         />
         <NavigationItem href="/app/clubes" label="Clubes" icon={MdShield} />
         <NavigationItem

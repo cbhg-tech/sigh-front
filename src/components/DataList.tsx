@@ -11,11 +11,14 @@ import { IconButton } from "./Inputs/IconButton";
 import { startTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CgSpinner } from "react-icons/cg";
+import { Textfield } from "./Inputs/Textfield";
 
 interface DataListProps {
   user: UserComplete;
   data: any[];
   lineKey: string;
+  searchTextKey?: string;
+  customEmptyDataMessage?: string;
   tableSettings: Array<{
     name: string;
     width: string;
@@ -36,9 +39,12 @@ export function DataList({
   data,
   tableSettings,
   lineKey,
+  searchTextKey,
+  customEmptyDataMessage,
   actions,
 }: DataListProps) {
   const [isLoading, setIsLoading] = useState<number | undefined>();
+  const [search, setSearch] = useState<string>("");
 
   const router = useRouter();
 
@@ -98,120 +104,146 @@ export function DataList({
     return false;
   }
 
+  const filteredData = data.filter((d) => {
+    if (search === "" || !searchTextKey) return d;
+
+    const value = d[searchTextKey] as string;
+
+    if (value.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      return d;
+  });
+
   return (
     <>
-      {/* TODO: adicionar filtros */}
-      <div></div>
+      <div className="grid gap-2 grid-cols-3">
+        {searchTextKey && (
+          <div>
+            <Textfield
+              id="search"
+              label="Pesquisar..."
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        )}
+      </div>
       <div>
-        <table className="w-full">
-          <thead>
-            <tr>
-              {tableSettings.map((header) => (
-                <th
-                  className={`${header.width} text-left py-4 px-2 bg-slate-100`}
-                  key={header.name}
-                >
-                  {header.name}
-                </th>
-              ))}
-              <th className="w-auto py-4 px-2 bg-slate-100"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((d) => (
-              <tr
-                className="border-b last:border-none border-slate-200"
-                key={d[lineKey]}
-              >
-                {tableSettings.map((set) => (
-                  <td
-                    className={`${set.width} py-4 px-2`}
-                    key={`${d[lineKey]}-${set.name}`}
+        {filteredData.length === 0 ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-light-on-surface-variant font-semibold text-2xl">
+              {customEmptyDataMessage ?? "Nenhum dado encontrado"}
+            </p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr>
+                {tableSettings.map((header) => (
+                  <th
+                    className={`${header.width} text-left py-4 px-2 bg-slate-100`}
+                    key={header.name}
                   >
-                    {set.formatter
-                      ? formatter(set.formatter, getValue(set.key, d))
-                      : getValue(set.key, d)}
-                  </td>
+                    {header.name}
+                  </th>
                 ))}
-
-                <td className={`w-auto py-4 px-2`}>
-                  <div className="flex gap-2 items-center justify-end">
-                    {isLoading === d[lineKey] && (
-                      <div className="flex gap-2 justify-end">
-                        <CgSpinner
-                          size="2rem"
-                          className="text-light-primary animate-spin"
-                        />
-                      </div>
-                    )}
-
-                    {isLoading !== d[lineKey] &&
-                      actions?.map((action) => {
-                        if (action.type === "VIEW") {
-                          const isBlocked = executeBlock(
-                            action.blockBy,
-                            action.roles!
-                          );
-
-                          if (isBlocked) return null;
-
-                          return (
-                            <Link
-                              href={`${action.redirect!}${d[lineKey]}`}
-                              key="VIEW"
-                            >
-                              <AiOutlineEye
-                                className="text-light-tertiary"
-                                size="1.5rem"
-                              />
-                            </Link>
-                          );
-                        }
-
-                        if (action.type === "EDIT") {
-                          return (
-                            <Link
-                              href={`${action.redirect!}${d[lineKey]}`}
-                              key="EDIT"
-                            >
-                              <MdEdit
-                                className="text-light-primary"
-                                size="1.5rem"
-                              />
-                            </Link>
-                          );
-                        }
-
-                        if (action.type === "DELETE") {
-                          return (
-                            <IconButton
-                              icon={MdOutlineDeleteOutline}
-                              className="text-light-error"
-                              size="1.5rem"
-                              key="DELETE"
-                              onClick={async () => {
-                                setIsLoading(d[lineKey]);
-
-                                await axios.delete(
-                                  `${action.deleteUrl!}${d[lineKey]}`
-                                );
-
-                                setIsLoading(undefined);
-
-                                startTransition(() => {
-                                  router.refresh();
-                                });
-                              }}
-                            />
-                          );
-                        }
-                      })}
-                  </div>
-                </td>
+                <th className="w-auto py-4 px-2 bg-slate-100"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredData.map((d) => (
+                <tr
+                  className="border-b last:border-none border-slate-200"
+                  key={d[lineKey]}
+                >
+                  {tableSettings.map((set) => (
+                    <td
+                      className={`${set.width} py-4 px-2`}
+                      key={`${d[lineKey]}-${set.name}`}
+                    >
+                      {set.formatter
+                        ? formatter(set.formatter, getValue(set.key, d))
+                        : getValue(set.key, d)}
+                    </td>
+                  ))}
+
+                  <td className={`w-auto py-4 px-2`}>
+                    <div className="flex gap-2 items-center justify-end">
+                      {isLoading === d[lineKey] && (
+                        <div className="flex gap-2 justify-end">
+                          <CgSpinner
+                            size="2rem"
+                            className="text-light-primary animate-spin"
+                          />
+                        </div>
+                      )}
+
+                      {isLoading !== d[lineKey] &&
+                        actions?.map((action) => {
+                          if (action.type === "VIEW") {
+                            const isBlocked = executeBlock(
+                              action.blockBy,
+                              action.roles!
+                            );
+
+                            if (isBlocked) return null;
+
+                            return (
+                              <Link
+                                href={`${action.redirect!}${d[lineKey]}`}
+                                key="VIEW"
+                              >
+                                <AiOutlineEye
+                                  className="text-light-tertiary"
+                                  size="1.5rem"
+                                />
+                              </Link>
+                            );
+                          }
+
+                          if (action.type === "EDIT") {
+                            return (
+                              <Link
+                                href={`${action.redirect!}${d[lineKey]}`}
+                                key="EDIT"
+                              >
+                                <MdEdit
+                                  className="text-light-primary"
+                                  size="1.5rem"
+                                />
+                              </Link>
+                            );
+                          }
+
+                          if (action.type === "DELETE") {
+                            return (
+                              <IconButton
+                                icon={MdOutlineDeleteOutline}
+                                className="text-light-error"
+                                size="1.5rem"
+                                key="DELETE"
+                                onClick={async () => {
+                                  setIsLoading(d[lineKey]);
+
+                                  await axios.delete(
+                                    `${action.deleteUrl!}${d[lineKey]}`
+                                  );
+
+                                  setIsLoading(undefined);
+
+                                  startTransition(() => {
+                                    router.refresh();
+                                  });
+                                }}
+                              />
+                            );
+                          }
+                        })}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );

@@ -111,6 +111,7 @@ const UsersPage = async () => {
         <DataList
           user={currentUser!}
           data={systemUsers}
+          searchTextKey="name"
           lineKey="id"
           tableSettings={[
             {
