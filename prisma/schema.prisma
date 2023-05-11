@@ -212,7 +212,7 @@ model Team {
 }
 
 model PartnerProject {
-  id                  Int        @id @default(autoincrement())
+  id                  Int         @id @default(autoincrement())
   name                String
   description         String
   initialDate         String
@@ -221,20 +221,17 @@ model PartnerProject {
   malePractitioners   Int
   femalePractitioners Int
   ageGroup            String
-  url                 String
-  logo                String
   contactName         String
   contactPhone        String
-  street              String
   state               String
   city                String
   place               String
-  federationId        Int
-  federation          Federation @relation(fields: [federationId], references: [id])
-  teamId              Int
-  team                Team       @relation(fields: [teamId], references: [id])
-  updatedAt           DateTime   @default(now()) @updatedAt
-  createdAt           DateTime   @default(now())
+  federationId        Int?
+  federation          Federation? @relation(fields: [federationId], references: [id])
+  teamId              Int?
+  team                Team?       @relation(fields: [teamId], references: [id])
+  updatedAt           DateTime    @default(now()) @updatedAt
+  createdAt           DateTime    @default(now())
 
   @@map("partner_projects")
 }

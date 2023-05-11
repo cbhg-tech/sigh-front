@@ -3,7 +3,9 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
+import { verifyUserRole } from "@/utils/verifyUserRole";
 import { PartnerProject, ROLE, USER_TYPE } from "@prisma/client";
+import { userAgent } from "next/server";
 import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [
@@ -48,25 +50,10 @@ const PartnerProjectPage = async () => {
   const partnerProjects = await getPartnerProjects();
   const currentUser = await getCurrentUser();
 
-  const canDeleteOrEdit = (pp: PartnerProject) => {
-    if (currentUser?.type === USER_TYPE.ATHLETE) return false;
-
-    if (
-      currentUser?.admin?.role === ROLE.ADMIN &&
-      !pp.teamId &&
-      !pp.federationId
-    )
-      return true;
-
-    if (
-      currentUser?.admin?.federationId === pp.federationId ||
-      currentUser?.admin?.teamId === pp.teamId
-    ) {
-      return true;
-    }
-
-    return false;
-  };
+  const canCreate = verifyUserRole({
+    user: currentUser!,
+    roles: [ROLE.ADMIN, ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
+  });
 
   return (
     <div>
@@ -74,12 +61,14 @@ const PartnerProjectPage = async () => {
         <h2 className="text-xl md:text-3xl text-light-on-surface">
           Projetos parceiros {`(${partnerProjects.length || 0})`}
         </h2>
-        <NavigationButton
-          href="/app/projetos-parceiros/formulario"
-          additionalClasses="w-full lg:w-auto px-6"
-        >
-          Criar projeto
-        </NavigationButton>
+        {canCreate && (
+          <NavigationButton
+            href="/app/projetos-parceiros/formulario"
+            additionalClasses="w-full lg:w-auto px-6"
+          >
+            Criar projeto
+          </NavigationButton>
+        )}
       </div>
 
       {partnerProjects.length === 0 ? (
@@ -113,21 +102,22 @@ const PartnerProjectPage = async () => {
                 >
                   <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{pp.name}</td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {pp.initialDate}
+                    {new Date(pp.initialDate).toLocaleDateString("pt-BR")}
                   </td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {pp.finalDate}
+                    {new Date(pp.finalDate).toLocaleDateString("pt-BR")}
                   </td>
                   <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>
                     {pp.practitioners}
                   </td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {pp.team.name || pp.federation.name || "CBHG"}
+                    {pp.team?.name || pp.federation?.name || "CBHG"}
                   </td>
                   <td className={`w-auto py-4 px-2`}>
                     <ListItemAction
                       id={pp.id}
-                      enableAction={canDeleteOrEdit(pp)}
+                      currentUser={currentUser!}
+                      pp={pp}
                     />
                   </td>
                 </tr>

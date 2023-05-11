@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios, { AxiosError, Method } from "axios";
 
 type FetchStatus = "idle" | "loading" | "success" | "error";
