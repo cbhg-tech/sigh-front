@@ -1,34 +1,9 @@
-import { EmptyMessage } from "@/components/EmptyMessage";
-import { Textfield } from "@/components/Inputs/Textfield";
+import { DataList } from "@/components/DataList";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
 import { verifyUserRole } from "@/utils/verifyUserRole";
 import { ROLE } from "@prisma/client";
-import { ListItemAction } from "./ListItemAction";
-
-const HeaderName = [
-  {
-    name: "Nome",
-    width: "w-1/2 lg:w-1/4",
-  },
-  {
-    name: "Federação",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "Email",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "Presidente",
-    width: "hidden lg:table-cell w-1/2 lg:w-1/5",
-  },
-  {
-    name: "",
-    width: "w-auto",
-  },
-];
 
 async function getTeams() {
   const teams = await prisma.team.findMany({
@@ -40,11 +15,11 @@ async function getTeams() {
   return teams;
 }
 
-const TeamsPage = async () => {
+export default async function TeamsPage() {
   const currentUser = await getCurrentUser();
   const teams = await getTeams();
 
-  const canCreateAndEdit = verifyUserRole({
+  const canCreate = verifyUserRole({
     user: currentUser!,
     roles: [ROLE.ADMIN],
   });
@@ -55,7 +30,7 @@ const TeamsPage = async () => {
         <h2 className="text-xl md:text-3xl text-light-on-surface">
           Clubes {`(${teams.length || 0})`}
         </h2>
-        {canCreateAndEdit && (
+        {canCreate && (
           <NavigationButton
             href="/app/clubes/formulario"
             additionalClasses="w-full lg:w-auto px-6"
@@ -65,61 +40,49 @@ const TeamsPage = async () => {
         )}
       </div>
 
-      {teams.length === 0 ? (
-        <EmptyMessage message="Nenhum clube cadastrado" />
-      ) : (
-        <>
-          <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
-            <form className="w-full lg:w-1/3">
-              <Textfield label="Buscar..." name="search" id="search" />
-            </form>
-          </div>
-
-          <table className="w-full">
-            <thead>
-              <tr>
-                {HeaderName.map((header) => (
-                  <th
-                    className={`${header.width} text-left py-4 px-2 bg-slate-100`}
-                    key={header.name}
-                  >
-                    {header.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {teams.map((team) => (
-                <tr
-                  className="border-b last:border-none border-slate-200"
-                  key={team.id}
-                >
-                  <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{team.name}</td>
-                  <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {team.federation.initials}
-                  </td>
-                  <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {team.email}
-                  </td>
-                  <td
-                    className={`hidden lg:table-cell w-1/2 lg:w-1/5 py-4 px-2`}
-                  >
-                    {team.presidentName}
-                  </td>
-                  <td className={`w-auto py-4 px-2`}>
-                    <ListItemAction
-                      id={team.id}
-                      enableEdit={canCreateAndEdit}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+      <DataList
+        user={currentUser!}
+        data={teams}
+        lineKey="id"
+        customEmptyDataMessage="Nenhum clube cadastrado"
+        searchTextKey="name"
+        tableSettings={[
+          {
+            name: "Nome",
+            width: "w-1/2 lg:w-1/4",
+            key: "name",
+          },
+          {
+            name: "Federação",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "federation.initials",
+          },
+          {
+            name: "Email",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "email",
+          },
+          {
+            name: "Presidente",
+            width: "hidden lg:table-cell w-1/2 lg:w-1/5",
+            key: "presidentName",
+          },
+        ]}
+        actions={[
+          {
+            type: "EDIT",
+            redirect: "/app/clubes/formulario?id=",
+            blockBy: "ROLE",
+            roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
+          },
+          {
+            type: "DELETE",
+            deleteUrl: "/api/team/",
+            blockBy: "ROLE",
+            roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
+          },
+        ]}
+      />
     </div>
   );
-};
-
-export default TeamsPage;
+}

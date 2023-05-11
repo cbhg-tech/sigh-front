@@ -11,7 +11,7 @@ async function getFederations() {
   return federations;
 }
 
-const FederationsPage = async () => {
+export default async function FederationsPage() {
   const currentUser = await getCurrentUser();
   const federations = await getFederations();
 
@@ -81,6 +81,4 @@ const FederationsPage = async () => {
       />
     </div>
   );
-};
-
-export default FederationsPage;
+}
