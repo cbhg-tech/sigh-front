@@ -68,6 +68,13 @@ export function ListItemAction({
 
   return (
     <div className="flex gap-2 justify-end items-center">
+      <Link href={`/app/projetos-parceiros/${id}`}>
+        <IconButton
+          icon={AiOutlineEye}
+          className="text-light-tertiary"
+          size="1.5rem"
+        />
+      </Link>
       {canDeleteOrEdit() ? (
         <>
           <Link href={`/app/projetos-parceiros/formulario?id=${id}`}>
@@ -91,16 +98,7 @@ export function ListItemAction({
           />
         </>
       ) : (
-        <>
-          <IconButton
-            icon={AiOutlineEye}
-            className="text-light-tertiary"
-            size="1.5rem"
-            onClick={() => {
-              console.log("details page");
-            }}
-          />
-        </>
+        <></>
       )}
     </div>
   );

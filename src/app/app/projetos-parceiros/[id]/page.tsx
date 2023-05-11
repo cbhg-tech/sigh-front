@@ -1,0 +1,119 @@
+import { prisma } from "@/services/prisma";
+import { NextPage } from "@/types/NextPage";
+import { getFormattedDate } from "@/utils/getFormattedDate";
+import {
+  MdBarChart,
+  MdCalendarToday,
+  MdDescription,
+  MdLink,
+  MdOutlineMapsHomeWork,
+  MdPhone,
+} from "react-icons/md";
+
+async function getPartnerProject(id: number) {
+  return prisma.partnerProject.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      federation: true,
+      team: true,
+    },
+  });
+}
+
+export default async function PartnerProjectDetail({
+  params: { id },
+}: NextPage) {
+  const data = await getPartnerProject(Number(id));
+
+  return (
+    <>
+      <h1 className="text-3xl text-light-on-surface">{data?.name}</h1>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdLink size="2rem" className="text-light-on-surface" />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Relacionado</h3>
+          <p className="text-light-on-surface-variant">
+            <strong>
+              {data?.federation?.name || data?.team?.name || "CBHG"}
+            </strong>
+          </p>
+        </div>
+      </section>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdCalendarToday size="1.75rem" className="text-light-on-surface" />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Período</h3>
+          <p className="text-light-on-surface-variant">
+            <strong>Data de início</strong>{" "}
+            {getFormattedDate(data!.initialDate)}
+          </p>
+          <p className="text-light-on-surface-variant">
+            <strong>Data do fim</strong> {getFormattedDate(data!.finalDate)}
+          </p>
+        </div>
+      </section>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdOutlineMapsHomeWork
+            size="1.75rem"
+            className="text-light-on-surface"
+          />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Endereço</h3>
+          <p className="text-light-on-surface-variant">
+            {data?.city} - {data?.state}
+            <br />
+            {data?.place}
+          </p>
+        </div>
+      </section>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdPhone size="1.75rem" className="text-light-on-surface" />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Contato</h3>
+          <p className="text-light-on-surface-variant">
+            <strong>{data?.contactName}</strong> {data?.contactPhone}
+          </p>
+        </div>
+      </section>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdBarChart size="1.75rem" className="text-light-on-surface" />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Números</h3>
+          <p className="text-light-on-surface-variant">
+            <strong>Faixa etária: </strong> {data?.ageGroup}
+          </p>
+          <p className="text-light-on-surface-variant">
+            <strong>Participantes: </strong> {data?.practitioners}
+          </p>
+          <p className="text-light-on-surface-variant">
+            <strong>Homens: </strong> {`${data?.malePractitioners}%`}
+          </p>
+          <p className="text-light-on-surface-variant">
+            <strong>Mulheres: </strong> {`${data?.femalePractitioners}%`}
+          </p>
+        </div>
+      </section>
+      <section className="mt-8 flex gap-4">
+        <div>
+          <MdDescription size="1.75rem" className="text-light-on-surface" />
+        </div>
+        <div>
+          <h3 className="text-xl text-light-on-surface">Descrição</h3>
+          <p className="text-light-on-surface-variant">{data?.description}</p>
+        </div>
+      </section>
+    </>
+  );
+}
