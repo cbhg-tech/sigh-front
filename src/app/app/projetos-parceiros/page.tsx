@@ -3,6 +3,7 @@ import { Textfield } from "@/components/Inputs/Textfield";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
+import { getFormattedDate } from "@/utils/getFormattedDate";
 import { verifyUserRole } from "@/utils/verifyUserRole";
 import { PartnerProject, ROLE, USER_TYPE } from "@prisma/client";
 import { userAgent } from "next/server";
@@ -102,10 +103,10 @@ const PartnerProjectPage = async () => {
                 >
                   <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{pp.name}</td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {new Date(pp.initialDate).toLocaleDateString("pt-BR")}
+                    {getFormattedDate(pp.initialDate)}
                   </td>
                   <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {new Date(pp.finalDate).toLocaleDateString("pt-BR")}
+                    {getFormattedDate(pp.finalDate)}
                   </td>
                   <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>
                     {pp.practitioners}

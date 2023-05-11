@@ -5,10 +5,14 @@ import { Select } from "@/components/Inputs/Select";
 import { Textarea } from "@/components/Inputs/Textarea";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { useMutation } from "@/hooks/useMutation";
+import { fetcher } from "@/services/fetcher";
+import { NextPage } from "@/types/NextPage";
 import { States } from "@/utils/states";
+import { PartnerProject } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { startTransition } from "react";
+import { startTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 
 interface IForm {
   name: string;
@@ -26,28 +30,58 @@ interface IForm {
   place: string;
 }
 
-function PartnerProjectsForm() {
+function PartnerProjectsForm({ searchParams }: NextPage) {
+  const id = searchParams?.id as string;
+
   const router = useRouter();
-  const { mutate } = useMutation("/api/partner-project", "POST");
+
+  const { data: selectedPartnerProject, isLoading } = useSWR<PartnerProject>(
+    id ? `/api/partner-project/${id}` : null,
+    fetcher
+  );
+
+  const { mutate: create, status: createStatus } = useMutation(
+    "/api/partner-project",
+    "POST"
+  );
+  const { mutate: update, status: updateStatus } = useMutation(
+    `/api/partner-project/${id}`,
+    "PUT"
+  );
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<IForm>();
+
+  useEffect(() => {
+    if (id && selectedPartnerProject) {
+      reset({
+        ...selectedPartnerProject,
+      });
+    }
+  }, [id, reset, selectedPartnerProject]);
 
   const onSubmit = async (data: IForm) => {
     try {
-      await mutate(data);
+      if (id) {
+        await update(data);
+      } else {
+        await create(data);
+      }
 
       startTransition(() => {
-        router.push("/app/usuarios");
+        router.push("/app/projetos-parceiros");
         router.refresh();
       });
     } catch (error) {
       alert("Erro ao cadastrar projeto de parceria");
     }
   };
+
+  const isSubmitting = createStatus === "loading" || updateStatus === "loading";
 
   return (
     <div>
@@ -203,7 +237,12 @@ function PartnerProjectsForm() {
           >
             Cancelar
           </Button>
-          <Button aditionalClasses="w-auto px-2" type="submit">
+          <Button
+            aditionalClasses="w-auto px-2"
+            type="submit"
+            isLoading={isSubmitting}
+            disabled={isSubmitting}
+          >
             Salvar
           </Button>
         </div>

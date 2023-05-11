@@ -60,6 +60,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
   return new Response(JSON.stringify(user), { status: 200 });
 }
+
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   const decoded = await authenticationMiddleware();
 

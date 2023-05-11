@@ -20,7 +20,10 @@ export function ListItemAction({
   currentUser: UserComplete;
   pp: PartnerProject;
 }) {
-  const { mutate, status } = useMutation(`/api/user/${id}`, "DELETE");
+  const { mutate, status } = useMutation(
+    `/api/partner-project/${id}`,
+    "DELETE"
+  );
 
   const router = useRouter();
 
