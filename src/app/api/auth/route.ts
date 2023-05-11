@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const redirectUrl = new URL("/app/dashboard", req.url);
+  const redirectUrl = new URL("/app/dashboard", process.env.APP_URL);
 
   return new Response(null, {
     status: 302,
