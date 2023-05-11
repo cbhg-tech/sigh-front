@@ -5,8 +5,7 @@ import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
 import { getFormattedDate } from "@/utils/getFormattedDate";
 import { verifyUserRole } from "@/utils/verifyUserRole";
-import { PartnerProject, ROLE, USER_TYPE } from "@prisma/client";
-import { userAgent } from "next/server";
+import { ROLE } from "@prisma/client";
 import { ListItemAction } from "./ListItemAction";
 
 const HeaderName = [

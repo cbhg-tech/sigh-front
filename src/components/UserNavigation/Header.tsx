@@ -1,22 +1,27 @@
-"use client";
-
 import { UserComplete } from "@/types/UserComplete";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
 import { MdOutlineMenu } from "react-icons/md";
+import { IconButton } from "../Inputs/IconButton";
 
 interface NavbarParams {
   user: UserComplete;
+  toogleSideMenu: Dispatch<SetStateAction<boolean>>;
 }
 
-export function Navbar({ user }: NavbarParams) {
+export function Header({ user, toogleSideMenu }: NavbarParams) {
   const { replace } = useRouter();
 
   return (
     <header className="items-center justify-between px-4 col-span-5 bg-light-surface-1 flex">
       <div className="flex items-center gap-2">
         <div className="flex items-center lg:hidden">
-          <MdOutlineMenu size="2.25rem" />
+          <IconButton
+            icon={MdOutlineMenu}
+            size="2.25rem"
+            onClick={() => toogleSideMenu(true)}
+          />
         </div>
         <Image
           className="object-contain hidden lg:block"
