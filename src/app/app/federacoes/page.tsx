@@ -66,6 +66,10 @@ export default async function FederationsPage() {
         ]}
         actions={[
           {
+            type: "VIEW",
+            redirect: "/app/federacoes/",
+          },
+          {
             type: "EDIT",
             redirect: "/app/federacoes/formulario?id=",
             blockBy: "ROLE",

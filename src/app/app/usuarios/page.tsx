@@ -81,20 +81,27 @@ const UsersPage = async () => {
           {
             name: "Status",
             width: "hidden lg:table-cell lg:w-1/5",
-            key: "status",
+            key: "",
             formatter: "STATUS",
+            formatterParam: "status",
           },
           {
             name: "RoleAccess",
             width: "hidden lg:table-cell lg:w-1/5",
-            key: "admin.role",
+            key: "",
             formatter: "BADGE",
+            formatterParam: "admin.role",
           },
           {
             name: "Associação",
             width: "hidden lg:table-cell w-1/2 lg:w-1/5",
-            key: "admin",
+            key: "",
             formatter: "ASSOCIATION",
+            formatterParam: [
+              "admin.federation.name",
+              "admin.team.name",
+              "CBHG",
+            ],
           },
         ]}
         actions={[

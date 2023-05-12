@@ -70,6 +70,10 @@ export default async function TeamsPage() {
         ]}
         actions={[
           {
+            type: "VIEW",
+            redirect: "/app/clubes/",
+          },
+          {
             type: "EDIT",
             redirect: "/app/clubes/formulario?id=",
             blockBy: "ROLE",

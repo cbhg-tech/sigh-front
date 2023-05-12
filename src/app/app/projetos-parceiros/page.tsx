@@ -1,39 +1,9 @@
-import { EmptyMessage } from "@/components/EmptyMessage";
-import { Textfield } from "@/components/Inputs/Textfield";
+import { DataList } from "@/components/DataList";
 import { NavigationButton } from "@/components/NavigationButton";
 import { prisma } from "@/services/prisma";
 import { getCurrentUser } from "@/utils/getCurrentUser";
-import { getFormattedDate } from "@/utils/getFormattedDate";
 import { verifyUserRole } from "@/utils/verifyUserRole";
 import { ROLE } from "@prisma/client";
-import { ListItemAction } from "./ListItemAction";
-
-const HeaderName = [
-  {
-    name: "Nome do projeto",
-    width: "w-1/2 lg:w-1/4",
-  },
-  {
-    name: "Início",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "Fim",
-    width: "hidden lg:table-cell lg:w-1/5",
-  },
-  {
-    name: "Qta de praticantes",
-    width: "w-1/2 lg:w-1/5",
-  },
-  {
-    name: "Relacionado",
-    width: "hidden lg:table-cell w-1/2 lg:w-1/5",
-  },
-  {
-    name: "",
-    width: "w-auto",
-  },
-];
 
 const getPartnerProjects = async () => {
   const partnerProjects = await prisma.partnerProject.findMany({
@@ -71,61 +41,66 @@ const PartnerProjectPage = async () => {
         )}
       </div>
 
-      {partnerProjects.length === 0 ? (
-        <EmptyMessage message="Nenhum projeto cadastrado" />
-      ) : (
-        <>
-          <div className="flex flex-col justify-end lg:flex-row gap-2 mb-4">
-            <form className="w-full lg:w-1/3">
-              <Textfield label="Buscar..." name="search" id="search" />
-            </form>
-          </div>
-
-          <table className="w-full">
-            <thead>
-              <tr>
-                {HeaderName.map((header) => (
-                  <th
-                    className={`${header.width} text-left py-4 px-2 bg-slate-100`}
-                    key={header.name}
-                  >
-                    {header.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {partnerProjects.map((pp) => (
-                <tr
-                  className="border-b last:border-none border-slate-200"
-                  key={pp.id}
-                >
-                  <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>{pp.name}</td>
-                  <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {getFormattedDate(pp.initialDate)}
-                  </td>
-                  <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {getFormattedDate(pp.finalDate)}
-                  </td>
-                  <td className={`w-1/2 lg:w-1/5 py-4 px-2`}>
-                    {pp.practitioners}
-                  </td>
-                  <td className={`hidden lg:table-cell lg:w-1/5 py-4 px-2`}>
-                    {pp.team?.name || pp.federation?.name || "CBHG"}
-                  </td>
-                  <td className={`w-auto py-4 px-2`}>
-                    <ListItemAction
-                      id={pp.id}
-                      currentUser={currentUser!}
-                      pp={pp}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
+      <DataList
+        user={currentUser!}
+        data={partnerProjects}
+        lineKey="id"
+        customEmptyDataMessage="Nenhum projeto cadastrado"
+        searchTextKey="name"
+        tableSettings={[
+          {
+            name: "Nome do projeto",
+            width: "w-1/2 lg:w-1/4",
+            key: "name",
+          },
+          {
+            name: "Início",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "initialDate",
+          },
+          {
+            name: "Fim",
+            width: "hidden lg:table-cell lg:w-1/5",
+            key: "finalDate",
+          },
+          {
+            name: "Qta de praticantes",
+            width: "w-1/2 lg:w-1/5",
+            key: "practitioners",
+          },
+          {
+            name: "Relacionado",
+            width: "hidden lg:table-cell w-1/2 lg:w-1/5",
+            key: "",
+            formatter: "ASSOCIATION",
+            formatterParam: ["team.name", "federation.name", "CBHG"],
+          },
+        ]}
+        actions={[
+          {
+            type: "VIEW",
+            redirect: "/app/projetos-parceiros/",
+          },
+          {
+            type: "EDIT",
+            redirect: "/app/projetos-parceiros/formulario?id=",
+            blockBy: "CREATED_BY",
+            relationsKey: {
+              teamId: "teamId",
+              federationId: "federationId",
+            },
+          },
+          {
+            type: "DELETE",
+            deleteUrl: "/api/partner-project/delete",
+            blockBy: "CREATED_BY",
+            relationsKey: {
+              teamId: "teamId",
+              federationId: "federationId",
+            },
+          },
+        ]}
+      />
     </div>
   );
 };
