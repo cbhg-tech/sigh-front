@@ -21,3 +21,4 @@
   - [ ] listagem
   - [ ] detalhes
 - [ ] Relatório de atletas
+- [ ] Migrar dados
