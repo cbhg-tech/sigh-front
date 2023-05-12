@@ -56,12 +56,16 @@ const PartnerProjectPage = async () => {
           {
             name: "Início",
             width: "hidden lg:table-cell lg:w-1/5",
-            key: "initialDate",
+            key: "",
+            formatter: "DATE",
+            formatterParam: "initialDate",
           },
           {
             name: "Fim",
             width: "hidden lg:table-cell lg:w-1/5",
-            key: "finalDate",
+            key: "",
+            formatter: "DATE",
+            formatterParam: "finalDate",
           },
           {
             name: "Qta de praticantes",

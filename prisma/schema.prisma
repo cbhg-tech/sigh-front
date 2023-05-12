@@ -40,6 +40,11 @@ enum LOG_TYPE {
   APPROVAL
 }
 
+enum TECHNICIAN_TYPE {
+  OFFICIAL
+  COMMITTEE
+}
+
 // TABLES
 
 model User {
@@ -201,7 +206,7 @@ model Team {
   federation              Federation       @relation(fields: [federationId], references: [id])
   admins                  Admin[]
   athletes                Athlete[]
-  technicials             Technicial[]
+  technicials             Technician[]
   partnerProjects         PartnerProject[]
   currentTeamTransfer     Transfer[]       @relation("current_team")
   destinationTeamTransfer Transfer[]       @relation("destination_team")
@@ -236,21 +241,23 @@ model PartnerProject {
   @@map("partner_projects")
 }
 
-model Technicial {
-  id           Int      @id @default(autoincrement())
+model Technician {
+  id           Int             @id @default(autoincrement())
   name         String
-  phone        Int
+  phone        String
+  charge       String?
   birthDate    String
   gender       String
   email        String
   document     String
   documentFile String
-  teamId       Int
-  team         Team     @relation(fields: [teamId], references: [id])
-  updatedAt    DateTime @default(now()) @updatedAt
-  createdAt    DateTime @default(now())
+  type         TECHNICIAN_TYPE
+  teamId       Int?
+  team         Team?           @relation(fields: [teamId], references: [id])
+  updatedAt    DateTime        @default(now()) @updatedAt
+  createdAt    DateTime        @default(now())
 
-  @@map("technicial_committee")
+  @@map("technicians")
 }
 
 model Approval {

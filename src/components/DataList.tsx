@@ -12,6 +12,7 @@ import { startTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CgSpinner } from "react-icons/cg";
 import { Textfield } from "./Inputs/Textfield";
+import { getFormattedDate } from "@/utils/getFormattedDate";
 
 type RelationsKey = {
   teamId?: string;
@@ -28,7 +29,7 @@ interface DataListProps {
     name: string;
     width: string;
     key: string;
-    formatter?: "ASSOCIATION" | "BADGE" | "STATUS";
+    formatter?: "ASSOCIATION" | "BADGE" | "STATUS" | "DATE";
     formatterParam?: string | string[];
   }>;
   actions?: Array<{
@@ -119,6 +120,10 @@ export function DataList({
         return formatBadge(value, formatterParam as string);
       case "STATUS":
         return formatStatus(value, formatterParam as string);
+      case "DATE":
+        return getFormattedDate(
+          getValue<string>(formatterParam! as string, value)
+        );
       default:
         return value;
     }
