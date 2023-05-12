@@ -1,10 +1,12 @@
 - [ ] Comissao tecnica
+  - [ ] listar
   - [ ] criar
   - [ ] editar
   - [ ] deletar
   - [ ] visualizar
 - [ ] Oficial tecnica
-  - [ ] criar
+  - [x] listar
+  - [x] criar
   - [ ] editar
   - [ ] deletar
   - [ ] visualizar
