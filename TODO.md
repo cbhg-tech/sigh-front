@@ -1,0 +1,23 @@
+- [ ] Comissao tecnica
+  - [ ] criar
+  - [ ] editar
+  - [ ] deletar
+  - [ ] visualizar
+- [ ] Oficial tecnica
+  - [ ] criar
+  - [ ] editar
+  - [ ] deletar
+  - [ ] visualizar
+- [ ] Atletas
+  - [ ] cadastro primario
+  - [ ] cadastro completo
+  - [ ] edição de cadastro
+  - [ ] listagem de atletas
+  - [ ] detalhes de atletas
+- [ ] Fluxo de aprovação de atletas
+  - [ ] listagem
+  - [ ] detalhes
+- [ ] Fluxo de transferencia
+  - [ ] listagem
+  - [ ] detalhes
+- [ ] Relatório de atletas
