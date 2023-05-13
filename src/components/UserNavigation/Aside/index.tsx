@@ -1,6 +1,6 @@
 import { MdDashboard, MdGroups, MdGroupWork, MdShield } from "react-icons/md";
 import { SiGoogleassistant } from "react-icons/si";
-import { FaUsersCog } from "react-icons/fa";
+import { FaUserFriends, FaUsersCog } from "react-icons/fa";
 import { Divider } from "../../Divider";
 import { NavigationItem } from "./NavigationItem";
 import { UserComplete } from "@/types/UserComplete";
@@ -50,12 +50,17 @@ export const Aside = ({
         </div>
         <NavigationItem
           href="/app/projetos-parceiros"
-          label="Projetos Parceiros"
+          label="Projetos parceiros"
           icon={MdGroupWork}
         />
         <NavigationItem
+          href="/app/comissao-tecnica"
+          label="Comissão técnica"
+          icon={FaUserFriends}
+        />
+        <NavigationItem
           href="/app/oficiais-tecnicos"
-          label="Oficiais Técnicos"
+          label="Oficiais técnicos"
           icon={MdGroups}
         />
         <NavigationItem href="/app/clubes" label="Clubes" icon={MdShield} />

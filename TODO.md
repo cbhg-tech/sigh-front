@@ -1,15 +1,16 @@
 - [ ] Comissao tecnica
-  - [ ] listar
-  - [ ] criar
-  - [ ] editar
-  - [ ] deletar
-  - [ ] visualizar
-- [ ] Oficial tecnica
   - [x] listar
   - [x] criar
   - [x] editar
   - [x] deletar
-  - [ ] visualizar
+  - [x] visualizar
+  - [ ] bloquear acesso de rotas por usuario
+- [x] Oficial tecnica
+  - [x] listar
+  - [x] criar
+  - [x] editar
+  - [x] deletar
+  - [x] visualizar
 - [ ] Atletas
   - [ ] cadastro primario
   - [ ] cadastro completo

@@ -9,7 +9,8 @@ import { fetcher } from "@/services/fetcher";
 import { NextPage } from "@/types/NextPage";
 import { formatPhone } from "@/utils/formatPhone";
 import { uploadFile } from "@/utils/uploadFile";
-import { Technician, TECHNICIAN_TYPE } from "@prisma/client";
+import { verifyUserRole } from "@/utils/verifyUserRole";
+import { ROLE, Technician, TECHNICIAN_TYPE } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -70,7 +71,7 @@ export default function TechnicalOfficerForm({ searchParams }: NextPage) {
           ...data,
           phone: data.phone.replace(/\D/g, ""),
           documentFile: url.technicianDocument,
-          type: TECHNICIAN_TYPE.OFFICIAL,
+          type: TECHNICIAN_TYPE.COMMITTEE,
         });
       } else {
         // prettier-ignore
@@ -100,7 +101,7 @@ export default function TechnicalOfficerForm({ searchParams }: NextPage) {
   return (
     <div>
       <h2 className="text-3xl text-light-on-surface mb-4">
-        Cadastro de oficial técnico
+        Cadastro de comissão técnica
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
         <div className="flex-1">
