@@ -6,12 +6,15 @@ import { Select } from "@/components/Inputs/Select";
 import { Textarea } from "@/components/Inputs/Textarea";
 import { Textfield } from "@/components/Inputs/Textfield";
 import { useMutation } from "@/hooks/useMutation";
+import { fetcher } from "@/services/fetcher";
+import { NextPage } from "@/types/NextPage";
 import { formatPhone } from "@/utils/formatPhone";
 import { uploadFile } from "@/utils/uploadFile";
-import { TECHNICIAN_TYPE } from "@prisma/client";
+import { Technician, TECHNICIAN_TYPE } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 
 export interface IForm {
   name: string;
@@ -20,36 +23,67 @@ export interface IForm {
   gender: string;
   charge: string;
   birthDate: string;
-  document?: File;
+  document: string;
 }
 
-export default function TechnicalOfficerForm() {
+export default function TechnicalOfficerForm({ searchParams }: NextPage) {
+  const id = searchParams?.id as string;
+
   const router = useRouter();
-  const { register, handleSubmit } = useForm<IForm>();
+
+  const { register, handleSubmit, reset } = useForm<IForm>();
 
   const [document, setDocument] = useState<File | undefined>();
+
+  const { data: selectedTechnician, isLoading: isLoadingTechnician } =
+    useSWR<Technician>(id ? `/api/technician/${id}` : null, fetcher);
 
   const { mutate: create, status: createStatus } = useMutation(
     "/api/technician",
     "POST"
   );
+  const { mutate: update, status: updateStatus } = useMutation(
+    `/api/technician/${id}`,
+    "PUT"
+  );
+
+  useEffect(() => {
+    if (!isLoadingTechnician && selectedTechnician) {
+      reset({
+        ...selectedTechnician,
+        charge: selectedTechnician.charge || "",
+      });
+    }
+  }, [isLoadingTechnician, reset, selectedTechnician]);
 
   const onSubmit = async (data: IForm) => {
     try {
-      if (!document) throw new Error("É necessário enviar um documento");
+      if (!id) {
+        if (!document) throw new Error("É necessário enviar um documento");
 
-      const url = await uploadFile(
-        "/sigh/technicians",
-        document,
-        "technicianDocument"
-      );
+        const url = await uploadFile(
+          "/sigh/technicians",
+          document,
+          "technicianDocument"
+        );
 
-      await create({
-        ...data,
-        phone: data.phone.replace(/\D/g, ""),
-        documentFile: url.technicianDocument,
-        type: TECHNICIAN_TYPE.OFFICIAL,
-      });
+        await create({
+          ...data,
+          phone: data.phone.replace(/\D/g, ""),
+          documentFile: url.technicianDocument,
+          type: TECHNICIAN_TYPE.OFFICIAL,
+        });
+      } else {
+        // prettier-ignore
+        const url = document ? await uploadFile("/sigh/technicians", document, "technicianDocument") : null;
+
+        await update({
+          ...data,
+          phone: data.phone.replace(/\D/g, ""),
+          documentFile:
+            url?.technicianDocument || selectedTechnician?.documentFile,
+        });
+      }
 
       startTransition(() => {
         router.push("/app/oficiais-tecnicos");
@@ -61,6 +95,8 @@ export default function TechnicalOfficerForm() {
   };
 
   const isLoading = createStatus === "loading";
+
+  if (id && isLoadingTechnician) return <div>Carregando...</div>;
 
   return (
     <div>
@@ -120,15 +156,13 @@ export default function TechnicalOfficerForm() {
             <Textfield id="charge" label="Cargo" {...register("charge")} />
           </div>
         </div>
-        <div>
-          <Textarea id="address" label="Endereço" />
-        </div>
         <div className="p-4">
           <FileInput
             id="document"
             label="Documento de identificação (RG ou CNH)"
             hint="Obrigatório para todos"
             onChange={(e) => setDocument(e.target.files?.[0] || undefined)}
+            url={selectedTechnician?.documentFile}
           />
         </div>
         <div className="flex justify-end gap-2">

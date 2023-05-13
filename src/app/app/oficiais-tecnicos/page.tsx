@@ -60,13 +60,13 @@ export default async function TechnicalOfficers() {
           },
           {
             type: "EDIT",
-            redirect: "/app/usuarios/formulario?id=",
+            redirect: "/app/oficiais-tecnicos/formulario?id=",
             blockBy: "ROLE",
             roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
           },
           {
             type: "DELETE",
-            deleteUrl: "/api/user/",
+            deleteUrl: "/api/technician/",
             blockBy: "ROLE",
             roles: [ROLE.ADMINFEDERATION, ROLE.ADMINTEAM],
           },

@@ -7,8 +7,8 @@
 - [ ] Oficial tecnica
   - [x] listar
   - [x] criar
-  - [ ] editar
-  - [ ] deletar
+  - [x] editar
+  - [x] deletar
   - [ ] visualizar
 - [ ] Atletas
   - [ ] cadastro primario
