@@ -1,10 +1,10 @@
-- [ ] Comissao tecnica
+- [x] Comissao tecnica
   - [x] listar
   - [x] criar
   - [x] editar
   - [x] deletar
   - [x] visualizar
-  - [ ] bloquear acesso de rotas por usuario
+  - [x] bloquear acesso de rotas por usuario
 - [x] Oficial tecnica
   - [x] listar
   - [x] criar

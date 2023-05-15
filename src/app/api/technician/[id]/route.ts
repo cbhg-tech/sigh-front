@@ -99,5 +99,5 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     },
   });
 
-  return new Response("Técnico deletado com sucesso", { status: 204 });
+  return new Response(null, { status: 204 });
 }

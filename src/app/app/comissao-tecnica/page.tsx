@@ -30,7 +30,7 @@ export default async function TechnicalCommittee() {
         </h2>
         {isTeam && (
           <NavigationButton
-            href="/app/oficiais-tecnicos/formulario"
+            href="/app/comissao-tecnica/formulario"
             additionalClasses="w-full lg:w-auto px-6"
           >
             Criar comissão técnica
