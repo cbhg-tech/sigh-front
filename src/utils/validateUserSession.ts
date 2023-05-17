@@ -1,36 +1,19 @@
+import { authAdmin } from "@/services/firebase-admin";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { prisma } from "../services/prisma";
 
 async function validateUserSession() {
   const userCookies = cookies();
 
-  const token = userCookies.get("token")?.value as unknown as string;
+  const token = userCookies.get("access_token")?.value as unknown as string;
 
   if (!token) {
     redirect("/");
   }
 
-  const sessionExist = await prisma.userSession.findUnique({
-    where: {
-      token,
-    },
-  });
+  const sessionIsValid = await authAdmin.verifyIdToken(token, true);
 
-  if (!sessionExist || !sessionExist.isValid) {
-    redirect("/");
-  }
-
-  if (sessionExist.expires_at < new Date()) {
-    await prisma.userSession.update({
-      where: {
-        id: sessionExist.id,
-      },
-      data: {
-        isValid: false,
-      },
-    });
-
+  if (!sessionIsValid) {
     redirect("/");
   }
 }

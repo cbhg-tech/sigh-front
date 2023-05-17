@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const useCookies = (key: string) => {
   const [cookie, setCookie] = useState(() => {
-    const cookieValue = window.document.cookie
+    const cookieValue = document.cookie
       .split("; ")
       .find((row) => row.startsWith(`${key}=`));
 
