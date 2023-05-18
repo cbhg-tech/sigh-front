@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: {
-      id: tokenDecoded.id,
+      uid: tokenDecoded.id,
     },
     include: {
       admin: true,

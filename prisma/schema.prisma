@@ -48,34 +48,20 @@ enum TECHNICIAN_TYPE {
 // TABLES
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  name         String
-  type         USER_TYPE
-  status       USER_STATUS   @default(ACTIVE)
-  updatedAt    DateTime      @default(now()) @updatedAt
-  createdAt    DateTime      @default(now())
-  admin        Admin?
-  athlete      Athlete?
-  approvals    Approval[]
-  transfers    Transfer[]
-  userSessions UserSession[]
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
+  uid       String      @unique
+  name      String
+  type      USER_TYPE
+  status    USER_STATUS @default(ACTIVE)
+  updatedAt DateTime    @default(now()) @updatedAt
+  createdAt DateTime    @default(now())
+  admin     Admin?
+  athlete   Athlete?
+  approvals Approval[]
+  transfers Transfer[]
 
   @@map("users")
-}
-
-model UserSession {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  token      String   @unique
-  isValid    Boolean  @default(true)
-  expires_at DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  @@map("user_sessions")
 }
 
 model Admin {

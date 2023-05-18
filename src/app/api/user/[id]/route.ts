@@ -1,3 +1,4 @@
+import { authAdmin } from "@/services/firebase-admin";
 import { prisma } from "@/services/prisma";
 import { RouteParams } from "@/types/RouteParams";
 import { authenticationMiddleware } from "@/utils/authenticationMiddleware";
@@ -42,6 +43,21 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
     return new Response("Dados incorretos", { status: 400 });
   }
 
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  if (!userExists) {
+    return new Response("Usuário não encontrado", { status: 404 });
+  }
+
+  await authAdmin.updateUser(userExists.uid, {
+    displayName: name,
+    email,
+  });
+
   const user = await prisma.user.update({
     where: {
       id: Number(id),
@@ -66,12 +82,6 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
   const id = params.id;
   const userId = decoded.id;
 
-  if (Number(id) === userId) {
-    return new Response("Não é possível deletar o próprio usuário", {
-      status: 400,
-    });
-  }
-
   const userExists = await prisma.user.findUnique({
     where: {
       id: Number(id),
@@ -80,6 +90,12 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
   if (!userExists) {
     return new Response("Usuário não encontrado", { status: 404 });
+  }
+
+  if (userExists.uid === userId) {
+    return new Response("Não é possível deletar o próprio usuário", {
+      status: 400,
+    });
   }
 
   await prisma.user.delete({

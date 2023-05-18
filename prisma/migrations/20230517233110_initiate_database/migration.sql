@@ -13,11 +13,14 @@ CREATE TYPE "EVENT_STATUS" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 -- CreateEnum
 CREATE TYPE "LOG_TYPE" AS ENUM ('TRANSFER', 'APPROVAL');
 
+-- CreateEnum
+CREATE TYPE "TECHNICIAN_TYPE" AS ENUM ('OFFICIAL', 'COMMITTEE');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "uid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" "USER_TYPE" NOT NULL,
     "status" "USER_STATUS" NOT NULL DEFAULT 'ACTIVE',
@@ -25,19 +28,6 @@ CREATE TABLE "users" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user_sessions" (
-    "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "token" TEXT NOT NULL,
-    "isValid" BOOLEAN NOT NULL DEFAULT true,
-    "expires_at" TIMESTAMP(3) NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "user_sessions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -145,7 +135,7 @@ CREATE TABLE "teams" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "initials" TEXT NOT NULL,
-    "uf" VARCHAR(2) NOT NULL,
+    "description" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "coachName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -174,16 +164,13 @@ CREATE TABLE "partner_projects" (
     "malePractitioners" INTEGER NOT NULL,
     "femalePractitioners" INTEGER NOT NULL,
     "ageGroup" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "logo" TEXT NOT NULL,
     "contactName" TEXT NOT NULL,
     "contactPhone" TEXT NOT NULL,
-    "street" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "place" TEXT NOT NULL,
-    "federationId" INTEGER NOT NULL,
-    "teamId" INTEGER NOT NULL,
+    "federationId" INTEGER,
+    "teamId" INTEGER,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -191,20 +178,22 @@ CREATE TABLE "partner_projects" (
 );
 
 -- CreateTable
-CREATE TABLE "technicial_committee" (
+CREATE TABLE "technicians" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "phone" INTEGER NOT NULL,
+    "phone" TEXT NOT NULL,
+    "charge" TEXT,
     "birthDate" TEXT NOT NULL,
     "gender" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "document" TEXT NOT NULL,
     "documentFile" TEXT NOT NULL,
-    "teamId" INTEGER NOT NULL,
+    "type" "TECHNICIAN_TYPE" NOT NULL,
+    "teamId" INTEGER,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "technicial_committee_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "technicians_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -262,10 +251,7 @@ CREATE TABLE "logs" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_sessions_userId_key" ON "user_sessions"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_sessions_token_key" ON "user_sessions"("token");
+CREATE UNIQUE INDEX "users_uid_key" ON "users"("uid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "admins_userId_key" ON "admins"("userId");
@@ -284,9 +270,6 @@ CREATE UNIQUE INDEX "documents_athleteId_key" ON "documents"("athleteId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "hospital_data_athleteId_key" ON "hospital_data"("athleteId");
-
--- AddForeignKey
-ALTER TABLE "user_sessions" ADD CONSTRAINT "user_sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "admins" ADD CONSTRAINT "admins_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -316,13 +299,13 @@ ALTER TABLE "hospital_data" ADD CONSTRAINT "hospital_data_athleteId_fkey" FOREIG
 ALTER TABLE "teams" ADD CONSTRAINT "teams_federationId_fkey" FOREIGN KEY ("federationId") REFERENCES "federations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "partner_projects" ADD CONSTRAINT "partner_projects_federationId_fkey" FOREIGN KEY ("federationId") REFERENCES "federations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "partner_projects" ADD CONSTRAINT "partner_projects_federationId_fkey" FOREIGN KEY ("federationId") REFERENCES "federations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "partner_projects" ADD CONSTRAINT "partner_projects_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "teams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "partner_projects" ADD CONSTRAINT "partner_projects_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "teams"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "technicial_committee" ADD CONSTRAINT "technicial_committee_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "teams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "technicians" ADD CONSTRAINT "technicians_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "teams"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "user_approval" ADD CONSTRAINT "user_approval_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

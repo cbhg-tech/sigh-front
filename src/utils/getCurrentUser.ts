@@ -4,7 +4,7 @@ import { prisma } from "@/services/prisma";
 
 async function getCurrentUser() {
   const userCookies = cookies();
-  const token = userCookies.get("token")?.value;
+  const token = userCookies.get("access_token")?.value;
 
   if (!token) {
     return null;
@@ -13,12 +13,10 @@ async function getCurrentUser() {
   const decoded = jwt.decode(token, { complete: true });
 
   // @ts-ignore
-  const userId = decoded?.payload.id;
+  const userId = decoded?.payload.user_id;
 
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { uid: userId },
     include: {
       admin: true,
       athlete: true,

@@ -1,7 +1,6 @@
-import { hashService } from "@/services/hash";
+import { authAdmin } from "@/services/firebase-admin";
 import { prisma } from "@/services/prisma";
 import { authenticationMiddleware } from "@/utils/authenticationMiddleware";
-import { getFormData } from "@/utils/getFormData";
 import { ROLE, USER_STATUS, USER_TYPE } from "@prisma/client";
 import { NextRequest } from "next/server";
 
@@ -23,6 +22,10 @@ export async function POST(req: NextRequest) {
     return new Response("Dados incorretos", { status: 400 });
   }
 
+  if (!Object.values(ROLE).includes(role)) {
+    return new Response("Role inválida", { status: 400 });
+  }
+
   const emailExists = await prisma.user.findFirst({
     where: {
       email,
@@ -33,17 +36,17 @@ export async function POST(req: NextRequest) {
     return new Response("Email já cadastrado", { status: 400 });
   }
 
-  if (!Object.values(ROLE).includes(role)) {
-    return new Response("Role inválida", { status: 400 });
-  }
-
-  const hashed = hashService().generate(password);
+  const firebaseUser = await authAdmin.createUser({
+    email,
+    password,
+    displayName: name,
+  });
 
   const user = await prisma.user.create({
     data: {
       name,
       email,
-      password: hashed,
+      uid: firebaseUser.uid,
       type: USER_TYPE.ADMIN,
       status: USER_STATUS.ACTIVE,
       admin: {

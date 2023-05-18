@@ -32,7 +32,6 @@ export default function LoginPage() {
 
       const token = await res.user.getIdToken();
 
-      // TODO: melhorar segurança disso
       const cookie = `access_token=${token};`;
       document.cookie = cookie;
 

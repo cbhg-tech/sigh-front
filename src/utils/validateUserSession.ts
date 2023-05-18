@@ -3,17 +3,22 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 async function validateUserSession() {
-  const userCookies = cookies();
+  try {
+    const userCookies = cookies();
 
-  const token = userCookies.get("access_token")?.value as unknown as string;
+    const token = userCookies.get("access_token")?.value as unknown as string;
 
-  if (!token) {
-    redirect("/");
-  }
+    if (!token) {
+      redirect("/");
+    }
 
-  const sessionIsValid = await authAdmin.verifyIdToken(token, true);
+    const sessionIsValid = await authAdmin.verifyIdToken(token, true);
 
-  if (!sessionIsValid) {
+    if (!sessionIsValid) {
+      redirect("/");
+    }
+  } catch (error) {
+    console.log(error);
     redirect("/");
   }
 }

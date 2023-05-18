@@ -1,15 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verifyToken } from "./verifyToken";
+import { authAdmin } from "@/services/firebase-admin";
 
 export async function authenticationMiddleware() {
-  const token = cookies().get("token")?.value as string | undefined;
+  const token = cookies().get("access_token")?.value as string | undefined;
 
   if (!token) {
     return redirect("/?error=unauthorized");
   }
 
-  const decoded = verifyToken(token) as { id: number; email: string };
+  const res = await authAdmin.verifyIdToken(token, true);
 
-  return decoded;
+  return { id: res.uid, email: res.email };
 }
