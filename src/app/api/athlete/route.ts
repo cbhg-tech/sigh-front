@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import * as jwt from "jsonwebtoken";
-import { hashService } from "@/services/hash";
+import { NextRequest } from "next/server";
 import { prisma } from "@/services/prisma";
 import { getFormData } from "@/utils/getFormData";
 import { USER_STATUS, USER_TYPE } from "@prisma/client";
+import { authAdmin } from "@/services/firebase-admin";
 
 type FormData = {
   name: string;
@@ -13,6 +12,15 @@ type FormData = {
   birthDate: string;
   teamId: string;
 };
+
+// {
+//   name: 'atleta 1';
+//   email: 'atleta@gmail.com';
+//   password: '123456';
+//   document: '11111111111';
+//   birthDate: '1999-01-01';
+//   teamId: '1';
+// };
 
 export async function POST(req: NextRequest) {
   const { birthDate, document, email, name, password, teamId } =
@@ -48,13 +56,17 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const hashed = hashService().generate(password);
+  const firebaseUser = await authAdmin.createUser({
+    email,
+    password,
+    displayName: name,
+  });
 
   const user = await prisma.user.create({
     data: {
       name: name,
       email: email,
-      password: hashed,
+      uid: firebaseUser.uid,
       type: USER_TYPE.ATHLETE,
       status: USER_STATUS.PENDING,
       athlete: {
@@ -68,27 +80,21 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const secret = process.env.JWT_SECRET || "secret";
-
-  const token = jwt.sign({ email }, secret, {
-    expiresIn: "1d",
-  });
-
-  const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
-
-  await prisma.userSession.create({
-    data: {
-      token,
-      userId: user.id,
-      expires_at: new Date(Date.now() + oneDayInMilliseconds),
-    },
-  });
-
   // @ts-ignore
   delete user.password;
 
-  return NextResponse.json({
-    token,
-    user,
+  const redirectUrl = new URL("/app/dashboard", process.env.APP_URL);
+  const token = await authAdmin.createSessionCookie(firebaseUser.uid, {
+    expiresIn: 60 * 60 * 24 * 5 * 1000,
+  });
+
+  console.log(token);
+
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: redirectUrl.toString(),
+      "Set-Cookie": `access_token=${token}; path=/; HttpOnly;`,
+    },
   });
 }
