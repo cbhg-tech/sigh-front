@@ -13,15 +13,6 @@ type FormData = {
   teamId: string;
 };
 
-// {
-//   name: 'atleta 1';
-//   email: 'atleta@gmail.com';
-//   password: '123456';
-//   document: '11111111111';
-//   birthDate: '1999-01-01';
-//   teamId: '1';
-// };
-
 export async function POST(req: NextRequest) {
   const { birthDate, document, email, name, password, teamId } =
     await getFormData<FormData>(req);

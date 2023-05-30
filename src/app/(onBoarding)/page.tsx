@@ -9,6 +9,8 @@ import { OnBoardingContainer } from "@/components/layouts/OnBoarding.layout";
 import { useForm } from "react-hook-form";
 import { auth } from "@/services/firebase-client";
 import { useRouter } from "next/navigation";
+import { generateCSRFToken } from "@/utils/generateCSRFToken";
+import { useMutation } from "@/hooks/useMutation";
 
 interface FormValues {
   email: string;
@@ -19,6 +21,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { register, handleSubmit } = useForm<FormValues>();
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useMutation("/api/auth", "POST");
 
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
@@ -31,9 +34,12 @@ export default function LoginPage() {
       );
 
       const token = await res.user.getIdToken();
+      const csrfToken = generateCSRFToken();
 
-      const cookie = `access_token=${token};`;
-      document.cookie = cookie;
+      await mutate({
+        token,
+        csrfToken,
+      });
 
       router.push("/app/dashboard");
     } catch (error) {

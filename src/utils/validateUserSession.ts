@@ -12,7 +12,7 @@ async function validateUserSession() {
       redirect("/");
     }
 
-    const sessionIsValid = await authAdmin.verifyIdToken(token, true);
+    const sessionIsValid = await authAdmin.verifySessionCookie(token, true);
 
     if (!sessionIsValid) {
       redirect("/");

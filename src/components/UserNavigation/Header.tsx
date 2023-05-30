@@ -49,7 +49,9 @@ export function Header({ user, toogleSideMenu }: NavbarParams) {
             className="p-4 text-light-on-surface w-full text-left bg-light-surface-5 hover:brightness-90 rounded"
             onClick={() => {
               document.cookie =
-                "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              document.cookie =
+                "csrf_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
               replace("/");
             }}

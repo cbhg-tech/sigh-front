@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth";
+import { getAuth, Persistence } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
