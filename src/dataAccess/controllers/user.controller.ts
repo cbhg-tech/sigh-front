@@ -104,14 +104,11 @@ export class UserController {
       await validateIfDocumentExist(document);
     }
 
-    await axios.post(
-      'https://us-central1-sigh-f656a.cloudfunctions.net/api/user/create',
-      {
-        ...data,
-        status: Status.ACTIVE,
-        document: document || '',
-      },
-    );
+    await axios.post('https://createuser-dxfl3wgjgq-uc.a.run.app', {
+      ...data,
+      status: Status.ACTIVE,
+      document: document || '',
+    });
   }
 
   public async put(data: Partial<IUser>) {
